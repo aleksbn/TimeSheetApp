@@ -1,14 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using TimeSheetBackend.Configurations;
 using TimeSheetBackend.Models.Data;
+using TimeSheetBackend.Warehouse;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Adding AutoMapper
+builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
 //adding CORS policy
 builder.Services.AddCors(options =>
