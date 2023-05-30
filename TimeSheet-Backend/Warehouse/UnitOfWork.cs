@@ -1,6 +1,6 @@
-﻿using TimeSheetBackend.Models.Data;
+﻿using TimeSheet_Backend.Models.Data;
 
-namespace TimeSheetBackend.Warehouse
+namespace TimeSheet_Backend.Warehouse
 {
     public class UnitOfWork : IUnitOfWork
     {

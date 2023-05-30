@@ -1,8 +1,8 @@
-﻿using TimeSheetBackend.Models.Data;
+﻿using TimeSheet_Backend.Models.Data;
 
-namespace TimeSheetBackend.Warehouse
+namespace TimeSheet_Backend.Warehouse
 {
-    public interface IUnitOfWork: IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         IGenericRepository<Company> CompanyRepository { get; }
         IGenericRepository<Department> DepartmentRepository { get; }

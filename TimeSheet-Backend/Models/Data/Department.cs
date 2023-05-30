@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TimeSheetBackend.Models.Data
+namespace TimeSheet_Backend.Models.Data
 {
     public class Department
     {

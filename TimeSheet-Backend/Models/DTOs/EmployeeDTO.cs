@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TimeSheetBackend.Models.DTOs
+namespace TimeSheet_Backend.Models.DTOs
 {
     public class CreateEmployeeDTO
     {

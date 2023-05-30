@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TimeSheetBackend.Configurations;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using TimeSheet_Backend.Configurations;
 
-namespace TimeSheetBackend.Models.Data
+namespace TimeSheet_Backend.Models.Data
 {
-    public class DatabaseContext: DbContext
+    public class DatabaseContext: IdentityDbContext<AppUser>
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options): base(options)
         { }
@@ -11,6 +12,7 @@ namespace TimeSheetBackend.Models.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new CompanyConfiguration());
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());

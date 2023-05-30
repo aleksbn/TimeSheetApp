@@ -1,0 +1,22 @@
+1.	Entitetske klase	DONE
+	Database		DONE
+	DbContext		DONE
+	appsettings		DONE
+	migracije		DONE
+2.	Konfigurisanje testnih podataka	DONE
+	CORS konfiguracija	DONE
+3.	Service Repository	DONE
+	Unit of Work		DONE
+	Dependency Injection	DONE
+4.	AutoMapper		DONE
+5.	DTOs			DONE
+6.	Identity User		DONE
+6.1	Register and Login endpoints	DONE
+6.2	Jwt token
+7.1	ApiControllers (GET)
+7.2	ApiControllers (POST)
+7.3	ApiControllers (PUT)
+7.4	ApiControllers (DELETE)
+8.	Zaštita endpoints
+9.	Paginacija
+10.	Globalno rješavanje grešaka

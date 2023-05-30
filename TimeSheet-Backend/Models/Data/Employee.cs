@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TimeSheetBackend.Models.Data
+namespace TimeSheet_Backend.Models.Data
 {
     public class Employee
     {

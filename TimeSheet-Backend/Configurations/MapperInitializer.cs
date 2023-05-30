@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using TimeSheetBackend.Models.Data;
-using TimeSheetBackend.Models.DTOs;
+using TimeSheet_Backend.Models.Data;
+using TimeSheet_Backend.Models.DTOs;
 
-namespace TimeSheetBackend.Configurations
+namespace TimeSheet_Backend.Configurations
 {
     public class MapperInitializer: Profile
     {
@@ -16,6 +16,8 @@ namespace TimeSheetBackend.Configurations
             CreateMap<Employee, CreateEmployeeDTO>().ReverseMap();
             CreateMap<WorkingTime, WorkingTimeDTO>().ReverseMap();
             CreateMap<WorkingTime, CreateWorkingTimeDTO>().ReverseMap();
+            CreateMap<AppUser, RegisterUserDTO>().ReverseMap();
+            CreateMap<AppUser, LoginUserDTO>().ReverseMap();
         }
     }
 }

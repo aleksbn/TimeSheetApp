@@ -1,9 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TimeSheetBackend.Models.Data;
+using TimeSheet_Backend.Models.Data;
 
-namespace TimeSheetBackend.Configurations
+namespace TimeSheet_Backend.Configurations
 {
+    public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
+    {
+        public void Configure(EntityTypeBuilder<IdentityRole> builder)
+        {
+            builder.HasData(
+                new IdentityRole
+                {
+                    Name = "admin",
+                    NormalizedName = "ADMINISTRATOR"
+                });
+            builder.HasData(
+                new IdentityRole
+                {
+                    Name = "manager",
+                    NormalizedName = "COMPANY MANAGER"
+                });
+        }
+    }
     public class CompanyConfiguration : IEntityTypeConfiguration<Company>
     {
         public void Configure(EntityTypeBuilder<Company> builder)
