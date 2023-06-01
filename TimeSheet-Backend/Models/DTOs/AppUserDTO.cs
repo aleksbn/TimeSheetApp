@@ -2,7 +2,7 @@
 
 namespace TimeSheet_Backend.Models.DTOs
 {
-    public class RegisterUserDTO: LoginUserDTO
+    public class RegisterUserDTO : LoginUserDTO
     {
         [Required]
         [StringLength(maximumLength: 50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters long")]
@@ -21,5 +21,11 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,50}$")]
         public string Password { get; set; }
+    }
+
+    public class ManagerDTO
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

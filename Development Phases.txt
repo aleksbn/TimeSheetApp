@@ -12,7 +12,7 @@
 5.	DTOs			DONE
 6.	Identity User		DONE
 6.1	Register and Login endpoints	DONE
-6.2	Jwt token
+6.2	Jwt token		DONE
 7.1	ApiControllers (GET)
 7.2	ApiControllers (POST)
 7.3	ApiControllers (PUT)

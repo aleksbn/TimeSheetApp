@@ -23,5 +23,6 @@ namespace TimeSheet_Backend.Models.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<WorkingTime> WorkingTimes { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

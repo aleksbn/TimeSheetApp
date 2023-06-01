@@ -47,17 +47,17 @@ namespace TimeSheet_Backend.Warehouse
         {
             IQueryable<T> query = _db;
 
-            if (expression != null)
-            {
-                query = query.Where(expression);
-            }
-
             if (includes != null)
             {
                 foreach (var includeProp in includes)
                 {
                     query = query.Include(includeProp);
                 }
+            }
+
+            if (expression != null)
+            {
+                query = query.Where(expression);
             }
 
             if (orderBy != null)

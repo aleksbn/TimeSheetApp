@@ -40,6 +40,9 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         public string ID { get; set; }
 
-        public virtual IList<WorkingTimeDTO> WorkingTimeDTOs { get; set; }
+        public int DepartmentId { get; set; }
+        public virtual DepartmentDTO Department { get; set; }
+
+        public virtual IList<WorkingTimeDTO> WorkingTimes { get; set; }
     }
 }

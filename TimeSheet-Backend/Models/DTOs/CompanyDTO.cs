@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using TimeSheet_Backend.Models.Data;
 
 namespace TimeSheet_Backend.Models.DTOs
 {
@@ -25,7 +27,8 @@ namespace TimeSheet_Backend.Models.DTOs
     {
         [Required]
         public int ID { get; set; }
-
+        public string CompanyManagerId { get; set; }
+        public virtual ManagerDTO CompanyManager { get; set; }
         public virtual IList<EmployeeDTO> Employees { get; set; }
         public virtual IList<DepartmentDTO> Departments { get; set; }
     }

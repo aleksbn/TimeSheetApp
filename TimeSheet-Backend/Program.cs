@@ -10,16 +10,14 @@ using TimeSheet_Backend.Warehouse;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//Adding DbContext
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //Adding AutoMapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 //adding CORS policy
 builder.Services.AddCors(options =>
@@ -30,6 +28,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSwaggerGen();
 //Token validation parameters
 var tokenValidationParameters = new TokenValidationParameters()
 {
@@ -44,8 +43,6 @@ var tokenValidationParameters = new TokenValidationParameters()
 };
 builder.Services.AddSingleton(tokenValidationParameters);
 
-//Adding DbContext
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //Adding Identity system to services
 builder.Services.AddAuthentication(options =>
 {
@@ -58,6 +55,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = tokenValidationParameters;
 });
 builder.Services.AddIdentity<AppUser, IdentityRole>(q => q.User.RequireUniqueEmail = true).AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
+builder.Services.AddControllers().AddNewtonsoftJson(o => o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 var app = builder.Build();
 
