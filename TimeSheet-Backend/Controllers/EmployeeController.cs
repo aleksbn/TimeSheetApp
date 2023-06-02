@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
 
@@ -24,7 +25,7 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
-                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.CompanyID == comId && e.DepartmentID == depId, null, new List<string>()
+                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId && e.DepartmentID == depId, null, new List<string>()
                 {
                     "WorkingTimes"
                 });
@@ -33,7 +34,7 @@ namespace TimeSheet_Backend.Controllers
             }
             catch (Exception x)
             {
-                return BadRequest(x);
+                return BadRequest(x.InnerException.Message);
             }
         }
 
@@ -42,7 +43,7 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
-                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.CompanyID == comId, null, new List<string>()
+                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId, null, new List<string>()
                 {
                     "Department"
                 });
@@ -51,7 +52,7 @@ namespace TimeSheet_Backend.Controllers
             }
             catch (Exception x)
             {
-                return BadRequest(x);
+                return BadRequest(x.InnerException.Message);
             }
         }
 
@@ -70,7 +71,49 @@ namespace TimeSheet_Backend.Controllers
             }
             catch (Exception x)
             {
-                return BadRequest(x);
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostEmployee([FromBody] EmployeeDTO employeeDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Input all required fields in a correct format!");
+            }
+
+            try
+            {
+                await _unitOfWork.EmployeeRepository.Insert(_mapper.Map<Employee>(employeeDTO));
+                await _unitOfWork.Save();
+                return Ok("Employee added");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditEmployee([FromBody] EmployeeDTO employeeDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Input all required fields in a correct format!");
+            }
+
+            try
+            {
+                var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == employeeDTO.ID);
+                employee = _mapper.Map<Employee>(employeeDTO);
+                _unitOfWork.EmployeeRepository.Update(employee);
+                await _unitOfWork.Save();
+                return Ok("Employee edited succesfully.");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
             }
         }
     }

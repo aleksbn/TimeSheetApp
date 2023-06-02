@@ -138,7 +138,7 @@ namespace TimeSheet_Backend.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:Issuer"],
                 audience: _configuration["JWT:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(15),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256));
 

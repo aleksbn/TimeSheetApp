@@ -76,7 +76,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1986, 12, 9),
                     StartOfEmployment = new DateTime(2012, 10, 11),
                     HourlyRate = 12,
-                    CompanyID = 1,
                     DepartmentID = 1
                 },
                 new Employee
@@ -92,7 +91,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1992, 11, 7),
                     StartOfEmployment = new DateTime(2019, 11, 20),
                     HourlyRate = 8,
-                    CompanyID = 1,
                     DepartmentID = 1
                 },
                 new Employee
@@ -108,7 +106,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1991, 5, 5),
                     StartOfEmployment = new DateTime(2017, 4, 7),
                     HourlyRate = 7,
-                    CompanyID = 1,
                     DepartmentID = 1
                 },
                 new Employee
@@ -124,7 +121,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1986, 10, 22),
                     StartOfEmployment = new DateTime(2013, 7, 8),
                     HourlyRate = 12,
-                    CompanyID = 1,
                     DepartmentID = 2
                 },
                 new Employee
@@ -140,7 +136,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1987, 7, 2),
                     StartOfEmployment = new DateTime(2020, 11, 12),
                     HourlyRate = 10,
-                    CompanyID = 1,
                     DepartmentID = 2
                 },
                 new Employee
@@ -156,7 +151,6 @@ namespace TimeSheet_Backend.Configurations
                     DateOfBirth = new DateTime(1993, 11, 8),
                     StartOfEmployment = new DateTime(2013, 12, 12),
                     HourlyRate = 10,
-                    CompanyID = 1,
                     DepartmentID = 2
                 }
                 );

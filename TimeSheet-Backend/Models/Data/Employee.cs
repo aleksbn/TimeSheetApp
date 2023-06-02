@@ -34,10 +34,6 @@ namespace TimeSheet_Backend.Models.Data
         public int DepartmentID { get; set; }
         public virtual Department Department { get; set; }
 
-        [ForeignKey(nameof(Company))]
-        public int CompanyID { get; set; }
-        public virtual Company Company { get; set; }
-
         public virtual IList<WorkingTime> WorkingTimes { get; set; }
     }
 }

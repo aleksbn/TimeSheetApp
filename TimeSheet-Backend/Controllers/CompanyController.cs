@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
 
@@ -28,7 +29,7 @@ namespace TimeSheet_Backend.Controllers
             }
             catch (Exception x)
             {
-                return BadRequest(x.Message);
+                return BadRequest(x.InnerException.Message);
             }
         }
 
@@ -45,7 +46,49 @@ namespace TimeSheet_Backend.Controllers
             }
             catch (Exception x)
             {
-                return BadRequest(x.Message);
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostCompany([FromBody] CompanyDTO company)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Input all required fields in a correct format!");
+            }
+
+            try
+            {
+                await _unitOfWork.CompanyRepository.Insert(_mapper.Map<Company>(company));
+                await _unitOfWork.Save();
+                return Ok("Company created");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCompany([FromBody] CompanyDTO editCompany)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest("Input all required fields in a correct format!");
+            }
+
+            try
+            {
+                var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == editCompany.ID, null);
+                company = _mapper.Map<Company>(editCompany);
+                _unitOfWork.CompanyRepository.Update(company);
+                await _unitOfWork.Save();
+                return Ok("Company edited succesfully.");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
             }
         }
     }
