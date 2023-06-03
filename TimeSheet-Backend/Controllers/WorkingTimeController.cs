@@ -38,6 +38,7 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
+        //treba dodati mjesec i/ili godinu
         [HttpGet("{comId}")]
         public async Task<IActionResult> FromCompany(int comId)
         {
@@ -85,11 +86,12 @@ namespace TimeSheet_Backend.Controllers
             {
                 List<WorkingTime> times = new();
                 var allEmployees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId);
+                var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
                 List<Employee> employees = new(allEmployees);
                 List<WorkingTime> workingTimes = new();
                 DateTime currentDate = DateTime.Today;
-                TimeSpan startTime = new(8, 0, 0);
-                TimeSpan endTime = new(16, 0, 0);
+                TimeSpan? startTime = company.StartTime == null ? company.StartTime : new TimeSpan(8,0,0);
+                TimeSpan? endTime = company.EndTime == null ? company.EndTime : new TimeSpan(8, 0, 0);
 
                 if (date != null)
                 {
@@ -116,8 +118,8 @@ namespace TimeSheet_Backend.Controllers
                     workingTimes.Add(new WorkingTime()
                     {
                         Date = currentDate,
-                        StartTime = startTime,
-                        EndTime = endTime,
+                        StartTime = startTime.Value,
+                        EndTime = endTime.Value,
                         EmployeeID = employee.ID
                     });
                 }
@@ -150,6 +152,41 @@ namespace TimeSheet_Backend.Controllers
             catch (Exception x)
             {
                 return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpDelete]
+        [ActionName("deleteWorkingTime")]
+        public async Task<IActionResult> DeleteSingleWorkingTime(int id)
+        {
+            var workingTime = await _unitOfWork.WorkingTimeRepository.Get(wt => wt.ID == id);
+            if (workingTime != null)
+            {
+                await _unitOfWork.WorkingTimeRepository.Delete(id);
+                await _unitOfWork.Save();
+                return Ok("Working time deleted");
+            }
+            else
+            {
+                return NotFound("That working time does not exist");
+            }
+        }
+
+        [HttpDelete]
+        [ActionName("deleteWorkingTimesForEmployee")]
+        public async Task<IActionResult> DeleteWorkingTimes(string id)
+        {
+            var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == id);
+            if (employee != null)
+            {
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.Employee.ID == id);
+                _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
+                await _unitOfWork.Save();
+                return Ok("Working times for an employee deleted");
+            }
+            else
+            {
+                return NotFound("That employee does not exist");
             }
         }
     }

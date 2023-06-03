@@ -11,6 +11,7 @@ namespace TimeSheet_Backend.Warehouse
         Task InsertRange(IEnumerable<T> entities);
 
         Task Delete(int id);
+        Task DeleteByString(string id);
         void DeleteRange(IEnumerable<T> entities);
 
         void Update(T entity);

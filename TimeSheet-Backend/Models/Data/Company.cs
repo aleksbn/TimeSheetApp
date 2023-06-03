@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
-using TimeSheet_Backend.Models.Data;
 
 namespace TimeSheet_Backend.Models.Data
 {
@@ -17,6 +16,8 @@ namespace TimeSheet_Backend.Models.Data
         public string Country { get; set; }
         [Required]
         public string Email { get; set; }
+        public TimeSpan? StartTime { get; set; }
+        public TimeSpan? EndTime { get; set; }
         [AllowNull]
         [ForeignKey(nameof(AppUser))]
         public string CompanyManagerId { get; set; }

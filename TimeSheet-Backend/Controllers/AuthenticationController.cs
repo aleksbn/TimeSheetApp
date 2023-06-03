@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
+using TimeSheet_Backend.Warehouse;
 
 namespace TimeSheet_Backend.Controllers
 {
@@ -22,6 +23,7 @@ namespace TimeSheet_Backend.Controllers
         private readonly IConfiguration _configuration;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AuthenticationController(
             UserManager<AppUser> userManager, 
@@ -29,7 +31,8 @@ namespace TimeSheet_Backend.Controllers
             DatabaseContext databaseContext, 
             IConfiguration configuration, 
             TokenValidationParameters tokenValidationParameters,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -37,6 +40,7 @@ namespace TimeSheet_Backend.Controllers
             _configuration = configuration;
             _tokenValidationParameters = tokenValidationParameters;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("register-user")]
@@ -75,6 +79,7 @@ namespace TimeSheet_Backend.Controllers
             return BadRequest("The role does not exist.");
         }
 
+        
         [HttpPost("login-user")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
         {
@@ -91,6 +96,83 @@ namespace TimeSheet_Backend.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpPut("edit-user")]
+        public async Task<IActionResult> EditUser([FromBody] EditUserDTO editUserDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Please, provide accurate fields");
+            }
+
+            var user = await _userManager.FindByEmailAsync(editUserDTO.OldEmail);
+            if (user == null)
+            {
+                return NotFound("There is no user under that email address.");
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, editUserDTO.OldPassword) == false)
+            {
+                return NotFound("Wrong old password");
+            }
+
+            if (editUserDTO.NewEmail != null)
+            {
+                var emailExists = await _userManager.FindByEmailAsync(editUserDTO.NewEmail);
+                if (emailExists != null)
+                {
+                    return BadRequest("There is a user with that email already. Pick another one.");
+                }
+                user.Email = editUserDTO.NewEmail;
+                user.NormalizedEmail = editUserDTO.NewEmail.ToUpper();
+                user.UserName = editUserDTO.NewEmail;
+                user.NormalizedUserName = editUserDTO.NewEmail.ToUpper();
+            }
+
+            if (editUserDTO.NewPassword != "")
+            {
+                await _userManager.ChangePasswordAsync(user, editUserDTO.OldPassword, editUserDTO.NewPassword);
+            }
+
+            if (editUserDTO.FirstName != "")
+            {
+                user.FirstName = editUserDTO.FirstName;
+            }
+
+            if (editUserDTO.LastName != "")
+            {
+                user.LastName = editUserDTO.LastName;
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok("User data changed");
+        }
+
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUser([FromBody] LoginUserDTO deleteUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Please, provide accurate data fields");
+            }
+
+            var user = await _userManager.FindByEmailAsync(deleteUser.Email);
+
+            if (user != null && await _userManager.CheckPasswordAsync(user, deleteUser.Password))
+            {
+                var companies = await _unitOfWork.CompanyRepository.GetAll(c => c.CompanyManagerId == user.Id);
+                foreach (var company in companies)
+                {
+                    company.CompanyManagerId = "";
+                }
+                await _unitOfWork.Save();
+                await _userManager.DeleteAsync(user);
+                return Ok("User has been deleted.");
+            }
+
+            return BadRequest("Email or password are wrong");
         }
 
         private async Task<AuthResultDTO> VerifyAndGenerateTokenAsync(TokenRequestDTO request)

@@ -24,6 +24,15 @@ namespace TimeSheet_Backend.Warehouse
             }
         }
 
+        public async Task DeleteByString(string id)
+        {
+            var entity = await _db.FindAsync(id);
+            if (entity != null)
+            {
+                _db.Remove(entity);
+            }
+        }
+
         public void DeleteRange(IEnumerable<T> entities)
         {
             _db.RemoveRange(entities);

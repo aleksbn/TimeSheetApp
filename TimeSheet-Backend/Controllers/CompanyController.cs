@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
@@ -85,6 +86,63 @@ namespace TimeSheet_Backend.Controllers
                 _unitOfWork.CompanyRepository.Update(company);
                 await _unitOfWork.Save();
                 return Ok("Company edited succesfully.");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCompany(int id, int targetDepartmentId = 0, bool deleteEmployees = false)
+        {
+            try
+            {
+                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == id);
+
+                if (employees.Count == 0)
+                {
+                    return NotFound("That company does not exist");
+                }
+
+                if (deleteEmployees)
+                {
+                    foreach (var employee in employees)
+                    {
+                        var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.EmployeeID == employee.ID);
+                        _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
+                    }
+                    _unitOfWork.EmployeeRepository.DeleteRange(employees);
+                }
+                else
+                {
+                    if (targetDepartmentId != 0)
+                    {
+                        var targetDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == targetDepartmentId);
+                        if (targetDepartment == null)
+                        {
+                            return NotFound("That target department does not exist");
+                        }
+                        foreach (var employee in employees)
+                        {
+                            employee.DepartmentID = targetDepartmentId;
+                            _unitOfWork.EmployeeRepository.Update(employee);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var employee in employees)
+                        {
+                            employee.DepartmentID = 0;
+                            _unitOfWork.EmployeeRepository.Update(employee);
+                        }
+                    }
+                }
+                var departments = await _unitOfWork.DepartmentRepository.GetAll(d => d.CompanyID == id);
+                _unitOfWork.DepartmentRepository.DeleteRange(departments);
+                await _unitOfWork.CompanyRepository.Delete(id);
+                await _unitOfWork.Save();
+                return Ok("Company and all selected data deleted.");
             }
             catch (Exception x)
             {

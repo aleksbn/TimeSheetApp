@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TimeSheet_Backend.Models.DTOs
 {
@@ -27,5 +28,27 @@ namespace TimeSheet_Backend.Models.DTOs
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+    }
+
+    public class EditUserDTO
+    {
+        private string _NewEmail;
+        private string _NewEmailConfirmation;
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [Required]
+        [EmailAddress]
+        public string OldEmail { get; set; }
+        [EmailAddress]
+        public string NewEmail { get { return _NewEmail; } set { _NewEmail = string.IsNullOrWhiteSpace(value) ? null : value; } }
+        [EmailAddress]
+        [Compare("NewEmail", ErrorMessage = "The email and confirmation do not match.")]
+        public string NewEmailConfirmation { get { return _NewEmailConfirmation; } set { _NewEmailConfirmation = string.IsNullOrWhiteSpace(value) ? null : value; } }
+        [Required]
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+        [Compare("NewPassword", ErrorMessage = "The password and confirmation do not match.")]
+        public string PasswordConfirmation { get; set; }
     }
 }

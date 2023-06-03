@@ -35,7 +35,9 @@ namespace TimeSheet_Backend.Configurations
                     Address = "Street of the Unknown Hero 12",
                     City = "Belgrade",
                     Country = "Serbia",
-                    Email = "official@vixtra.com"
+                    Email = "official@vixtra.com",
+                    StartTime = new TimeSpan(8,0,0),
+                    EndTime = new TimeSpan(16,0,0)
                 }
                 );
         }

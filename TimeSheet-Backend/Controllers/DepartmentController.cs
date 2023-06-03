@@ -94,5 +94,64 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest(x.InnerException.Message);
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteDepartment(int depId, bool deleteEmployees = false, int targetDepId = 0)
+        {
+            try
+            {
+                var deletionDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == depId);
+
+                if (deletionDepartment == null)
+                {
+                    return NotFound("That department for deletion does not exist");
+                }
+                if (deleteEmployees)
+                {
+                    var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                    foreach (var employee in employees)
+                    {
+                        var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.EmployeeID == employee.ID);
+                        _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
+                    }
+                    _unitOfWork.EmployeeRepository.DeleteRange(employees);
+                }
+                else
+                {
+                    if (targetDepId != 0)
+                    {
+                        var targetDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == targetDepId);
+                        if (targetDepartment == null)
+                        {
+                            return NotFound("That target department does not exist");
+                        }
+                        else
+                        {
+                            var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                            foreach (var employee in employees)
+                            {
+                                employee.DepartmentID = targetDepId;
+                                _unitOfWork.EmployeeRepository.Update(employee);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                        foreach (var employee in employees)
+                        {
+                            employee.DepartmentID = 0;
+                            _unitOfWork.EmployeeRepository.Update(employee);
+                        }
+                    }
+                }
+                await _unitOfWork.Save();
+                return Ok("Department deleted");
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+            }
+        }
     }
 }

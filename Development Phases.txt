@@ -14,9 +14,11 @@
 6.1	Register and Login endpoints	DONE
 6.2	Jwt token		DONE
 7.1	ApiControllers (GET)	DONE
-7.2	ApiControllers (POST)
-7.3	ApiControllers (PUT)
-7.4	ApiControllers (DELETE)
-8.	Zaštita endpoints
+7.2	ApiControllers (POST)	DONE
+7.3	ApiControllers (PUT)	DONE
+7.4	ApiControllers (DELETE)	DONE
+7.5	AuthController methods	DONE
+8.	Dodavanje Start i End time za kompaniju	DONE
 9.	Paginacija
 10.	Globalno rješavanje grešaka
+11.	Zastita Endpoints-a

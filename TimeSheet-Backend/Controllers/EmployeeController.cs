@@ -116,5 +116,23 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest(x.InnerException.Message);
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEmployee(string id)
+        {
+            var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == id);
+            if (employee != null)
+            {
+                await _unitOfWork.EmployeeRepository.DeleteByString(id);
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.EmployeeID == id);
+                _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
+                await _unitOfWork.Save();
+                return Ok("Employee deleted");
+            }
+            else
+            {
+                return NotFound("That employee does not exist");
+            }
+        }
     }
 }
