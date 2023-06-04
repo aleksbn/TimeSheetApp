@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
@@ -21,16 +22,16 @@ namespace TimeSheet_Backend.Controllers
         }
         //treba dodati mjesec i/ili godinu
         [HttpGet("{depId}")]
-        public async Task<IActionResult> FromDepartment(int depId)
+        public async Task<IActionResult> FromDepartment(int depId, [FromQuery] RequestParams requestParams)
         {
             try
             {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.DepartmentID == depId, null, new List<string>()
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.DepartmentID == depId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
                 {
                     "Employee"
                 });
-
-                return Ok(_mapper.Map<List<WorkingTimeDTO>>(workingTimes));
+                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                return Ok(toReturn);
             }
             catch (Exception x)
             {
@@ -40,16 +41,16 @@ namespace TimeSheet_Backend.Controllers
 
         //treba dodati mjesec i/ili godinu
         [HttpGet("{comId}")]
-        public async Task<IActionResult> FromCompany(int comId)
+        public async Task<IActionResult> FromCompany(int comId, [FromQuery]RequestParams requestParams)
         {
             try
             {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.Department.CompanyID == comId, null, new List<string>()
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.Department.CompanyID == comId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
                 {
                     "Employee"
                 });
-
-                return Ok(_mapper.Map<List<WorkingTimeDTO>>(workingTimes));
+                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                return Ok(toReturn);
             }
             catch (Exception x)
             {

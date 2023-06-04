@@ -21,16 +21,16 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpGet("{comId}/{depId}")]
-        public async Task<IActionResult> GetEmployeesFromDepartment(int comId, int depId)
+        public async Task<IActionResult> GetEmployeesFromDepartment(int comId, int depId, [FromQuery] RequestParams requestParams)
         {
             try
             {
-                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId && e.DepartmentID == depId, null, new List<string>()
+                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId && e.DepartmentID == depId, e => e.OrderBy(em => em.ID), new List<string>()
                 {
                     "WorkingTimes"
                 });
-
-                return Ok(_mapper.Map<List<EmployeeDTO>>(employees));
+                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                return Ok(toReturn);
             }
             catch (Exception x)
             {
@@ -39,16 +39,17 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpGet("{comId:int}")]
-        public async Task<IActionResult> GetEmployeesFromCompany(int comId)
+        public async Task<IActionResult> GetEmployeesFromCompany(int comId, [FromQuery] RequestParams requestParams)
         {
             try
             {
-                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId, null, new List<string>()
+                var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId, e => e.OrderBy(em => em.DepartmentID), new List<string>()
                 {
                     "Department"
                 });
 
-                return Ok(_mapper.Map<List<EmployeeDTO>>(employees));
+                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                return Ok(toReturn);
             }
             catch (Exception x)
             {

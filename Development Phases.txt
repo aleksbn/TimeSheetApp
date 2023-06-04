@@ -19,6 +19,5 @@
 7.4	ApiControllers (DELETE)	DONE
 7.5	AuthController methods	DONE
 8.	Dodavanje Start i End time za kompaniju	DONE
-9.	Paginacija
-10.	Globalno rješavanje grešaka
-11.	Zastita Endpoints-a
+9.	Paginacija		DONE
+10.	Zastita Endpoints-a
