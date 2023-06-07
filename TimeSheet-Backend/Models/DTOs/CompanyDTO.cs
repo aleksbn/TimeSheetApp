@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using TimeSheet_Backend.Models.Data;
 
 namespace TimeSheet_Backend.Models.DTOs
 {
