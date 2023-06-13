@@ -37,15 +37,15 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpGet("{comId}/{depId}")]
-        public async Task<IActionResult> GetAllFromDeparment(int comId, int depId)
+        public async Task<IActionResult> Get(int comId, int depId)
         {
             try
             {
-                var departments = await _unitOfWork.DepartmentRepository.GetAll(d => d.CompanyID == comId && d.ID == depId, null, new List<string>()
+                var department = await _unitOfWork.DepartmentRepository.Get(d => d.CompanyID == comId && d.ID == depId, new List<string>()
                 {
                     "Employees"
                 });
-                return Ok(_mapper.Map<List<DepartmentDTO>>(departments));
+                return Ok(_mapper.Map<DepartmentDTO>(department));
             }
             catch (Exception x)
             {

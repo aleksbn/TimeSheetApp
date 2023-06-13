@@ -42,6 +42,19 @@ export default {
       return this.$store.getters["companies/hasCompanies"];
     },
   },
+  methods: {
+    async loadCompanies() {
+      try {
+        await this.$store.dispatch("companies/loadCompanies");
+      } catch (error) {
+        this.error =
+          error.message + " in getting companies." || "Something went wrong!";
+      }
+    },
+  },
+  created() {
+    this.loadCompanies();
+  },
 };
 </script>
 

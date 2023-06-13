@@ -4,8 +4,13 @@ import getters from "./getters.js";
 
 export default {
   namespaced: true,
-  state() {},
+  state() {
+    return {
+      employees: [],
+      employee: null,
+    };
+  },
   mutations,
   getters,
-  actions
+  actions,
 };

@@ -4,8 +4,12 @@ import getters from "./getters.js";
 
 export default {
   namespaced: true,
-  state() {},
+  state() {
+    return {
+      workingTimes: [],
+    };
+  },
   mutations,
   getters,
-  actions
+  actions,
 };

@@ -29,7 +29,7 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "WorkingTimes"
                 });
-                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(toReturn);
             }
             catch (Exception x)
@@ -48,7 +48,7 @@ namespace TimeSheet_Backend.Controllers
                     "Department"
                 });
 
-                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                var toReturn = _mapper.Map<List<EmployeeDTO>>(employees.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(toReturn);
             }
             catch (Exception x)

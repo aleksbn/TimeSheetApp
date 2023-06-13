@@ -8,7 +8,6 @@ import EmployeeDetails from "./pages/employees/EmployeeDetails.vue";
 import Departments from "./pages/departments/DepartmentsList.vue";
 import DepartmentDetails from "./pages/departments/DepartmentDetails.vue";
 import WorkingTimes from "./pages/workingtimes/WorkingTimesList.vue";
-import WorkingTimeDetails from "./pages/workingtimes/WorkingTimeDetails.vue";
 import NotFound from "./pages/NotFound.vue";
 
 const router = createRouter({
@@ -17,41 +16,17 @@ const router = createRouter({
     { path: "/", redirect: "/about" },
     { path: "/about", component: AboutUs },
     { path: "/companies", component: Companies },
+    { path: "/companies/:comid", component: CompanyDetails, props: true },
+    { path: "/departments/:comid/", component: Departments, props: true },
     {
-      path: "/companies/:comid",
-      component: CompanyDetails,
+      path: "/departments/:comid/:depid",
+      component: DepartmentDetails,
       props: true,
-      children: [
-        { path: "departments", component: Departments },
-        {
-          path: "departments/:depid",
-          component: DepartmentDetails,
-          props: true,
-          children: [
-            { path: "employees", component: Employees },
-            { path: "employees/:emid", component: EmployeeDetails },
-            { path: "workingtimes", component: WorkingTimes },
-            { path: "workingtimes/:wtid", component: WorkingTimeDetails },
-          ],
-        },
-        { path: "employees", component: Employees },
-        {
-          path: "employees/:emid",
-          component: EmployeeDetails,
-          props: true,
-          children: [
-            { path: "workingtimes", component: WorkingTimes },
-            { path: "workingtimes/:wtid", component: WorkingTimeDetails },
-          ],
-        },
-        { path: "workingtimes", component: WorkingTimes },
-        {
-          path: "workingtimes/:wtid",
-          component: WorkingTimeDetails,
-          props: true,
-        },
-      ],
     },
+    { path: "/employees/:comid", component: Employees, props: true },
+    { path: "/employees/:comid/:depid", component: Employees, props: true },
+    { path: "/employeedetails/:empid", component: EmployeeDetails, props: true },
+    { path: "/workingtimes/:id", component: WorkingTimes, props: true },
     { path: "/:notFOund(.*)", component: NotFound },
   ],
 });

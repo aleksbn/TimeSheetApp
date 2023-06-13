@@ -4,7 +4,12 @@ import getters from "./getters.js";
 
 export default {
   namespaced: true,
-  state() {},
+  state() {
+    return {
+      departments: [],
+      department: null
+    }
+  },
   mutations,
   getters,
   actions

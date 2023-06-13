@@ -5,4 +5,10 @@ export default {
   hasCompanies(state) {
     return !!state.companies && state.companies.length > 0;
   },
+  company(state) {
+    return state.company;
+  },
+  hasCompany(state) {
+    return !!state.company;
+  }
 };

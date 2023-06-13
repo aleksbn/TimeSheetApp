@@ -3,9 +3,9 @@
     public class RequestParams
     {
         const int maxPageSize = 100;
-        private int _pageSize;
+        private int _pageSize = 10;
 
-        public int PageNumber { get; set; } = 1;
+        public int PageNumber { get; set; } = 0;
         public int PageSize { 
             get
             {

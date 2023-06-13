@@ -10,7 +10,7 @@ const store = createStore({
     companies: companiesModule,
     departments: departmentsModule,
     employees: employeesModule,
-    workintTimes:workingTimesModule
+    workingTimes: workingTimesModule,
   },
 });
 

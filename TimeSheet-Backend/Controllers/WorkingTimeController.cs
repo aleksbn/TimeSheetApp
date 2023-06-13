@@ -30,7 +30,25 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "Employee"
                 });
-                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
+                return Ok(toReturn);
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+            }
+        }
+
+        [HttpGet("{empId}")]
+        public async Task<IActionResult> FromEmployee(string empId, [FromQuery] RequestParams requestParams)
+        {
+            try
+            {
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.ID == empId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
+                {
+                    "Employee"
+                });
+                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(toReturn);
             }
             catch (Exception x)
@@ -49,7 +67,7 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "Employee"
                 });
-                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes).Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize);
+                var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(toReturn);
             }
             catch (Exception x)
