@@ -7,6 +7,7 @@ export default {
   state() {
     return {
       workingTimes: [],
+      wtCount: 0,
     };
   },
   mutations,

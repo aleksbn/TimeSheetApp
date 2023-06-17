@@ -1,6 +1,8 @@
 <template>
   <div>
-    <section>FILTER</section>
+    <section>
+      <working-time-filter @params-changed="setParams" v-if="show"></working-time-filter>
+    </section>
     <section>
       <base-card>
         <div class="controls">
@@ -38,9 +40,25 @@
 
 <script>
 import WorkingTimeItem from "../../components/workingTimes/WorkingTimeItem.vue";
+import { defineAsyncComponent } from "vue";
+
 export default {
   components: {
     WorkingTimeItem,
+    WorkingTimeFilter: defineAsyncComponent(() =>
+      import("../../components/workingTimes/WorkingTimeFilter.vue")
+    ),
+  },
+  data() {
+    return {
+      id: null,
+      link: null,
+      activeFilters: {
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      show: false,
+    };
   },
   computed: {
     hasWorkingTimes() {
@@ -50,27 +68,34 @@ export default {
       return this.$store.getters["workingTimes/workingTimes"];
     },
   },
+  watch: {
+    activeFilters() {
+      this.loadWorkingTimes();
+    },
+  },
   methods: {
+    setParams(updatedParams) {
+      this.activeFilters = updatedParams;
+    },
     async loadWorkingTimes() {
-      let id = null;
-      let link = null;
       if (localStorage.getItem("empidwt")) {
-        id = localStorage.getItem("empidwt");
-        link = "https://localhost:7059/api/workingtime/fromemployee/";
-      }
-      else if (localStorage.getItem("depidwt")) {
-        id = localStorage.getItem("depidwt");
-        link = "https://localhost:7059/api/workingtime/fromdepartment/";
-      }
-      else if (localStorage.getItem("comidwt")) {
-        id = localStorage.getItem("comidwt");
-        link = "https://localhost:7059/api/workingtime/fromcompany/";
+        this.id = localStorage.getItem("empidwt");
+        this.link = "https://localhost:7059/api/workingtime/fromemployee/";
+      } else if (localStorage.getItem("depidwt")) {
+        this.id = localStorage.getItem("depidwt");
+        this.link = "https://localhost:7059/api/workingtime/fromdepartment/";
+      } else if (localStorage.getItem("comidwt")) {
+        this.id = localStorage.getItem("comidwt");
+        this.link = "https://localhost:7059/api/workingtime/fromcompany/";
       }
       try {
         await this.$store.dispatch("workingTimes/loadWorkingTimes", {
-          id: id,
-          link: link,
+          id: this.id,
+          link: this.link,
+          pageNumber: this.activeFilters.pageNumber,
+          pageSize: this.activeFilters.pageSize,
         });
+        this.show = true;
       } catch (error) {
         this.error =
           error.message + " in getting employees" || "Something went wrong!";

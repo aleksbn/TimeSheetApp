@@ -1,6 +1,5 @@
 <template>
   <div>
-    <section>FILTER</section>
     <section>
       <base-card>
         <div class="controls">

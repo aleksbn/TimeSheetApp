@@ -26,12 +26,15 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.DepartmentID == depId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(
+                    w => w.Employee.DepartmentID == depId, 
+                    w => w.OrderBy(wt => wt.Employee.FirstName).ThenBy(wt => wt.Employee.LastName).ThenBy(wt => wt.Date), 
+                    new List<string>()
                 {
                     "Employee"
                 });
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
-                return Ok(toReturn);
+                return Ok( new { toReturn, workingTimes.Count  });
             }
             catch (Exception x)
             {
@@ -44,12 +47,15 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.ID == empId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(
+                    w => w.Employee.ID == empId,
+                    w => w.OrderBy(wt => wt.Employee.FirstName).ThenBy(wt => wt.Employee.LastName).ThenBy(wt => wt.Date),
+                    new List<string>()
                 {
                     "Employee"
                 });
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
-                return Ok(toReturn);
+                return Ok(new { toReturn, workingTimes.Count });
             }
             catch (Exception x)
             {
@@ -63,12 +69,15 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(w => w.Employee.Department.CompanyID == comId, w => w.OrderByDescending(wt => wt.Date), new List<string>()
+                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(
+                    w => w.Employee.Department.CompanyID == comId, w => 
+                    w.OrderBy(wt => wt.Employee.FirstName).ThenBy(wt => wt.Employee.LastName).ThenBy(wt => wt.Date), 
+                    new List<string>()
                 {
                     "Employee"
                 });
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
-                return Ok(toReturn);
+                return Ok(new { toReturn, workingTimes.Count });
             }
             catch (Exception x)
             {

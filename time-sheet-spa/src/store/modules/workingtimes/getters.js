@@ -5,4 +5,7 @@ export default {
   hasWorkingTimes(state) {
     return !!state.workingTimes && state.workingTimes.length > 0;
   },
+  numberOfWorkingTimes(state) {
+    return state.wtCount;
+  }
 };

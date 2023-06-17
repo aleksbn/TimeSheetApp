@@ -27,7 +27,7 @@ namespace TimeSheet_Backend.Controllers
             {
                 var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId && e.DepartmentID == depId, e => e.OrderBy(em => em.ID), new List<string>()
                 {
-                    "WorkingTimes"
+                    "WorkingTimes", "Department"
                 });
                 var toReturn = _mapper.Map<List<EmployeeDTO>>(employees.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(toReturn);

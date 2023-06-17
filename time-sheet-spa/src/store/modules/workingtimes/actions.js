@@ -2,7 +2,12 @@ export default {
   async loadWorkingTimes(context, payload) {
     const link = payload.link;
     const res = await fetch(
-      link + payload.id
+      link +
+        payload.id +
+        "?PageNumber=" +
+        payload.pageNumber +
+        "&PageSize=" +
+        payload.pageSize
     );
     const data = await res.json();
     if (!res.ok) {
@@ -10,18 +15,23 @@ export default {
       throw error;
     }
     const workingTimes = [];
-    for (const key in data) {
+    for (const key in data.toReturn) {
       const wt = {
-        ID: data[key].id,
-        Date: data[key].date,
-        StartTime: data[key].startTime,
-        EndTime: data[key].endTime,
-        EmployeeID: data[key].employeeID,
-        Employee: data[key].employee
+        ID: data.toReturn[key].id,
+        Date: data.toReturn[key].date,
+        StartTime: data.toReturn[key].startTime,
+        EndTime: data.toReturn[key].endTime,
+        EmployeeID: data.toReturn[key].employeeID,
+        Employee: data.toReturn[key].employee,
       };
       workingTimes.push(wt);
     }
     
-    context.commit("setWorkingTimes", workingTimes);
+    context.commit("setWorkingTimes", {
+      wts: workingTimes,
+      wtcount: data.count,
+    });
   },
 };
+
+//akcija za preracunavanje koliko WTs ima

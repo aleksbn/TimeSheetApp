@@ -1,6 +1,5 @@
 export default {
   employees(state) {
-    console.log(state.employees);
     return state.employees;
   },
   hasEmployees(state) {

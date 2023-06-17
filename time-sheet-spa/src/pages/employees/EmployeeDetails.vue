@@ -96,7 +96,7 @@
           />
         </div>
         <div class="form-control">
-          <label for="employee.HourlyRate">Hourly rate:</label>
+          <label for="employee.HourlyRate">Hourly rate ($):</label>
           <input
             type="number"
             step="0.01"

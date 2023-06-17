@@ -43,10 +43,11 @@ export default {
         StartOfEployment: data[key].startOfEmployment,
         HourlyRate: data[key].hourlyRate,
         DepartmentId: data[key].departmentId,
+        Department: data[key].department
       };
+      console.log(employee);
       employees.push(employee);
     }
-
     context.commit("setEmployees", employees);
   },
   async loadEmployeesFromDepartment(context, payload) {
@@ -71,6 +72,7 @@ export default {
         StartOfEployment: data[key].startOfEmployment,
         HourlyRate: data[key].hourlyRate,
         DepartmentId: data[key].departmentId,
+        Department: data[key].department
       };
       employees.push(employee);
     }

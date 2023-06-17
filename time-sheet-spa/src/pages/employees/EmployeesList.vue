@@ -1,6 +1,8 @@
 <template>
   <div>
-    <section>FILTER</section>
+    <section>
+      <employee-filter @change-filter="setFilters"></employee-filter>
+    </section>
     <section>
       <base-card>
         <div class="controls">
@@ -16,6 +18,8 @@
             <th>Title</th>
             <th>Degree</th>
             <th>Phone</th>
+            <th>Department</th>
+            <th>Hourly rate</th>
             <th>Actions</th>
           </tr>
           <employee-item
@@ -32,6 +36,7 @@
             :StartOfEmployment="employee.StartOfEmployment"
             :HourlyRate="employee.HourlyRate"
             :DepartmentId="employee.DepartmentId"
+            :Department="employee.Department"
           ></employee-item>
         </table>
         <h3 v-else>
@@ -45,22 +50,68 @@
 
 <script>
 import EmployeeItem from "../../components/employees/EmployeeItem.vue";
+import EmployeeFilter from "../../components/employees/EmployeeFilter.vue";
 export default {
   components: {
     EmployeeItem,
+    EmployeeFilter,
   },
   computed: {
     hasEmployees() {
       return this.$store.getters["employees/hasEmployees"];
     },
     filteredEmployees() {
-      return this.$store.getters["employees/employees"];
+      var employees = this.$store.getters["employees/employees"];
+      employees = employees.filter((employee) => {
+        if (employee.ID.includes(this.activeFilters.id)) {
+          return true;
+        }
+      });
+      employees = employees.filter((employee) => {
+        if (employee.FirstName.toUpperCase().includes(this.activeFilters.firstName.toUpperCase())) {
+          return true;
+        }
+      });
+      employees = employees.filter((employee) => {
+        if (employee.LastName.toUpperCase().includes(this.activeFilters.lastName.toUpperCase())) {
+          return true;
+        }
+      });
+      employees = employees.filter((employee) => {
+        if (employee.Department.name.toUpperCase().includes(this.activeFilters.department.toUpperCase())) {
+          return true;
+        }
+      });
+      employees = employees.filter((employee) => {
+        if (
+          this.activeFilters.hourlyRate === 0 ||
+          employee.HourlyRate === this.activeFilters.hourlyRate
+        ) {
+          return true;
+        }
+      });
+
+      return employees;
     },
+  },
+  data() {
+    return {
+      activeFilters: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        department: "",
+        hourlyRate: 0,
+      },
+    };
   },
   methods: {
     async loadEmployees() {
       try {
-        if (localStorage.getItem("comid") !== null && localStorage.getItem("depid") === null) {
+        if (
+          localStorage.getItem("comid") !== null &&
+          localStorage.getItem("depid") === null
+        ) {
           await this.$store.dispatch("employees/loadEmployeesFromCompany", {
             comid: localStorage.getItem("comid"),
           });
@@ -74,6 +125,10 @@ export default {
         this.error =
           error.message + " in getting employees" || "Something went wrong!";
       }
+    },
+    setFilters(updatedFilters) {
+      this.activeFilters = updatedFilters;
+      this.activeFilters.hourlyRate = isNaN(updatedFilters.hourlyRate) ? 0 : parseFloat(updatedFilters.hourlyRate);
     },
   },
   created() {
@@ -101,7 +156,8 @@ table {
   margin: 20px 0;
 }
 
-th, td {
+th,
+td {
   text-align: left;
   border-bottom: 1px solid #ddd;
   padding: 15px;
