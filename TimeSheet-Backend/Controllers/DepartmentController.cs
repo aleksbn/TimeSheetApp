@@ -54,7 +54,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostDepartment([FromBody] DepartmentDTO departmentDTO)
+        public async Task<IActionResult> PostDepartment([FromBody] CreateDepartmentDTO departmentDTO)
         {
             if(!ModelState.IsValid)
             {

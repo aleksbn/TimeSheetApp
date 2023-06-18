@@ -12,6 +12,16 @@ const store = createStore({
     employees: employeesModule,
     workingTimes: workingTimesModule,
   },
+  state() {
+    return {
+      userId: '123'
+    }
+  },
+  getters: {
+    userId(state) {
+      return state.userId;
+    }
+  }
 });
 
 export default store;

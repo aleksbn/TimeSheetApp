@@ -52,7 +52,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostCompany([FromBody] CompanyDTO company)
+        public async Task<IActionResult> PostCompany([FromBody] CreateCompanyDTO company)
         {
             if (!ModelState.IsValid)
             {

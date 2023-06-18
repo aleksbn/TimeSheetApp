@@ -16,7 +16,7 @@ export default {
       Address: data.address,
       Phone: data.phone,
       DateOfBirth: data.dateOfBirth,
-      StartOfEployment: data.startOfEmployment,
+      StartOfEmployment: data.startOfEmployment,
       HourlyRate: data.hourlyRate,
       DepartmentId: data.departmentId,
     };
@@ -40,12 +40,11 @@ export default {
         Address: data[key].address,
         Phone: data[key].phone,
         DateOfBirth: data[key].dateOfBirth,
-        StartOfEployment: data[key].startOfEmployment,
+        StartOfEmployment: data[key].startOfEmployment,
         HourlyRate: data[key].hourlyRate,
         DepartmentId: data[key].departmentId,
         Department: data[key].department
       };
-      console.log(employee);
       employees.push(employee);
     }
     context.commit("setEmployees", employees);
@@ -69,7 +68,7 @@ export default {
         Address: data[key].address,
         Phone: data[key].phone,
         DateOfBirth: data[key].dateOfBirth,
-        StartOfEployment: data[key].startOfEmployment,
+        StartOfEmployment: data[key].startOfEmployment,
         HourlyRate: data[key].hourlyRate,
         DepartmentId: data[key].departmentId,
         Department: data[key].department

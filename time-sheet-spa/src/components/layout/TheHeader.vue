@@ -1,19 +1,57 @@
 <template>
-    <header>
-        <nav>
-            <h1><router-link to="/">Make your company</router-link></h1>
-            <ul>
-                <li><router-link to="/companies">All Companies</router-link></li>
-                <li><router-link to="/companies/0/departments">All Departments</router-link></li>
-                <li><router-link to="/companies/0/employees">All Employees</router-link></li>
-                <li><router-link to="/companies/0/workingtimes">All Working Times</router-link></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <h1><router-link to="/addcompany">Make your company</router-link></h1>
+      <ul>
+        <li><router-link to="/companies">All Companies</router-link></li>
+        <li v-if="hasComId">
+          <router-link :to="depIdLink">All Departments</router-link>
+        </li>
+        <li v-if="hasComId">
+          <router-link :to="empIdLink">All Employees</router-link>
+        </li>
+      </ul>
+    </nav>
+  </header>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      comid: null,
+    };
+  },
+  computed: {
+    hasComId() {
+      return this.comid;
+    },
+    hasDepId() {
+      return this.depid;
+    },
+    depIdLink() {
+      return "/departments/" + this.comid;
+    },
+    hasEmpId() {
+      return this.empid;
+    },
+    empIdLink() {
+        return "/employees/" + this.comid;
+    },
+  },
+  methods: {
+    checkLocalStorage() {
+      setInterval(() => {
+        this.comid = localStorage.getItem("comid")
+          ? localStorage.getItem("comid")
+          : null;
+      }, 200);
+    },
+  },
+  created() {
+    this.checkLocalStorage();
+  },
+};
 </script>
 
 <style scoped>

@@ -4,12 +4,13 @@
       <base-card>
         <div class="controls">
           <base-button>Refresh</base-button>
-          <base-button link to="/">Add another department</base-button>
+          <base-button link to="/adddepartment">Add another department</base-button>
         </div>
         <ul v-if="hasDepartments">
           <department-item
             v-for="department in filteredDepartments"
             :key="department.ID"
+            :comid="this.comid"
             :ID="department.ID"
             :Name="department.Name"
           >
@@ -17,7 +18,7 @@
         </ul>
         <h3 v-else>
           There are no departments for this company.
-          <router-link to="/">Add one!</router-link>
+          <router-link to="/adddepartment">Add one!</router-link>
         </h3>
       </base-card>
     </section>
@@ -50,6 +51,7 @@ export default {
   },
   created() {
     this.loadDepartments();
+    localStorage.removeItem("depid");
   }
 };
 </script>

@@ -7,7 +7,7 @@
       <base-card>
         <div class="controls">
           <base-button>Refresh</base-button>
-          <base-button link to="/" v-if="hasEmployees"
+          <base-button link to="/addemployee" v-if="hasEmployees"
             >Add employee</base-button
           >
         </div>
@@ -133,6 +133,7 @@ export default {
   },
   created() {
     this.loadEmployees();
+    localStorage.removeItem("empid");
   },
 };
 </script>

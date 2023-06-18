@@ -4,7 +4,7 @@
       <base-card>
         <div class="controls">
           <base-button>Refresh</base-button>
-          <base-button link v-if="hasCompanies" to="/">Add company</base-button>
+          <base-button link v-if="hasCompanies" to="/addcompany">Add company</base-button>
         </div>
         <ul v-if="hasCompanies">
           <company-item
@@ -53,6 +53,9 @@ export default {
   },
   created() {
     this.loadCompanies();
+    localStorage.removeItem("comid");
+    localStorage.removeItem("depid");
+    localStorage.removeItem("empid");
   },
 };
 </script>

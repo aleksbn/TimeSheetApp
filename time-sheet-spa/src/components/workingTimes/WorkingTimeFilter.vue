@@ -61,11 +61,8 @@ export default {
     loadSelect() {
       this.pageNumbers = [];
       for (let i = 0; i < this.numberOfRecords; i += this.params.pageSize) {
-        console.log("i - " + i);
-        console.log("pn - " + i / this.params.pageSize);
         this.pageNumbers.push(i / this.params.pageSize);
       }
-      console.log('done');
     },
   },
 };
