@@ -1,14 +1,20 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
     <section>
       <base-card>
         <div class="controls">
-          <base-button>Refresh</base-button>
+          <base-button @click="refresh">Refresh</base-button>
           <base-button link v-if="hasCompanies" to="/addcompany"
             >Add company</base-button
           >
         </div>
-        <ul v-if="hasCompanies">
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <ul v-else-if="hasCompanies">
           <company-item
             v-for="company in filteredCompanies"
             :key="company.ID"
@@ -32,6 +38,12 @@
 <script>
 import CompanyItem from "../../components/companies/CompanyItem.vue";
 export default {
+  data() {
+    return {
+      isLoading: false,
+      error: null,
+    };
+  },
   components: {
     CompanyItem,
   },
@@ -40,23 +52,29 @@ export default {
       return this.$store.getters["companies/companies"];
     },
     hasCompanies() {
-      return this.$store.getters["companies/hasCompanies"];
+      return !this.isLoading && this.$store.getters["companies/hasCompanies"];
     },
   },
   methods: {
     async loadCompanies() {
+      this.isLoading = true;
       try {
         await this.$store.dispatch("companies/loadCompanies");
       } catch (error) {
         this.error =
           error.message + " in getting companies." || "Something went wrong!";
       }
+      this.isLoading = false;
     },
+    refresh() {
+      this.loadCompanies();
+    },
+    handleError() {
+      this.error = null;
+    }
   },
   created() {
-    setTimeout(() => {
-      this.loadCompanies();
-    }, 200);
+    this.loadCompanies();
     localStorage.removeItem("comid");
     localStorage.removeItem("depid");
     localStorage.removeItem("empid");

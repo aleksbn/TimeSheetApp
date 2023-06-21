@@ -1,14 +1,26 @@
 <template>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <header>
     <nav>
       <h1><router-link to="/addcompany">Make your company</router-link></h1>
-      <ul>
+      <input id="menu-toggle" type="checkbox" />
+      <label class="menu-button-container" for="menu-toggle">
+        <div class="menu-button"></div>
+      </label>
+      <ul class="menu">
+        <li><router-link to="/about">About</router-link></li>
         <li><router-link to="/companies">All Companies</router-link></li>
-        <li v-if="hasComId">
+        <li v-if="hasComId && isLoggedIn">
           <router-link :to="depIdLink">All Departments</router-link>
         </li>
-        <li v-if="hasComId">
+        <li v-if="hasComId && isLoggedIn">
           <router-link :to="empIdLink">All Employees</router-link>
+        </li>
+        <li v-if="!isLoggedIn">
+          <router-link to="/auth">Login/Signup</router-link>
+        </li>
+        <li v-if="isLoggedIn">
+          <base-button link @click="logout">Logout</base-button>
         </li>
       </ul>
     </nav>
@@ -23,6 +35,9 @@ export default {
     };
   },
   computed: {
+    isLoggedIn() {
+      return this.$store.getters["auth/isAuthenticated"];
+    },
     hasComId() {
       return this.comid;
     },
@@ -46,6 +61,10 @@ export default {
           ? localStorage.getItem("comid")
           : null;
       }, 200);
+    },
+    logout() {
+      this.$store.dispatch("auth/logout");
+      this.$router.replace("/auth");
     },
   },
   created() {
@@ -115,5 +134,134 @@ header ul {
 
 li {
   margin: 0 0.5rem;
+}
+
+h2 {
+  vertical-align: center;
+  text-align: center;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.top-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #00baf0;
+  background: linear-gradient(to left, #f46b45, #eea849);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: #fff;
+  height: 60px;
+  padding: 1em;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu > li {
+  margin: 0 1rem;
+  overflow: hidden;
+}
+
+.menu-button-container {
+  display: none;
+  height: 100%;
+  width: 30px;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+.menu-button,
+.menu-button::before,
+.menu-button::after {
+  display: block;
+  background-color: #fff;
+  position: absolute;
+  height: 4px;
+  width: 30px;
+  transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 2px;
+}
+
+.menu-button::before {
+  content: "";
+  margin-top: -8px;
+}
+
+.menu-button::after {
+  content: "";
+  margin-top: 8px;
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button::before {
+  margin-top: 0px;
+  transform: rotate(405deg);
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button {
+  background: rgba(255, 255, 255, 0);
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button::after {
+  margin-top: 0px;
+  transform: rotate(-405deg);
+}
+
+@media (max-width: 700px) {
+  .menu-button-container {
+    display: flex;
+  }
+  .menu {
+    position: absolute;
+    top: 0;
+    margin-top: 50px;
+    left: 0;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  #menu-toggle ~ .menu li {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  #menu-toggle:checked ~ .menu li {
+    border: 1px solid #333;
+    vertical-align: middle;
+    height: 3em;
+    padding: 0em;
+    transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .menu > li {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0.5em 0;
+    width: 100%;
+    color: white;
+    background-color: #222;
+  }
+  .menu > li:not(:last-child) {
+    border-bottom: 1px solid #444;
+  }
 }
 </style>

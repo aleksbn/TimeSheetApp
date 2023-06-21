@@ -1,7 +1,13 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <div v-if="isLoading">
+      <base-spinner></base-spinner>
+    </div>
     <company-form
-      v-if="hasCompany"
+      v-else-if="hasCompany"
       @save-data="saveData"
       :key="company.ID"
       :ID="company.ID"
@@ -12,7 +18,9 @@
       :Email="company.Email"
       :Mode="this.EditMode"
     ></company-form>
-    <h3 v-else>There's some problems with loading of this company.</h3>
+    <base-card v-else>
+      <h3>There are some problems with loading of this company.</h3>
+    </base-card>
   </div>
 </template>
 
@@ -26,6 +34,8 @@ export default {
   props: ["comid"],
   data() {
     return {
+      isLoading: false,
+      error: null,
       mode: true,
       EditMode: "old",
     };
@@ -35,13 +45,18 @@ export default {
       this.$store.dispatch("companies/editCompany", data);
       this.$router.push("/companies");
     },
+    handleError() {
+      this.error = null;
+    },
     async loadCompany() {
+      this.isLoading = true;
       try {
         await this.$store.dispatch("companies/loadCompany", { id: this.comid });
       } catch (error) {
         this.error =
           error.message + " in getting company." || "Something went wrong!";
       }
+      this.isLoading = false;
     },
   },
   created() {
@@ -51,7 +66,7 @@ export default {
   },
   computed: {
     hasCompany() {
-      return this.$store.getters["companies/hasCompany"];
+      return !this.isLoading && this.$store.getters["companies/hasCompany"];
     },
     company() {
       return this.$store.getters["companies/company"];

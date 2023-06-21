@@ -1,8 +1,14 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <div v-if="isLoading">
+      <base-spinner></base-spinner>
+    </div>
     <employee-form
       @save-data="saveData"
-      v-if="hasEmployee"
+      v-else-if="hasEmployee"
       :key="employee.ID"
       :ID="employee.ID"
       :FirstName="employee.FirstName"
@@ -33,8 +39,10 @@ export default {
   props: ["empid"],
   data() {
     return {
+      isLoading: false,
       mode: true,
-      EditMode: "old"
+      EditMode: "old",
+      error: null
     };
   },
   methods: {
@@ -43,15 +51,20 @@ export default {
       this.$router.push("/employees/" + localStorage.getItem("comid"));
     },
     async loadEmployee() {
+      this.isLoading = true;
       try {
         await this.$store.dispatch("employees/loadEmployee", {
           empid: this.empid,
         });
       } catch (error) {
         this.error =
-        error.message + " in getting employee." || "Something went wrong!";
+          error.message + " in getting employee." || "Something went wrong!";
       }
+      this.isLoading = false;
     },
+    handleError() {
+      this.error = null;
+    }
   },
   created() {
     this.loadEmployee();
@@ -59,7 +72,7 @@ export default {
   },
   computed: {
     hasEmployee() {
-      return this.$store.getters["employees/hasEmployee"];
+      return !this.isLoading && this.$store.getters["employees/hasEmployee"];
     },
     employee() {
       return this.$store.getters["employees/employee"];

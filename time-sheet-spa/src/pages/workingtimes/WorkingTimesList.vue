@@ -1,17 +1,26 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
     <section>
-      <working-time-filter @params-changed="setParams" v-if="show"></working-time-filter>
+      <working-time-filter
+        @params-changed="setParams"
+        v-if="show"
+      ></working-time-filter>
     </section>
     <section>
       <base-card>
         <div class="controls">
-          <base-button>Refresh</base-button>
+          <base-button @click="refresh">Refresh</base-button>
           <base-button link to="/" v-if="hasWorkingTimes"
             >Add a working time</base-button
           >
         </div>
-        <table v-if="hasWorkingTimes">
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <table v-else-if="hasWorkingTimes">
           <tr>
             <th>ID</th>
             <th>Employee name</th>
@@ -51,8 +60,10 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       id: null,
       link: null,
+      error: null,
       activeFilters: {
         pageNumber: 0,
         pageSize: 10,
@@ -62,7 +73,9 @@ export default {
   },
   computed: {
     hasWorkingTimes() {
-      return this.$store.getters["workingTimes/hasWorkingTimes"];
+      return (
+        !this.isLoading && this.$store.getters["workingTimes/hasWorkingTimes"]
+      );
     },
     filteredWorkingTimes() {
       return this.$store.getters["workingTimes/workingTimes"];
@@ -78,6 +91,7 @@ export default {
       this.activeFilters = updatedParams;
     },
     async loadWorkingTimes() {
+      this.isLoading = true;
       if (localStorage.getItem("empidwt")) {
         this.id = localStorage.getItem("empidwt");
         this.link = "https://localhost:7059/api/workingtime/fromemployee/";
@@ -100,7 +114,14 @@ export default {
         this.error =
           error.message + " in getting employees" || "Something went wrong!";
       }
+      this.isLoading = false;
     },
+    refresh() {
+      this.loadWorkingTimes();
+    },
+    handleError() {
+      this.error = null;
+    }
   },
   created() {
     this.loadWorkingTimes();

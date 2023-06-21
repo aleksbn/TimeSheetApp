@@ -1,10 +1,18 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
     <section>
       <base-card>
         <div class="controls">
-          <base-button>Refresh</base-button>
-          <base-button link to="/adddepartment">Add another department</base-button>
+          <base-button @click="refresh">Refresh</base-button>
+          <base-button link to="/adddepartment"
+            >Add another department</base-button
+          >
+        </div>
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
         </div>
         <ul v-if="hasDepartments">
           <department-item
@@ -28,13 +36,19 @@
 <script>
 import DepartmentItem from "../../components/departments/DepartmentItem.vue";
 export default {
+  data() {
+    return {
+      isLoading: false,
+      error: null
+    };
+  },
   props: ["comid"],
   components: {
     DepartmentItem,
   },
   computed: {
     hasDepartments() {
-      return this.$store.getters["departments/hasDepartments"];
+      return !this.isLoading && this.$store.getters["departments/hasDepartments"];
     },
     filteredDepartments() {
       return this.$store.getters["departments/departments"];
@@ -42,19 +56,28 @@ export default {
   },
   methods: {
     async loadDepartments() {
+      this.isLoading = true;
       try {
-        await this.$store.dispatch("departments/loadDepartments", { comid: this.comid });
+        await this.$store.dispatch("departments/loadDepartments", {
+          comid: this.comid,
+        });
       } catch (error) {
-        this.error = error.message + " in getting departments" || "Something went wrong!";
+        this.error =
+          error.message + " in getting departments" || "Something went wrong!";
       }
+      this.isLoading = false;
+    },
+    handleError() {
+      this.error = null;
+    },
+    refresh() {
+      this.loadDepartments();
     }
   },
   created() {
-    setTimeout(() => {
-      this.loadDepartments();
-    }, 200);
+    this.loadDepartments();
     localStorage.removeItem("depid");
-  }
+  },
 };
 </script>
 

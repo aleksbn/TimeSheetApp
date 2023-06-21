@@ -1,7 +1,13 @@
 <template>
   <div>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <div v-if="isLoading">
+      <base-spinner></base-spinner>
+    </div>
     <department-form
-      v-if="hasDepartment"
+      v-else-if="hasDepartment"
       @save-data="saveData"
       :key="department.ID"
       :comid="this.comid"
@@ -23,6 +29,8 @@ export default {
   props: ["depid", "comid"],
   data() {
     return {
+      error: null,
+      isLoading: false,
       mode: true,
       EditMode: "old",
     };
@@ -33,6 +41,7 @@ export default {
       this.$router.push("/departments/" + this.comid);
     },
     async loadDepartment() {
+      this.isLoading = true;
       try {
         await this.$store.dispatch("departments/loadDepartment", {
           comid: this.comid,
@@ -42,7 +51,11 @@ export default {
         this.error =
           error.message + " in getting department." || "Something went wrong!";
       }
+      this.isLoading = false;
     },
+    handleError() {
+      this.error = null;
+    }
   },
   created() {
     this.loadDepartment();
@@ -51,7 +64,7 @@ export default {
   },
   computed: {
     hasDepartment() {
-      return this.$store.getters["departments/hasDepartment"];
+      return !this.isLoading && this.$store.getters["departments/hasDepartment"];
     },
     department() {
       return this.$store.getters["departments/department"];
