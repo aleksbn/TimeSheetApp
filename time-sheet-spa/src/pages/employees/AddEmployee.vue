@@ -4,7 +4,10 @@
       <h2 style="text-align: center">Add a new employee</h2>
     </section>
     <section>
-      <employee-form :Mode="this.mode"></employee-form>
+      <employee-form
+        @save-data="saveData"
+        :Mode="this.EditMode"
+      ></employee-form>
     </section>
   </div>
 </template>
@@ -17,8 +20,14 @@ export default {
   },
   data() {
     return {
-      mode: "new",
+      EditMode: "new",
     };
+  },
+  methods: {
+    saveData(data) {
+      this.$store.dispatch("employees/addEmployee", data);
+      this.$router.push("/employees/" + localStorage.getItem("comid"));
+    },
   },
 };
 </script>

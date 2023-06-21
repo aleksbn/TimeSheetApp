@@ -132,7 +132,9 @@ export default {
     },
   },
   created() {
-    this.loadEmployees();
+    setTimeout(() => {
+      this.loadEmployees();
+    }, 200);
     localStorage.removeItem("empid");
   },
 };

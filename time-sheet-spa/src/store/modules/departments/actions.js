@@ -42,7 +42,6 @@ export default {
   },
 
   async addDepartment(_1, payload) {
-    console.log(payload);
     const dep = {
       Name: payload.depName,
       CompanyID: payload.comId

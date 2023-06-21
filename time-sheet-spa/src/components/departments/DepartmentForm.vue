@@ -37,6 +37,7 @@
           >
           <base-button
             v-if="this.ID"
+            :type="'button'"
             @click="deleteDepartment()"
             style="display: inline"
             >Delete this department</base-button

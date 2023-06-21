@@ -82,6 +82,7 @@
           >
           <base-button
             v-if="this.ID"
+            :type="'button'"
             @click="deleteCompany()"
             style="display: inline"
             >Delete this company</base-button

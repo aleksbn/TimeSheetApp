@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button v-if="!link" :class="mode">
+    <button :type="type" v-if="!link" :class="mode">
       <slot></slot>
     </button>
     <router-link v-else :to="to" :class="mode">
@@ -16,6 +16,11 @@ export default {
         type: String,
         required: false,
         default: null
+    },
+    type: {
+      type: String,
+      required: false,
+      default: 'submit'
     },
     link: {
       type: Boolean,

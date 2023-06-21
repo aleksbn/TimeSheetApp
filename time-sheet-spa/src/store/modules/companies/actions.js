@@ -67,7 +67,7 @@ export default {
     }
   },
 
-  async editCompany(context, payload) {
+  async editCompany(_1, payload) {
     const com = {
       ID: payload.comId,
       Name: payload.comName,

@@ -9,7 +9,7 @@
       :Name="department.Name"
       :Mode="this.EditMode"
     ></department-form>
-    <h3 v-else>There's some problems with loading of this company.</h3>
+    <h3 v-else>There's some problems with loading of this department.</h3>
   </div>
 </template>
 

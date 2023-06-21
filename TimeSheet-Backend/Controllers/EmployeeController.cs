@@ -77,7 +77,7 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostEmployee([FromBody] EmployeeDTO employeeDTO)
+        public async Task<IActionResult> PostEmployee([FromBody] CreateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace TimeSheet_Backend.Controllers
             {
                 await _unitOfWork.EmployeeRepository.Insert(_mapper.Map<Employee>(employeeDTO));
                 await _unitOfWork.Save();
-                return Ok("Employee added");
+                return Ok("Employee created");
             }
             catch (Exception x)
             {

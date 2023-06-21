@@ -1,6 +1,8 @@
 <template>
   <div>
-    <employee-form v-if="hasEmployee"
+    <employee-form
+      @save-data="saveData"
+      v-if="hasEmployee"
       :key="employee.ID"
       :ID="employee.ID"
       :FirstName="employee.FirstName"
@@ -12,10 +14,12 @@
       :DepartmentId="employee.DepartmentId"
       :Address="employee.Address"
       :Phone="employee.Phone"
+      :Email="employee.Email"
       :DateOfBirth="employee.DateOfBirth"
       :StartOfEmployment="employee.StartOfEmployment"
-      :Mode="this.mode"
+      :Mode="this.EditMode"
     ></employee-form>
+    <h3 v-else>There's some problems with loading of this employee.</h3>
   </div>
 </template>
 
@@ -23,23 +27,20 @@
 import EmployeeForm from "../../components/employees/EmployeeForm.vue";
 
 export default {
-  props: ["empid"],
-  data() {
-    return {
-      mode: "old"
-    }
-  },
   components: {
     EmployeeForm,
   },
-  created() {
-    this.loadEmployee();
-    localStorage.setItem("empidwt", this.empid);
+  props: ["empid"],
+  data() {
+    return {
+      mode: true,
+      EditMode: "old"
+    };
   },
   methods: {
-    stop() {},
-    toggleMode() {
-      this.mode = !this.mode;
+    saveData(data) {
+      this.$store.dispatch("employees/editEmployee", data);
+      this.$router.push("/employees/" + localStorage.getItem("comid"));
     },
     async loadEmployee() {
       try {
@@ -48,9 +49,13 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting employee." || "Something went wrong!";
+        error.message + " in getting employee." || "Something went wrong!";
       }
     },
+  },
+  created() {
+    this.loadEmployee();
+    localStorage.setItem("empidwt", this.empid);
   },
   computed: {
     hasEmployee() {

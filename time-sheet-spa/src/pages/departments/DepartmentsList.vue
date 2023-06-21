@@ -50,7 +50,9 @@ export default {
     }
   },
   created() {
-    this.loadDepartments();
+    setTimeout(() => {
+      this.loadDepartments();
+    }, 200);
     localStorage.removeItem("depid");
   }
 };
