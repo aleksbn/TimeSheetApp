@@ -6,7 +6,7 @@
       >
       <select name="pageNumber" id="pageNumber" @change="setParams">
         <option v-for="number in pageSizeNumbers" :key="number" :value="number">
-          {{ number }}
+          {{ number + 1 }}
         </option>
       </select>
       /

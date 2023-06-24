@@ -1,6 +1,11 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+    <base-dialog
+      :show="!!error"
+      title="An error occured"
+      @close="handleError"
+      :showClose="true"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
@@ -9,6 +14,7 @@
     <department-form
       v-else-if="hasDepartment"
       @save-data="saveData"
+      @delete-department="deleteDepartment"
       :key="department.ID"
       :comid="this.comid"
       :ID="department.ID"
@@ -16,21 +22,34 @@
       :Mode="this.EditMode"
     ></department-form>
     <h3 v-else>There's some problems with loading of this department.</h3>
+    <base-dialog
+      :showClose="false"
+      fixed
+      title="Select some delete options"
+      :show="deleting"
+    >
+      <department-delete-options
+        @cancel="cancelDeletion"
+      ></department-delete-options>
+    </base-dialog>
   </div>
 </template>
 
 <script>
 import DepartmentForm from "../../components/departments/DepartmentForm.vue";
+import DepartmentDeleteOptions from "@/components/departments/DepartmentDeleteOptions.vue";
 
 export default {
   components: {
     DepartmentForm,
+    DepartmentDeleteOptions,
   },
   props: ["depid", "comid"],
   data() {
     return {
       error: null,
       isLoading: false,
+      deleting: false,
       mode: true,
       EditMode: "old",
     };
@@ -39,6 +58,12 @@ export default {
     saveData(data) {
       this.$store.dispatch("departments/editDepartment", data);
       this.$router.push("/departments/" + this.comid);
+    },
+    cancelDeletion() {
+      this.deleting = false;
+    },
+    deleteDepartment() {
+      this.deleting = true;
     },
     async loadDepartment() {
       this.isLoading = true;
@@ -55,7 +80,7 @@ export default {
     },
     handleError() {
       this.error = null;
-    }
+    },
   },
   created() {
     this.loadDepartment();
@@ -64,7 +89,9 @@ export default {
   },
   computed: {
     hasDepartment() {
-      return !this.isLoading && this.$store.getters["departments/hasDepartment"];
+      return (
+        !this.isLoading && this.$store.getters["departments/hasDepartment"]
+      );
     },
     department() {
       return this.$store.getters["departments/department"];

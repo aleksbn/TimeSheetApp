@@ -96,7 +96,7 @@
 <script>
 export default {
   props: ["ID", "Name", "Address", "City", "Country", "Email", "Mode"],
-  emits: ["save-data"],
+  emits: ["save-data", "delete-company"],
   data() {
     return {
       editModeType: true,
@@ -189,7 +189,7 @@ export default {
       this.$emit("save-data", formData);
     },
     deleteCompany() {
-      alert('About to be done');
+      this.$emit("delete-company", this.ID);
     },
     openEmployees() {
       localStorage.removeItem("depid");

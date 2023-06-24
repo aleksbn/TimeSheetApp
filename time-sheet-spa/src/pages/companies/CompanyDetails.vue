@@ -1,6 +1,11 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+    <base-dialog
+      :show="!!error"
+      title="An error occured"
+      @close="handleError"
+      :showClose="true"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
@@ -9,6 +14,7 @@
     <company-form
       v-else-if="hasCompany"
       @save-data="saveData"
+      @delete-company="deleteCompany"
       :key="company.ID"
       :ID="company.ID"
       :Name="company.Name"
@@ -21,20 +27,33 @@
     <base-card v-else>
       <h3>There are some problems with loading of this company.</h3>
     </base-card>
+    <base-dialog
+      :showClose="false"
+      fixed
+      title="Select some delete options"
+      :show="deleting"
+    >
+      <company-delete-options
+        @cancel="cancelDeletion"
+      ></company-delete-options>
+    </base-dialog>
   </div>
 </template>
 
 <script>
 import CompanyForm from "../../components/companies/CompanyForm.vue";
+import CompanyDeleteOptions from "@/components/companies/CompanyDeleteOptions.vue";
 
 export default {
   components: {
     CompanyForm,
+    CompanyDeleteOptions,
   },
   props: ["comid"],
   data() {
     return {
       isLoading: false,
+      deleting: false,
       error: null,
       mode: true,
       EditMode: "old",
@@ -44,6 +63,12 @@ export default {
     saveData(data) {
       this.$store.dispatch("companies/editCompany", data);
       this.$router.push("/companies");
+    },
+    cancelDeletion() {
+      this.deleting = false;
+    },
+    deleteCompany() {
+      this.deleting = true;
     },
     handleError() {
       this.error = null;
@@ -70,6 +95,9 @@ export default {
     },
     company() {
       return this.$store.getters["companies/company"];
+    },
+    deletingDialog() {
+      return this.deleting;
     },
   },
 };

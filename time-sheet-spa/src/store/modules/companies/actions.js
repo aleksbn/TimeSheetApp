@@ -91,4 +91,22 @@ export default {
       throw error;
     }
   },
+
+  async deleteCompany(_1, payload) {
+    const res = await fetch(
+      `https://localhost:7059/api/company/${payload.id}?targetDepartmentId=${payload.targetDepartmentId}&&deleteEmployees=${payload.deleteEmployees}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const error = new Error(res.message || "Failed to load data!");
+      throw error;
+    }
+  },
 };

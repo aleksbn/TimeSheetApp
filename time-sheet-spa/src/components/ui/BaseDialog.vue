@@ -12,7 +12,7 @@
           <slot></slot>
         </section>
         <menu v-if="!fixed">
-          <slot name="actions">
+          <slot name="actions" v-if="this.showClose">
             <base-button @click="tryClose">Close</base-button>
           </slot>
         </menu>
@@ -39,8 +39,8 @@ export default {
     },
     showClose: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ["close"],
   methods: {

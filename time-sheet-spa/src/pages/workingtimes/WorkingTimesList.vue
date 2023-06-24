@@ -1,6 +1,11 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+    <base-dialog
+      :show="!!error"
+      title="An error occured"
+      @close="handleError"
+      :showClose="true"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -27,9 +32,11 @@
             <th>Date</th>
             <th>Start time</th>
             <th>End time</th>
+            <th></th>
           </tr>
           <working-time-item
             v-for="wt in filteredWorkingTimes"
+            @delete="deleteWT"
             :key="wt.ID"
             :ID="wt.ID"
             :Employee="wt.Employee"
@@ -43,6 +50,20 @@
           <router-link to="/">Add one!</router-link>
         </h3>
       </base-card>
+      <base-dialog
+        :show="deleting"
+        title="Do you want to delete selected working time?"
+        :showClose="false"
+      >
+        <div class="form-control">
+          <base-button style="display: inline" @click="deleteWTnow"
+            >Delete</base-button
+          >
+          <base-button style="display: inline" @click="cancel"
+            >Cancel</base-button
+          >
+        </div>
+      </base-dialog>
     </section>
   </div>
 </template>
@@ -61,6 +82,8 @@ export default {
   data() {
     return {
       isLoading: false,
+      deleting: false,
+      wtForDel: null,
       id: null,
       link: null,
       error: null,
@@ -87,6 +110,24 @@ export default {
     },
   },
   methods: {
+    deleteWT(wtid) {
+      this.deleting = true;
+      this.wtForDel = wtid;
+    },
+    async deleteWTnow() {
+      try {
+        await this.$store.dispatch("workingTimes/deleteWorkingTime", {
+          id: this.wtForDel,
+        });
+        this.refresh();
+      } catch (error) {
+        this.error = error;
+      }
+      this.deleting = false;
+    },
+    cancel() {
+      this.deleting = false;
+    },
     setParams(updatedParams) {
       this.activeFilters = updatedParams;
     },
@@ -121,7 +162,7 @@ export default {
     },
     handleError() {
       this.error = null;
-    }
+    },
   },
   created() {
     this.loadWorkingTimes();
@@ -148,12 +189,11 @@ table {
   margin: 20px 0;
 }
 
-th,
-td {
+th {
   text-align: left;
   border-bottom: 1px solid #ddd;
-  padding: 15px;
-  margin: 15px;
+  padding: 15px 5px;
+  margin: 15px 0;
 }
 
 tr:nth-child(even) {

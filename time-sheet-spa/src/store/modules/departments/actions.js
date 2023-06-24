@@ -82,5 +82,23 @@ export default {
         const error = new Error(res.message || "Failed to post data!");
         throw error;
       }
+  },
+
+  async deleteDepartment(_1, payload) {
+    const res = await fetch(
+      `https://localhost:7059/api/department/${payload.depId}?deleteEmployees=${payload.deleteEmployees}&&targetDepId=${payload.targetDepId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const error = new Error(res.message || "Failed to load data!");
+      throw error;
+    }
   }
 };

@@ -183,7 +183,7 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         [ActionName("deleteWorkingTime")]
         public async Task<IActionResult> DeleteSingleWorkingTime(int id)
         {
@@ -200,7 +200,7 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("id")]
         [ActionName("deleteWorkingTimesForEmployee")]
         public async Task<IActionResult> DeleteWorkingTimes(string id)
         {

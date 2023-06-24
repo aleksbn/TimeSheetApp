@@ -1,6 +1,6 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -26,7 +26,7 @@
             <th>Phone</th>
             <th>Department</th>
             <th>Hourly rate</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
           <employee-item
             v-for="employee in filteredEmployees"

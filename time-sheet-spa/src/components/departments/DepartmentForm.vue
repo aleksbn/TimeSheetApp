@@ -51,7 +51,7 @@
 <script>
 export default {
   props: ["ID", "Name", "Mode"],
-  emits: ["save-data"],
+  emits: ["save-data", "delete-department"],
   data() {
     return {
       editModeType: true,
@@ -109,7 +109,7 @@ export default {
     },
 
     deleteDepartment() {
-      alert("About to be done");
+      this.$emit("delete-department", this.ID);
     },
   },
   computed: {

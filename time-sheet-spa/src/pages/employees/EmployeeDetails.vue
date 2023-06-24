@@ -1,6 +1,11 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError">
+    <base-dialog
+      :show="!!error"
+      title="An error occured"
+      @close="handleError"
+      :showClose="true"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
@@ -8,6 +13,7 @@
     </div>
     <employee-form
       @save-data="saveData"
+      @delete-employee="deleteEmployee"
       v-else-if="hasEmployee"
       :key="employee.ID"
       :ID="employee.ID"
@@ -26,23 +32,36 @@
       :Mode="this.EditMode"
     ></employee-form>
     <h3 v-else>There's some problems with loading of this employee.</h3>
+    <base-dialog
+      :showClose="false"
+      fixed
+      title="Select some delete options"
+      :show="deleting"
+    >
+      <employee-delete-options
+        @cancel="cancelDeletion"
+      ></employee-delete-options>
+    </base-dialog>
   </div>
 </template>
 
 <script>
 import EmployeeForm from "../../components/employees/EmployeeForm.vue";
+import EmployeeDeleteOptions from "@/components/employees/EmployeeDeleteOptions.vue";
 
 export default {
   components: {
     EmployeeForm,
+    EmployeeDeleteOptions,
   },
   props: ["empid"],
   data() {
     return {
       isLoading: false,
+      deleting: false,
       mode: true,
       EditMode: "old",
-      error: null
+      error: null,
     };
   },
   methods: {
@@ -64,10 +83,17 @@ export default {
     },
     handleError() {
       this.error = null;
-    }
+    },
+    cancelDeletion() {
+      this.deleting = false;
+    },
+    deleteEmployee() {
+      this.deleting = true;
+    },
   },
   created() {
     this.loadEmployee();
+    localStorage.setItem("empid", this.empid);
     localStorage.setItem("empidwt", this.empid);
   },
   computed: {

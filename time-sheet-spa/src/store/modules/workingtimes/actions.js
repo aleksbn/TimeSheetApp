@@ -26,12 +26,25 @@ export default {
       };
       workingTimes.push(wt);
     }
-    
+
     context.commit("setWorkingTimes", {
       wts: workingTimes,
       wtcount: data.count,
     });
   },
-};
 
-//akcija za preracunavanje koliko WTs ima
+  async deleteWorkingTime(_1, payload) {
+    const res = await fetch(`https://localhost:7059/api/workingtime/deleteWorkingTime/${payload.id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const error = new Error(res.message || "Failed to load data!");
+      throw error;
+    }
+  },
+};

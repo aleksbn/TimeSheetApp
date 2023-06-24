@@ -162,7 +162,7 @@
 <script>
 import moment from "moment";
 export default {
-  emits: ["save-data"],
+  emits: ["save-data", "delete-employee"],
   props: [
     "ID",
     "FirstName",
@@ -350,7 +350,7 @@ export default {
       this.$router.push("/workingtimes/" + this.empid);
     },
     deleteEmployee() {
-      alert("About to be done");
+      this.$emit("delete-employee", this.ID);
     },
   },
   computed: {

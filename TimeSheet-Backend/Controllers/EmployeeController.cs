@@ -118,13 +118,14 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(string id)
         {
             var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == id);
             if (employee != null)
             {
                 await _unitOfWork.EmployeeRepository.DeleteByString(id);
+                await _unitOfWork.Save();
                 var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.EmployeeID == id);
                 _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
                 await _unitOfWork.Save();

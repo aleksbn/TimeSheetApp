@@ -93,17 +93,12 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteCompany(int id, int targetDepartmentId = 0, bool deleteEmployees = false)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteCompany(int id, int targetDepartmentId = 0, bool deleteEmployees = false )
         {
             try
             {
                 var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == id);
-
-                if (employees.Count == 0)
-                {
-                    return NotFound("That company does not exist");
-                }
 
                 if (deleteEmployees)
                 {
@@ -138,6 +133,7 @@ namespace TimeSheet_Backend.Controllers
                         }
                     }
                 }
+                await _unitOfWork.Save();
                 var departments = await _unitOfWork.DepartmentRepository.GetAll(d => d.CompanyID == id);
                 _unitOfWork.DepartmentRepository.DeleteRange(departments);
                 await _unitOfWork.CompanyRepository.Delete(id);

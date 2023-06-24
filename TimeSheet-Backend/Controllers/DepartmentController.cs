@@ -95,12 +95,12 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteDepartment(int depId, bool deleteEmployees = false, int targetDepId = 0)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteDepartment(int id, bool deleteEmployees = false, int targetDepId = 0)
         {
             try
             {
-                var deletionDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == depId);
+                var deletionDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == id);
 
                 if (deletionDepartment == null)
                 {
@@ -108,7 +108,7 @@ namespace TimeSheet_Backend.Controllers
                 }
                 if (deleteEmployees)
                 {
-                    var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                    var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == id);
                     foreach (var employee in employees)
                     {
                         var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.EmployeeID == employee.ID);
@@ -127,7 +127,7 @@ namespace TimeSheet_Backend.Controllers
                         }
                         else
                         {
-                            var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                            var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == id);
                             foreach (var employee in employees)
                             {
                                 employee.DepartmentID = targetDepId;
@@ -137,7 +137,7 @@ namespace TimeSheet_Backend.Controllers
                     }
                     else
                     {
-                        var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == depId);
+                        var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.DepartmentID == id);
                         foreach (var employee in employees)
                         {
                             employee.DepartmentID = 0;
@@ -145,6 +145,8 @@ namespace TimeSheet_Backend.Controllers
                         }
                     }
                 }
+                await _unitOfWork.Save();
+                await _unitOfWork.DepartmentRepository.Delete(deletionDepartment.ID);
                 await _unitOfWork.Save();
                 return Ok("Department deleted");
             }
