@@ -82,6 +82,15 @@
           >
           <base-button
             v-if="this.ID"
+            link
+            :to="calculationLink"
+            :type="'button'"
+            style="display: inline"
+          >
+            See the calculations
+          </base-button>
+          <base-button
+            v-if="this.ID"
             :type="'button'"
             @click="deleteCompany()"
             style="display: inline"
@@ -179,10 +188,10 @@ export default {
         comEmail: this.comEmail.val,
       };
 
-      if(this.Mode === "old") {
+      if (this.Mode === "old") {
         formData = {
           ...formData,
-          comId: this.ID
+          comId: this.ID,
         };
       }
 
@@ -207,6 +216,9 @@ export default {
     },
     textForMode() {
       return this.editModeType === true ? "Save" : "Edit";
+    },
+    calculationLink() {
+      return "/calculations/" + this.ID;
     },
   },
   mounted() {

@@ -1,6 +1,6 @@
 <template>
   <base-card>
-    <form action="/">
+    <form>
       <div class="form-control">
         <label for="ID">ID:</label>
         <input type="text" name="id" id="id" @input="setFilter" />

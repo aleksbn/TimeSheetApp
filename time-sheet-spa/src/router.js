@@ -10,6 +10,7 @@ import Employees from "./pages/employees/EmployeesList.vue";
 import EmployeeDetails from "./pages/employees/EmployeeDetails.vue";
 import Departments from "./pages/departments/DepartmentsList.vue";
 import DepartmentDetails from "./pages/departments/DepartmentDetails.vue";
+import StatisticsPage from "./pages/statistics/StatisticsPage.vue";
 import WorkingTimes from "./pages/workingtimes/WorkingTimesList.vue";
 import NotFound from "./pages/NotFound.vue";
 
@@ -21,6 +22,7 @@ const router = createRouter({
     { path: "/adddepartment", component: AddDepartment },
     { path: "/addemployee", component: AddEmployee },
     { path: "/about", component: AboutUs },
+    { path: "/calculations/:comid", component: StatisticsPage, props: true },
     { path: "/companies", component: Companies },
     { path: "/companies/:comid", component: CompanyDetails, props: true },
     { path: "/departments/:comid/", component: Departments, props: true },
