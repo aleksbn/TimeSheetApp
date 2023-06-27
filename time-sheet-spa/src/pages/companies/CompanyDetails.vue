@@ -60,8 +60,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("companies/editCompany", data);
+    async saveData(data) {
+      await this.$store.dispatch("companies/editCompany", data);
       this.$router.push("/companies");
     },
     cancelDeletion() {
@@ -84,8 +84,8 @@ export default {
       this.isLoading = false;
     },
   },
-  created() {
-    this.loadCompany();
+  async created() {
+    await this.loadCompany();
     localStorage.setItem("comid", this.comid);
     localStorage.setItem("comidwt", this.comid);
   },

@@ -55,8 +55,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("departments/editDepartment", data);
+    async saveData(data) {
+      await this.$store.dispatch("departments/editDepartment", data);
       this.$router.push("/departments/" + this.comid);
     },
     cancelDeletion() {
@@ -82,8 +82,8 @@ export default {
       this.error = null;
     },
   },
-  created() {
-    this.loadDepartment();
+  async created() {
+    await this.loadDepartment();
     localStorage.setItem("depid", this.depid);
     localStorage.setItem("depidwt", this.depid);
   },

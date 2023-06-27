@@ -66,15 +66,15 @@ export default {
       }
       this.isLoading = false;
     },
-    refresh() {
-      this.loadCompanies();
+    async refresh() {
+      await this.loadCompanies();
     },
     handleError() {
       this.error = null;
     }
   },
-  created() {
-    this.loadCompanies();
+  async created() {
+    await this.loadCompanies();
     localStorage.removeItem("comid");
     localStorage.removeItem("depid");
     localStorage.removeItem("empid");

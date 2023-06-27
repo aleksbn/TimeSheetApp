@@ -15,7 +15,7 @@
 <script>
 export default {
   props: ["ID", "Employee", "WtDate", "StartTime", "EndTime"],
-  emits: ["delete"],
+  emits: ["delete", "edit"],
   computed: {
     fullName() {
       return this.Employee.firstName + " " + this.Employee.lastName;
@@ -26,7 +26,7 @@ export default {
       this.$emit("delete", this.ID);
     },
     editWT() {
-      
+      this.$emit("edit", this.ID);
     }
   }
 };

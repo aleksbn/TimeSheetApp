@@ -24,8 +24,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("employees/addEmployee", data);
+    async saveData(data) {
+      await this.$store.dispatch("employees/addEmployee", data);
       this.$router.push("/employees/" + localStorage.getItem("comid"));
     },
   },

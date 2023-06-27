@@ -47,11 +47,5 @@ export default {
       }
     },
   },
-  created() {
-
-  },
-  methods: {
-
-  }
 };
 </script>

@@ -70,12 +70,12 @@ export default {
     handleError() {
       this.error = null;
     },
-    refresh() {
-      this.loadDepartments();
+    async refresh() {
+      await this.loadDepartments();
     }
   },
-  created() {
-    this.loadDepartments();
+  async created() {
+    await this.loadDepartments();
     localStorage.removeItem("depid");
   },
 };

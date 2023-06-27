@@ -20,7 +20,26 @@ namespace TimeSheet_Backend.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        //treba dodati mjesec i/ili godinu
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetWorkingTime(int id)
+        {
+            try
+            {
+                var workingTime = await _unitOfWork.WorkingTimeRepository.Get(wt => wt.ID == id, new List<string>
+                {
+                    "Employee"
+                });
+                var toReturn = _mapper.Map<WorkingTimeDTO>(workingTime);
+                return Ok(toReturn);
+            }
+            catch (Exception x)
+            {
+                return BadRequest(x.InnerException.Message);
+
+            }
+        }
+        
         [HttpGet("{depId}")]
         public async Task<IActionResult> FromDepartment(int depId, [FromQuery] RequestParams requestParams)
         {
@@ -63,7 +82,6 @@ namespace TimeSheet_Backend.Controllers
             }
         }
 
-        //treba dodati mjesec i/ili godinu
         [HttpGet("{comId}")]
         public async Task<IActionResult> FromCompany(int comId, [FromQuery]RequestParams requestParams)
         {
@@ -87,7 +105,7 @@ namespace TimeSheet_Backend.Controllers
 
         [HttpPost]
         [ActionName("create")]
-        public async Task<IActionResult> PostWorkingTime([FromBody] WorkingTimeDTO workingTimeDTO)
+        public async Task<IActionResult> PostWorkingTime([FromBody] CreateWorkingTimeDTO workingTimeDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -197,24 +215,6 @@ namespace TimeSheet_Backend.Controllers
             else
             {
                 return NotFound("That working time does not exist");
-            }
-        }
-
-        [HttpDelete("id")]
-        [ActionName("deleteWorkingTimesForEmployee")]
-        public async Task<IActionResult> DeleteWorkingTimes(string id)
-        {
-            var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == id);
-            if (employee != null)
-            {
-                var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.Employee.ID == id);
-                _unitOfWork.WorkingTimeRepository.DeleteRange(workingTimes);
-                await _unitOfWork.Save();
-                return Ok("Working times for an employee deleted");
-            }
-            else
-            {
-                return NotFound("That employee does not exist");
             }
         }
     }

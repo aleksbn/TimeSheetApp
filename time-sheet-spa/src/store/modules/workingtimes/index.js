@@ -8,6 +8,7 @@ export default {
     return {
       workingTimes: [],
       wtCount: 0,
+      workingTime: null
     };
   },
   mutations,

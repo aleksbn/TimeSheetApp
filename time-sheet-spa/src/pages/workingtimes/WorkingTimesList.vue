@@ -8,6 +8,23 @@
     >
       <p>{{ error }}</p>
     </base-dialog>
+    <base-dialog :show="editing" title="Edit working time" :showClose="false">
+      <working-time-form
+        v-if="hasWorkingTime"
+        :key="workingTime.ID"
+        :ID="workingTime.ID"
+        :Employee="workingTime.Employee"
+        :WtDate="workingTime.WtDate"
+        :StartTime="workingTime.StartTime"
+        :EndTime="workingTime.EndTime"
+        :Mode="editing === true ? 'old' : 'new'"
+        @close="closeEditor"
+        @cancel="cancelEditing"
+      ></working-time-form>
+    </base-dialog>
+    <base-dialog :show="creating" title="Add working data" :showClose="false">
+      <add-working-time @close="close"></add-working-time>
+    </base-dialog>
     <section>
       <working-time-filter
         @params-changed="setParams"
@@ -18,7 +35,7 @@
       <base-card>
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
-          <base-button link to="/" v-if="hasWorkingTimes"
+          <base-button @click="create" v-if="hasWorkingTimes"
             >Add a working time</base-button
           >
         </div>
@@ -37,6 +54,7 @@
           <working-time-item
             v-for="wt in filteredWorkingTimes"
             @delete="deleteWT"
+            @edit="editWT"
             :key="wt.ID"
             :ID="wt.ID"
             :Employee="wt.Employee"
@@ -55,7 +73,7 @@
         title="Do you want to delete selected working time?"
         :showClose="false"
       >
-        <div class="form-control">
+        <div class="form-control" style="text-align: center">
           <base-button style="display: inline" @click="deleteWTnow"
             >Delete</base-button
           >
@@ -71,6 +89,8 @@
 <script>
 import WorkingTimeItem from "../../components/workingTimes/WorkingTimeItem.vue";
 import { defineAsyncComponent } from "vue";
+import WorkingTimeForm from "@/components/workingTimes/WorkingTimeForm.vue";
+import AddWorkingTime from "../../pages/workingtimes/AddWorkingTime.vue";
 
 export default {
   components: {
@@ -78,12 +98,17 @@ export default {
     WorkingTimeFilter: defineAsyncComponent(() =>
       import("../../components/workingTimes/WorkingTimeFilter.vue")
     ),
+    WorkingTimeForm,
+    AddWorkingTime,
   },
   data() {
     return {
       isLoading: false,
       deleting: false,
+      editing: false,
+      creating: false,
       wtForDel: null,
+      wtForEdit: null,
       id: null,
       link: null,
       error: null,
@@ -100,6 +125,12 @@ export default {
         !this.isLoading && this.$store.getters["workingTimes/hasWorkingTimes"]
       );
     },
+    hasWorkingTime() {
+      return this.$store.getters["workingTimes/hasWorkingTime"];
+    },
+    workingTime() {
+      return this.$store.getters["workingTimes/workingTime"];
+    },
     filteredWorkingTimes() {
       return this.$store.getters["workingTimes/workingTimes"];
     },
@@ -110,9 +141,29 @@ export default {
     },
   },
   methods: {
+    async close() {
+      this.creating = false;
+      await this.refresh();
+    },
+    create() {
+      this.creating = true;
+    },
+    cancelEditing() {
+      this.editing = false;
+    },
+    async closeEditor() {
+      this.editing = false;
+      await this.loadWorkingTime();
+      await this.refresh();
+    },
     deleteWT(wtid) {
       this.deleting = true;
       this.wtForDel = wtid;
+    },
+    async editWT(wtid) {
+      this.editing = true;
+      this.wtForEdit = wtid;
+      await this.loadWorkingTime();
     },
     async deleteWTnow() {
       try {
@@ -157,15 +208,26 @@ export default {
       }
       this.isLoading = false;
     },
-    refresh() {
-      this.loadWorkingTimes();
+    async loadWorkingTime() {
+      try {
+        await this.$store.dispatch(
+          "workingTimes/loadWorkingTime",
+          this.wtForEdit
+        );
+      } catch (error) {
+        this.error =
+          error.message + " in getting employees" || "Something went wrong!";
+      }
+    },
+    async refresh() {
+      await this.loadWorkingTimes();
     },
     handleError() {
       this.error = null;
     },
   },
-  created() {
-    this.loadWorkingTimes();
+  async created() {
+    await this.loadWorkingTimes();
   },
 };
 </script>

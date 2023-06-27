@@ -67,9 +67,9 @@ export default {
     },
   },
   watch: {
-    delSelected() {
+    async delSelected() {
       if (this.delSelected == 0) {
-        this.loadDepartments();
+        await this.loadDepartments();
       }
     },
   },

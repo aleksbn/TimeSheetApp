@@ -277,7 +277,7 @@ export default {
           empId: this.ID,
         };
       }
-      console.log(formData);
+      
       this.$emit("save-data", formData);
     },
     validateForm() {
@@ -367,8 +367,8 @@ export default {
       return this.DepartmentId;
     },
   },
-  created() {
-    this.loadDepartments();
+  async created() {
+    await this.loadDepartments();
     this.comid = localStorage.getItem("comid");
     this.empid = localStorage.getItem("empid");
     this.depid = localStorage.getItem("depid");

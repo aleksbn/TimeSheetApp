@@ -21,8 +21,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("companies/addCompany", data);
+    async saveData(data) {
+      await this.$store.dispatch("companies/addCompany", data);
       this.$router.push("/companies");
     },
   },

@@ -15,11 +15,23 @@
       </div>
       <div class="form-control">
         <label for="department">Department:</label>
-        <input type="text" name="department" id="department" @input="setFilter" />
+        <input
+          type="text"
+          name="department"
+          id="department"
+          @input="setFilter"
+        />
       </div>
       <div class="form-control">
         <label for="hourlyRate">Hourly rate:</label>
-        <input type="number" name="hourlyRate" id="hourlyRate" value="0" min="0" @change="setFilter" />
+        <input
+          type="number"
+          name="hourlyRate"
+          id="hourlyRate"
+          value="0"
+          min="0"
+          @change="setFilter"
+        />
       </div>
     </form>
   </base-card>
@@ -43,8 +55,8 @@ export default {
     setFilter(event) {
       const inputId = event.target.id;
       var value = event.target.value;
-      if(inputId === "hourlyRate") {
-        if(value === "") {
+      if (inputId === "hourlyRate") {
+        if (value === "") {
           value = 0;
         }
       }

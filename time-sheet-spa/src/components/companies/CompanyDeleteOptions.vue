@@ -100,14 +100,14 @@ export default {
     },
   },
   watch: {
-    delSelected() {
+    async delSelected() {
       if (this.delSelected == 0) {
-        this.loadCompanies();
+        await this.loadCompanies();
       }
     },
-    comId() {
+    async comId() {
       if (this.comId != 0) {
-        this.loadDepartments();
+        await this.loadDepartments();
       }
     },
   },

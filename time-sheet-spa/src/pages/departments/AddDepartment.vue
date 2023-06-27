@@ -24,8 +24,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("departments/addDepartment", data);
+    async saveData(data) {
+      await this.$store.dispatch("departments/addDepartment", data);
       this.$router.push("/departments/" + localStorage.getItem('comid'));
     },
   },

@@ -13,14 +13,14 @@
 export default {
   props: {
     mode: {
-        type: String,
-        required: false,
-        default: null
+      type: String,
+      required: false,
+      default: null,
     },
     type: {
       type: String,
       required: false,
-      default: 'submit'
+      default: "submit",
     },
     link: {
       type: Boolean,

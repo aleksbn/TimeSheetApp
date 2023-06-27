@@ -151,8 +151,8 @@ export default {
     handleError() {
       this.error = null;
     },
-    refresh() {
-      this.loadEmployees();
+    async refresh() {
+      await this.loadEmployees();
     },
     setFilters(updatedFilters) {
       this.activeFilters = updatedFilters;
@@ -161,8 +161,8 @@ export default {
         : parseFloat(updatedFilters.hourlyRate);
     },
   },
-  created() {
-    this.loadEmployees();
+  async created() {
+    await this.loadEmployees();
     localStorage.removeItem("empid");
   },
 };

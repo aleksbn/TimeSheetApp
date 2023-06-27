@@ -65,8 +65,8 @@ export default {
     };
   },
   methods: {
-    saveData(data) {
-      this.$store.dispatch("employees/editEmployee", data);
+    async saveData(data) {
+      await this.$store.dispatch("employees/editEmployee", data);
       this.$router.push("/employees/" + localStorage.getItem("comid"));
     },
     async loadEmployee() {
@@ -91,8 +91,8 @@ export default {
       this.deleting = true;
     },
   },
-  created() {
-    this.loadEmployee();
+  async created() {
+    await this.loadEmployee();
     localStorage.setItem("empid", this.empid);
     localStorage.setItem("empidwt", this.empid);
   },
