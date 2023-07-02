@@ -38,12 +38,12 @@ var tokenValidationParameters = new TokenValidationParameters()
     ValidIssuer = builder.Configuration["JWT:Issuer"],
     ValidateAudience = true,
     ValidAudience = builder.Configuration["JWT:Audience"],
-    ValidateLifetime = true,
-    ClockSkew = TimeSpan.Zero
+    ValidateLifetime = true
 };
 builder.Services.AddSingleton(tokenValidationParameters);
 
 //Adding Identity system to services
+builder.Services.AddIdentity<AppUser, IdentityRole>(q => q.User.RequireUniqueEmail = true).AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -54,7 +54,18 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = tokenValidationParameters;
 });
-builder.Services.AddIdentity<AppUser, IdentityRole>(q => q.User.RequireUniqueEmail = true).AddEntityFrameworkStores<DatabaseContext>().AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "auth_cookie";
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.LoginPath = new PathString("/api/authentication/login-user");
+    options.AccessDeniedPath = new PathString("/api/authentication/login-user");
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
 builder.Services.AddControllers().AddNewtonsoftJson(o => o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 var app = builder.Build();

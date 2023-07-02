@@ -1,23 +1,32 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
+using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
 
 namespace TimeSheet_Backend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CompanyController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CompanyController(IUnitOfWork unitOfWork, IMapper mapper)
+        private string GetUserId()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public CompanyController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -26,7 +35,7 @@ namespace TimeSheet_Backend.Controllers
             try
             {
                 var companies = await _unitOfWork.CompanyRepository.GetAll();
-                return Ok(_mapper.Map<List<CompanyDTO>>(companies));
+                return Ok(_mapper.Map<List<CompanyDTO>>(companies).Where(c => c.CompanyManagerId == GetUserId()));
             }
             catch (Exception x)
             {
@@ -43,7 +52,7 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "CompanyManager"
                 });
-                return Ok(_mapper.Map<CompanyDTO>(company));
+                return company.CompanyManagerId == GetUserId() ? Ok(_mapper.Map<CompanyDTO>(company)) : Unauthorized("That company is not created by this user. You cannot read it.");
             }
             catch (Exception x)
             {
@@ -61,7 +70,9 @@ namespace TimeSheet_Backend.Controllers
 
             try
             {
-                await _unitOfWork.CompanyRepository.Insert(_mapper.Map<Company>(company));
+                var toInsert = _mapper.Map<Company>(company);
+                toInsert.CompanyManagerId = GetUserId();
+                await _unitOfWork.CompanyRepository.Insert(toInsert);
                 await _unitOfWork.Save();
                 return Ok("Company created");
             }
@@ -81,6 +92,10 @@ namespace TimeSheet_Backend.Controllers
 
             try
             {
+                if(editCompany.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot edit it.");
+                }
                 var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == editCompany.ID, null);
                 company = _mapper.Map<Company>(editCompany);
                 _unitOfWork.CompanyRepository.Update(company);
@@ -96,6 +111,12 @@ namespace TimeSheet_Backend.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCompany(int id, int targetDepartmentId = 0, bool deleteEmployees = false )
         {
+            var companyExists = await _unitOfWork.CompanyRepository.Get(c => c.ID == id);
+            if(companyExists.CompanyManagerId == GetUserId())
+            {
+                return Unauthorized("That company is not created by this user. You cannot delete it.");
+            }
+
             try
             {
                 var employees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == id);

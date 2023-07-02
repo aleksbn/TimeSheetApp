@@ -115,7 +115,7 @@ export default {
     async deleteCompany() {
       const deleteData = {
         id: parseInt(localStorage.getItem("comid")),
-        targetDepartmentId: this.depId,
+        targetDepartmentId: this.depId != '' ? this.depId : 0,
         deleteEmployees: this.delSelected == 0 ? false : true,
       };
       try {

@@ -79,7 +79,6 @@ export default {
   },
   methods: {
     changeFilter() {
-      console.log(this.filterData);
       this.$emit("filter-changed", this.filterData);
     },
   },

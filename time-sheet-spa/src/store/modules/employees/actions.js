@@ -1,11 +1,18 @@
 export default {
-  async loadEmployee(context, payload) {
+  async loadEmployee({ commit, dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/employee/" + payload.empid
+      "https://localhost:7059/api/employee/" + payload.empid,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(data.message || "Failed to load employee data!");
       throw error;
     }
 
@@ -23,15 +30,25 @@ export default {
       HourlyRate: data.hourlyRate,
       DepartmentId: data.departmentId,
     };
-    context.commit("setEmployee", employee);
+    commit("setEmployee", employee);
   },
-  async loadEmployeesFromCompany(context, payload) {
+
+  async loadEmployeesFromCompany({ commit, dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/employee/" + payload.comid
+      "https://localhost:7059/api/employee/" + payload.comid,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(
+        data.message || "Failed to load employees from company!"
+      );
       throw error;
     }
     const employees = [];
@@ -53,18 +70,31 @@ export default {
       };
       employees.push(employee);
     }
-    context.commit("setEmployees", employees);
+    commit("setEmployees", employees);
   },
-  async loadEmployeesFromDepartment(context, payload) {
+
+  async loadEmployeesFromDepartment(
+    { commit, dispatch, rootGetters },
+    payload
+  ) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
       "https://localhost:7059/api/employee/" +
         payload.comid +
         "/" +
-        payload.depid
+        payload.depid,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(
+        data.message || "Failed to load employees from department!"
+      );
       throw error;
     }
 
@@ -87,9 +117,10 @@ export default {
       employees.push(employee);
     }
 
-    context.commit("setEmployees", employees);
+    commit("setEmployees", employees);
   },
-  async addEmployee(_1, payload) {
+
+  async addEmployee({ dispatch, rootGetters }, payload) {
     const emp = {
       FirstName: payload.empFirstName,
       LastName: payload.empLastName,
@@ -104,9 +135,11 @@ export default {
       DepartmentId: payload.empDepartmentId,
     };
 
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch("https://localhost:7059/api/employee/", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -114,11 +147,13 @@ export default {
     });
 
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to post data!");
+      const error = new Error(res.message || "Failed to add an employee!");
       throw error;
     }
   },
-  async editEmployee(_1, payload) {
+
+  async editEmployee({ dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const emp = {
       ID: payload.empId,
       DepartmentId: payload.empDepartmentId,
@@ -137,6 +172,7 @@ export default {
     const res = await fetch("https://localhost:7059/api/employee", {
       method: "PUT",
       headers: {
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -144,22 +180,27 @@ export default {
     });
 
     if (!res.ok) {
-      const error = new Error(res.message);
+      const error = new Error(res.message || "Failed to edit employee!");
       throw error;
     }
   },
 
-  async deleteEmployee(_1, payload) {
-    const res = await fetch(`https://localhost:7059/api/employee/${payload.empId}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+  async deleteEmployee({ dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
+    const res = await fetch(
+      `https://localhost:7059/api/employee/${payload.empId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to load data!");
+      const error = new Error(res.message || "Failed to delete employee!");
       throw error;
     }
   },

@@ -20,7 +20,10 @@
           <router-link to="/auth">Login/Signup</router-link>
         </li>
         <li v-if="isLoggedIn">
-          <base-button link @click="logout">Logout</base-button>
+          <router-link to="/logout">Logout</router-link>
+        </li>
+        <li v-if="isLoggedIn">
+          <router-link to="/editprofile">Edit profile</router-link>
         </li>
       </ul>
     </nav>

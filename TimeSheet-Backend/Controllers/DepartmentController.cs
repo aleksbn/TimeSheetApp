@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
@@ -11,17 +12,28 @@ namespace TimeSheet_Backend.Controllers
     public class DepartmentController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
-        public DepartmentController(IUnitOfWork unitOfWork, IMapper mapper)
+        public DepartmentController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetUserId()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAll(int id)
         {
+            if(await _unitOfWork.CompanyRepository.Get(c => c.ID == id && c.CompanyManagerId == GetUserId()) == null)
+            {
+                return Unauthorized("That company is not created by this user. You cannot read its data.");
+            }
             try
             {
                 var departments = await _unitOfWork.DepartmentRepository.GetAll(d => d.CompanyID == id, null, new List<string>()
@@ -39,6 +51,10 @@ namespace TimeSheet_Backend.Controllers
         [HttpGet("{comId}/{depId}")]
         public async Task<IActionResult> Get(int comId, int depId)
         {
+            if (await _unitOfWork.CompanyRepository.Get(c => c.ID == comId && c.CompanyManagerId == GetUserId()) == null)
+            {
+                return Unauthorized("That company is not created by this user. You cannot read its data.");
+            }
             try
             {
                 var department = await _unitOfWork.DepartmentRepository.Get(d => d.CompanyID == comId && d.ID == depId, new List<string>()
@@ -56,7 +72,11 @@ namespace TimeSheet_Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> PostDepartment([FromBody] CreateDepartmentDTO departmentDTO)
         {
-            if(!ModelState.IsValid)
+            if (await _unitOfWork.CompanyRepository.Get(c => c.ID == departmentDTO.CompanyID && c.CompanyManagerId == GetUserId()) == null)
+            {
+                return Unauthorized("That company is not created by this user. You cannot add department to it.");
+            }
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Input all required fields in a correct format!");
             }
@@ -76,6 +96,12 @@ namespace TimeSheet_Backend.Controllers
         [HttpPut]
         public async Task<IActionResult> EditDepartment([FromBody] DepartmentDTO departmentDTO)
         {
+            var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == departmentDTO.CompanyID);
+            if (com.CompanyManagerId != GetUserId())
+            {
+                return Unauthorized("That company is not created by this user. You cannot edit its data.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Input all required fields in a correct format!");
@@ -98,6 +124,12 @@ namespace TimeSheet_Backend.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteDepartment(int id, bool deleteEmployees = false, int targetDepId = 0)
         {
+            var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == id);
+            var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+            if (com.CompanyManagerId != GetUserId())
+            {
+                return Unauthorized("That company is not created by this user. You cannot delete its data.");
+            }
             try
             {
                 var deletionDepartment = await _unitOfWork.DepartmentRepository.Get(d => d.ID == id);

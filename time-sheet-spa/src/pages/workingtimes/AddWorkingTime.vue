@@ -1,6 +1,6 @@
 <template #default>
   <form @submit.prevent="submitData">
-    <div class="form-control" v-if="hasEmployees">
+    <div class="form-control" v-if="hasEmployees" :class="{ invalid: !employeeId.isValid }">
       <label for="employeeId">Employee</label>
       <select name="employeeId" id="employeeId" v-model="employeeId.val">
         <option value="0" style="font-style: italic" disabled>
@@ -17,7 +17,7 @@
         employees.
       </p>
     </div>
-    <div class="form-control">
+    <div class="form-control" :class="{ invalid: !wtDate.isValid }">
       <label for="wtDate">Date</label>
       <input
         type="text"
@@ -26,7 +26,7 @@
         v-model="wtDate.val"
       />
     </div>
-    <div class="form-control">
+    <div class="form-control" :class="{ invalid: !wtStartTime.isValid }">
       <label for="StartTime">Start time</label>
       <input
         type="time"
@@ -35,7 +35,7 @@
         v-model="wtStartTime.val"
       />
     </div>
-    <div class="form-control">
+    <div class="form-control" :class="{ invalid: !wtEndTime.isValid }">
       <label for="EndTime">End time</label>
       <input
         type="time"
@@ -55,7 +55,7 @@
 <script>
 import moment from "moment";
 export default {
-  emits: ["close"],
+  emits: ["cancel"],
   data() {
     return {
       formIsValid: true,
@@ -177,7 +177,8 @@ h3 {
   color: red;
 }
 
-.invalid input {
+.invalid input,
+.invalid select {
   border: 1px solid red;
 }
 p {

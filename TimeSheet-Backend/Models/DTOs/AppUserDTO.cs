@@ -20,7 +20,7 @@ namespace TimeSheet_Backend.Models.DTOs
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,50}$")]
+        [RegularExpression("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,50}$")]
         public string Password { get; set; }
     }
 
@@ -40,14 +40,18 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         [EmailAddress]
         public string OldEmail { get; set; }
+        [AllowNull]
         [EmailAddress]
         public string NewEmail { get { return _NewEmail; } set { _NewEmail = string.IsNullOrWhiteSpace(value) ? null : value; } }
+        [AllowNull]
         [EmailAddress]
         [Compare("NewEmail", ErrorMessage = "The email and confirmation do not match.")]
         public string NewEmailConfirmation { get { return _NewEmailConfirmation; } set { _NewEmailConfirmation = string.IsNullOrWhiteSpace(value) ? null : value; } }
         [Required]
         public string OldPassword { get; set; }
+        [AllowNull]
         public string NewPassword { get; set; }
+        [AllowNull]
         [Compare("NewPassword", ErrorMessage = "The password and confirmation do not match.")]
         public string PasswordConfirmation { get; set; }
     }

@@ -11,9 +11,19 @@
 import TheHeader from "./components/layout/TheHeader.vue";
 export default {
   components: {
-    TheHeader
+    TheHeader,
+  },
+  async created() {
+    if(localStorage.getItem("userId") != null) {
+      await this.$store.dispatch("auth/setUserData", {
+        id: localStorage.getItem("userId"),
+        token: localStorage.getItem("token"),
+        refreshToken: localStorage.getItem("refreshToken"),
+        expiresAt: localStorage.getItem("expiresAt")
+      })
+    }
   }
-}
+};
 </script>
 
 <style>

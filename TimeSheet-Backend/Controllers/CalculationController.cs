@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using TimeSheet_Backend.Models.Data;
+using System.Security.Claims;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
 
@@ -14,16 +12,35 @@ namespace TimeSheet_Backend.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CalculationController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CalculationController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetUserId()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
         [HttpGet("{comid:int}")]
         public async Task<IActionResult> Get(int comid, int year = 0, int month = 0)
         {
+            var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == comid);
+
+            if(company == null)
+            {
+                return BadRequest("That company does not exist.");
+            }
+
+            if (company.CompanyManagerId != GetUserId())
+            {
+                return Unauthorized("That company is not created by this user. You cannot read statistics about it.");
+            }
+
             var employeeList = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comid, null, new List<string>
             {
                 "WorkingTimes", 

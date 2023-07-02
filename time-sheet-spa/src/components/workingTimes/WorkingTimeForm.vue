@@ -9,7 +9,7 @@
         <label for="Name">Name</label>
         <input type="text" name="Name" disabled :value="fullName" />
       </div>
-      <div class="form-control">
+      <div class="form-control" :class="{ invalid: !wtDate.isValid }">
         <label for="wtDate">Date</label>
         <input
           type="text"
@@ -18,7 +18,7 @@
           @blur="clearValidity('wtDate')"
         />
       </div>
-      <div class="form-control">
+      <div class="form-control" :class="{ invalid: !wtStartTime.isValid }">
         <label for="StartTime">Start time</label>
         <input
           type="time"
@@ -27,7 +27,7 @@
           @blur="clearValidity('wtStartTime')"
         />
       </div>
-      <div class="form-control">
+      <div class="form-control" :class="{ invalid: !wtEndTime.isValid }">
         <label for="EndTime">End time</label>
         <input
           type="time"
@@ -176,9 +176,11 @@ h3 {
   color: red;
 }
 
-.invalid input {
+.invalid input,
+.invalid select {
   border: 1px solid red;
 }
+
 p {
   font-weight: bold;
   font-size: large;

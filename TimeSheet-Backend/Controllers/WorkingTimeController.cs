@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
@@ -13,12 +12,19 @@ namespace TimeSheet_Backend.Controllers
     public class WorkingTimeController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
-        public WorkingTimeController(IUnitOfWork unitOfWork, IMapper mapper)
+        private string GetUserId()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public WorkingTimeController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("{id}")]
@@ -30,6 +36,12 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "Employee"
                 });
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == workingTime.Employee.DepartmentID);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot read its data.");
+                }
                 var toReturn = _mapper.Map<WorkingTimeDTO>(workingTime);
                 return Ok(toReturn);
             }
@@ -52,6 +64,12 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "Employee"
                 });
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == depId);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot read its data.");
+                }
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok( new { toReturn, workingTimes.Count  });
             }
@@ -73,6 +91,13 @@ namespace TimeSheet_Backend.Controllers
                 {
                     "Employee"
                 });
+                var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == empId);
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot read its data.");
+                }
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(new { toReturn, workingTimes.Count });
             }
@@ -92,8 +117,13 @@ namespace TimeSheet_Backend.Controllers
                     w.OrderBy(wt => wt.Employee.FirstName).ThenBy(wt => wt.Employee.LastName).ThenBy(wt => wt.Date), 
                     new List<string>()
                 {
-                    "Employee"
+                        "Employee"
                 });
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot read its data.");
+                }
                 var toReturn = _mapper.Map<List<WorkingTimeDTO>>(workingTimes.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
                 return Ok(new { toReturn, workingTimes.Count });
             }
@@ -114,6 +144,13 @@ namespace TimeSheet_Backend.Controllers
 
             try
             {
+                var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTimeDTO.EmployeeID);
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot add to its data.");
+                }
                 await _unitOfWork.WorkingTimeRepository.Insert(_mapper.Map<WorkingTime>(workingTimeDTO));
                 await _unitOfWork.Save();
                 return Ok("Working time added");
@@ -130,6 +167,12 @@ namespace TimeSheet_Backend.Controllers
         {
             try
             {
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot add to its data.");
+                }
+
                 List<WorkingTime> times = new();
                 var allEmployees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId);
                 var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
@@ -189,6 +232,14 @@ namespace TimeSheet_Backend.Controllers
 
             try
             {
+                var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTimeDTO.EmployeeID);
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot edit its data.");
+                }
+
                 var workingTime = await _unitOfWork.WorkingTimeRepository.Get(wt => wt.ID == workingTimeDTO.ID);
                 workingTime = _mapper.Map<WorkingTime>(workingTimeDTO);
                 _unitOfWork.WorkingTimeRepository.Update(workingTime);
@@ -208,6 +259,14 @@ namespace TimeSheet_Backend.Controllers
             var workingTime = await _unitOfWork.WorkingTimeRepository.Get(wt => wt.ID == id);
             if (workingTime != null)
             {
+                var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTime.EmployeeID);
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
+                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                if (com == null || com.CompanyManagerId != GetUserId())
+                {
+                    return Unauthorized("That company is not created by this user. You cannot delete from its data.");
+                }
+
                 await _unitOfWork.WorkingTimeRepository.Delete(id);
                 await _unitOfWork.Save();
                 return Ok("Working time deleted");

@@ -1,11 +1,18 @@
 export default {
-  async loadDepartments(context, payload) {
+  async loadDepartments({ commit, dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/department/" + payload.comid
+      "https://localhost:7059/api/department/" + payload.comid,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(data.message || "Failed to load departments!");
       throw error;
     }
 
@@ -18,18 +25,27 @@ export default {
       departments.push(dep);
     }
 
-    context.commit("setDepartments", departments);
+    commit("setDepartments", departments);
   },
-  async loadDepartment(context, payload) {
+  async loadDepartment({ commit, dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
       "https://localhost:7059/api/department/" +
         payload.comid +
         "/" +
-        payload.depid
+        payload.depid,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(
+        data.message || "Failed to load department data!"
+      );
       throw error;
     }
 
@@ -38,18 +54,20 @@ export default {
       Name: data.name,
     };
 
-    context.commit("setDepartment", department);
+    commit("setDepartment", department);
   },
 
-  async addDepartment(_1, payload) {
+  async addDepartment({ dispatch, rootGetters }, payload) {
     const dep = {
       Name: payload.depName,
-      CompanyID: payload.comId
+      CompanyID: payload.comId,
     };
 
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch("https://localhost:7059/api/department", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -57,21 +75,23 @@ export default {
     });
 
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to post data!");
+      const error = new Error(res.message || "Failed to add department!");
       throw error;
     }
   },
 
-  async editDepartment(_1, payload) {
+  async editDepartment({ dispatch, rootGetters }, payload) {
     const dep = {
-        ID: payload.depId,
-        Name: payload.depName,
-        CompanyID: payload.comId
+      ID: payload.depId,
+      Name: payload.depName,
+      CompanyID: payload.comId,
     };
 
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch("https://localhost:7059/api/department", {
       method: "PUT",
       headers: {
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -79,17 +99,19 @@ export default {
     });
 
     if (!res.ok) {
-        const error = new Error(res.message || "Failed to post data!");
-        throw error;
-      }
+      const error = new Error(res.message || "Failed to edit department!");
+      throw error;
+    }
   },
 
-  async deleteDepartment(_1, payload) {
+  async deleteDepartment({ dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
       `https://localhost:7059/api/department/${payload.depId}?deleteEmployees=${payload.deleteEmployees}&&targetDepId=${payload.targetDepId}`,
       {
         method: "DELETE",
         headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },
@@ -97,8 +119,8 @@ export default {
     );
 
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to load data!");
+      const error = new Error(res.message || "Failed to delete department!");
       throw error;
     }
-  }
+  },
 };

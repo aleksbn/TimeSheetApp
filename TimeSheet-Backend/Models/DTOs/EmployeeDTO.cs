@@ -31,6 +31,8 @@ namespace TimeSheet_Backend.Models.DTOs
         public DateTime StartOfEmployment { get; set; }
         [Required]
         public double HourlyRate { get; set; }
+        [Required]
+        public int DepartmentId { get; set; }
     }
 
     public class EmployeeDTO: CreateEmployeeDTO
@@ -40,9 +42,7 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         public string ID { get; set; }
 
-        public int DepartmentId { get; set; }
         public virtual DepartmentDTO Department { get; set; }
-
         public virtual IList<WorkingTimeDTO> WorkingTimes { get; set; }
     }
 }

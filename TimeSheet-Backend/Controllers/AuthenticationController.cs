@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace TimeSheet_Backend.Controllers
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AuthenticationController(
             UserManager<AppUser> userManager, 
@@ -32,7 +34,8 @@ namespace TimeSheet_Backend.Controllers
             IConfiguration configuration, 
             TokenValidationParameters tokenValidationParameters,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -41,6 +44,12 @@ namespace TimeSheet_Backend.Controllers
             _tokenValidationParameters = tokenValidationParameters;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetUserId()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
         [HttpPost("register-user")]
@@ -70,7 +79,8 @@ namespace TimeSheet_Backend.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(appUser, userDTO.Role);
-                    return Ok("User created.");
+                    var userId = _userManager.FindByEmailAsync(appUser.Email);
+                    return Ok(userId);
                 }
 
                 return BadRequest("User could not be created.");
@@ -78,7 +88,6 @@ namespace TimeSheet_Backend.Controllers
 
             return BadRequest("The role does not exist.");
         }
-
         
         [HttpPost("login-user")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
@@ -92,12 +101,13 @@ namespace TimeSheet_Backend.Controllers
             if (userExists != null && await _userManager.CheckPasswordAsync(userExists, userDTO.Password))
             {
                 var tokenValue = await GenerateJWTTokenAsync(userExists, null);
-                return Ok(tokenValue);
+                return Ok(new { userExists.Id, tokenValue});
             }
 
             return Unauthorized();
         }
 
+        [Authorize]
         [HttpPut("edit-user")]
         public async Task<IActionResult> EditUser([FromBody] EditUserDTO editUserDTO)
         {
@@ -107,9 +117,15 @@ namespace TimeSheet_Backend.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(editUserDTO.OldEmail);
+
             if (user == null)
             {
                 return NotFound("There is no user under that email address.");
+            }
+
+            if (user.Id != GetUserId())
+            {
+                return Unauthorized("You are not allowed to edit an account you're not logged into.");
             }
 
             if (await _userManager.CheckPasswordAsync(user, editUserDTO.OldPassword) == false)
@@ -225,32 +241,42 @@ namespace TimeSheet_Backend.Controllers
                 signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256));
 
             var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-            
-            if(rToken != null)
+
+            if (rToken != null)
             {
                 var rTokenResponse = new AuthResultDTO { Token = jwtToken, ExpiresAt = token.ValidTo, RefreshToken = rToken.Token };
                 return rTokenResponse;
             }
 
-            var refreshToken = new RefreshToken()
-            {
-                JwtId = token.Id,
-                IsRevoked = false,
-                UserId = user.Id,
-                DateAdded = DateTime.UtcNow,
-                DateExpired = DateTime.UtcNow.AddMonths(6),
-                Token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString()
-            };
-
-            await _databaseContext.RefreshTokens.AddAsync(refreshToken);
-            await _databaseContext.SaveChangesAsync();
-
             var response = new AuthResultDTO()
             {
                 Token = jwtToken,
                 ExpiresAt = token.ValidTo,
-                RefreshToken = refreshToken.Token
+                RefreshToken = null
             };
+
+            var rTokensFromDb = await _databaseContext.RefreshTokens.Where(rt => rt.UserId == user.Id).OrderByDescending(rt => rt.DateExpired).ToListAsync();
+
+            if (rTokensFromDb != null && rTokensFromDb[0].DateExpired <= DateTime.UtcNow)
+            {
+                var refreshToken = new RefreshToken()
+                {
+                    JwtId = token.Id,
+                    IsRevoked = false,
+                    UserId = user.Id,
+                    DateAdded = DateTime.UtcNow,
+                    DateExpired = DateTime.UtcNow.AddMonths(6),
+                    Token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString()
+                };
+                await _databaseContext.RefreshTokens.AddAsync(refreshToken);
+                await _databaseContext.SaveChangesAsync();
+
+                response.Token = refreshToken.Token;
+            }
+            else
+            {
+                response.RefreshToken = rTokensFromDb[0].Token;
+            }
 
             return response;
         }

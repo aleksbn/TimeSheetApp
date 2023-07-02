@@ -16,16 +16,6 @@ const store = createStore({
     auth: authModule,
     statistics: statisticsModule,
   },
-  state() {
-    return {
-      userId: "123",
-    };
-  },
-  getters: {
-    userId(state) {
-      return state.userId;
-    },
-  },
 });
 
 export default store;

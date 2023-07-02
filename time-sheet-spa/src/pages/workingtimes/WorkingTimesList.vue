@@ -23,7 +23,7 @@
       ></working-time-form>
     </base-dialog>
     <base-dialog :show="creating" title="Add working data" :showClose="false">
-      <add-working-time @close="close"></add-working-time>
+      <add-working-time @cancel="close"></add-working-time>
     </base-dialog>
     <section>
       <working-time-filter
@@ -204,7 +204,7 @@ export default {
         this.show = true;
       } catch (error) {
         this.error =
-          error.message + " in getting employees" || "Something went wrong!";
+          error.message + " in getting working times." || "Something went wrong!";
       }
       this.isLoading = false;
     },
@@ -216,7 +216,7 @@ export default {
         );
       } catch (error) {
         this.error =
-          error.message + " in getting employees" || "Something went wrong!";
+          error.message + " in getting working time." || "Something went wrong!";
       }
     },
     async refresh() {

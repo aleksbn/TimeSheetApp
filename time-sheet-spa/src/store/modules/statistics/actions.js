@@ -1,17 +1,24 @@
 export default {
-  async loadStatistics(context, payload) {
+  async loadStatistics({ commit, dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
       "https://localhost:7059/api/calculation/" +
         payload.comid +
         "?year=" +
         payload.year +
         "&month=" +
-        payload.month
+        payload.month,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
     );
 
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load data!");
+      const error = new Error(data.message || "Failed to load statistic data!");
       throw error;
     }
 
@@ -31,6 +38,6 @@ export default {
       statistics.push(stat);
     }
 
-    context.commit("setStatistics", statistics);
+    commit("setStatistics", statistics);
   },
 };

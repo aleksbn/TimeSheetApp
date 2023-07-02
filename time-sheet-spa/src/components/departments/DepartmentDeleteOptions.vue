@@ -85,7 +85,7 @@ export default {
         this.$router.push("/departments/" + localStorage.getItem("comid"));
       } catch (error) {
         this.error =
-          error.message + "in deleting company." || "Something went wrong!";
+          error.message + " in deleting department." || "Something went wrong!";
       }
     },
     cancel() {

@@ -6,7 +6,10 @@ export default {
   namespaced: true,
   state() {
     return {
-      isLoggedIn: true,
+      userId: null,
+      expiresAt: 0,
+      refreshToken: '',
+      token: ''
     };
   },
   mutations,

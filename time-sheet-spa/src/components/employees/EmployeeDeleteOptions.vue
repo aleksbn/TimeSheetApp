@@ -29,7 +29,7 @@ export default {
         this.$router.push(link);
       } catch (error) {
         this.error =
-          error.message + "in deleting employee." || "Something went wrong!";
+          error.message + " in deleting employee." || "Something went wrong!";
       }
     },
     cancel() {
