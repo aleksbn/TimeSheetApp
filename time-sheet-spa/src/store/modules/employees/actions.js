@@ -36,7 +36,12 @@ export default {
   async loadEmployeesFromCompany({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/employee/" + payload.comid,
+      "https://localhost:7059/api/employee/" +
+        payload.comid +
+        "?PageNumber=" +
+        payload.pageNumber +
+        "&PageSize=" +
+        payload.pageSize,
       {
         method: "GET",
         headers: {
@@ -52,25 +57,29 @@ export default {
       throw error;
     }
     const employees = [];
-    for (const key in data) {
+    for (const key in data.toReturn) {
       const employee = {
-        ID: data[key].id,
-        FirstName: data[key].firstName,
-        LastName: data[key].lastName,
-        JobTitle: data[key].jobTitle,
-        Degree: data[key].degree,
-        Address: data[key].address,
-        Email: data[key].email,
-        Phone: data[key].phone,
-        DateOfBirth: data[key].dateOfBirth,
-        StartOfEmployment: data[key].startOfEmployment,
-        HourlyRate: data[key].hourlyRate,
-        DepartmentId: data[key].departmentId,
-        Department: data[key].department,
+        ID: data.toReturn[key].id,
+        FirstName: data.toReturn[key].firstName,
+        LastName: data.toReturn[key].lastName,
+        JobTitle: data.toReturn[key].jobTitle,
+        Degree: data.toReturn[key].degree,
+        Address: data.toReturn[key].address,
+        Email: data.toReturn[key].email,
+        Phone: data.toReturn[key].phone,
+        DateOfBirth: data.toReturn[key].dateOfBirth,
+        StartOfEmployment: data.toReturn[key].startOfEmployment,
+        HourlyRate: data.toReturn[key].hourlyRate,
+        DepartmentId: data.toReturn[key].departmentId,
+        Department: data.toReturn[key].department,
       };
       employees.push(employee);
     }
-    commit("setEmployees", employees);
+    
+    commit("setEmployees", {
+      employees: employees,
+      emCount: data.count,
+    });
   },
 
   async loadEmployeesFromDepartment(
@@ -82,7 +91,11 @@ export default {
       "https://localhost:7059/api/employee/" +
         payload.comid +
         "/" +
-        payload.depid,
+        payload.depid +
+        "?PageNumber=" +
+        payload.pageNumber +
+        "&PageSize=" +
+        payload.pageSize,
       {
         method: "GET",
         headers: {
@@ -97,27 +110,29 @@ export default {
       );
       throw error;
     }
-
     const employees = [];
-    for (const key in data) {
+    for (const key in data.toReturn) {
       const employee = {
-        ID: data[key].id,
-        FirstName: data[key].firstName,
-        LastName: data[key].lastName,
-        JobTitle: data[key].jobTitle,
-        Degree: data[key].degree,
-        Address: data[key].address,
-        Phone: data[key].phone,
-        DateOfBirth: data[key].dateOfBirth,
-        StartOfEmployment: data[key].startOfEmployment,
-        HourlyRate: data[key].hourlyRate,
-        DepartmentId: data[key].departmentId,
-        Department: data[key].department,
+        ID: data.toReturn[key].id,
+        FirstName: data.toReturn[key].firstName,
+        LastName: data.toReturn[key].lastName,
+        JobTitle: data.toReturn[key].jobTitle,
+        Degree: data.toReturn[key].degree,
+        Address: data.toReturn[key].address,
+        Email: data.toReturn[key].email,
+        Phone: data.toReturn[key].phone,
+        DateOfBirth: data.toReturn[key].dateOfBirth,
+        StartOfEmployment: data.toReturn[key].startOfEmployment,
+        HourlyRate: data.toReturn[key].hourlyRate,
+        DepartmentId: data.toReturn[key].departmentId,
+        Department: data.toReturn[key].department,
       };
       employees.push(employee);
     }
-
-    commit("setEmployees", employees);
+    commit("setEmployees", {
+      employees: employees,
+      emCount: data.count,
+    });
   },
 
   async addEmployee({ dispatch, rootGetters }, payload) {

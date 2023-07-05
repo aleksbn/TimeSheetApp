@@ -14,6 +14,19 @@ namespace TimeSheet_Backend.Models.DTOs
         public string Role { get; set; }
     }
 
+    public class GetUserDTO
+    {
+        [Required]
+        [StringLength(maximumLength: 50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters long")]
+        public string FirstName { get; set; }
+        [Required]
+        [StringLength(maximumLength: 50, MinimumLength = 2, ErrorMessage = "Last Name must be between 2 and 50 characters long")]
+        public string LastName { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+
     public class LoginUserDTO
     {
         [Required]
@@ -22,12 +35,6 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         [RegularExpression("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,50}$")]
         public string Password { get; set; }
-    }
-
-    public class ManagerDTO
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 
     public class EditUserDTO

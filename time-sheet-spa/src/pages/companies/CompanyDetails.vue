@@ -23,6 +23,8 @@
       :Country="company.Country"
       :Email="company.Email"
       :Mode="this.EditMode"
+      :StartTime="company.StartTime"
+      :EndTime="company.EndTime"
     ></company-form>
     <base-card v-else>
       <h3>There are some problems with loading of this company.</h3>

@@ -5,6 +5,7 @@
     <h4>
       <b>{{ Email }}</b>
     </h4>
+    <h4>{{ StartTime }} - {{ EndTime }}</h4>
     <div class="actions">
       <base-button link :to="detailsLink">Details</base-button>
     </div>
@@ -13,7 +14,7 @@
 
 <script>
 export default {
-  props: ["ID", "Name", "Address", "City", "Country", "Email"],
+  props: ["ID", "Name", "Address", "City", "Country", "Email", "StartTime", "EndTime"],
   computed: {
     fullAddress() {
       return this.Address + ", " + this.City + ", " + this.Country;

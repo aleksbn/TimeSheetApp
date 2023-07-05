@@ -18,7 +18,33 @@ export default {
     }
   },
 
-  async editUser(_1, payload) {
+  async getUser({ commit, dispatch, rootGetters }) {
+    await dispatch("auth/checkTokens", null, { root: true });
+    const res = await fetch(
+      "https://localhost:7059/api/Authentication/get-user",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        },
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) {
+      const error = new Error(data.message || "Failed to load company data!");
+      throw error;
+    }
+    var user = {
+      FirstName: data.firstName,
+      LastName: data.lastName,
+      Email: data.email,
+    };
+
+    commit("setCurrentUser", user);
+  },
+
+  async editUser({ dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
       "https://localhost:7059/api/Authentication/edit-user",
       {
@@ -26,6 +52,7 @@ export default {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
         },
         body: JSON.stringify(payload),
       }
@@ -38,7 +65,7 @@ export default {
   },
 
   setUserData(context, payload) {
-    context.commit('setUserData', payload);
+    context.commit("setUserData", payload);
   },
 
   async login(context, payload) {
@@ -60,7 +87,7 @@ export default {
       const error = new Error(res.message || "Failed to update user data!");
       throw error;
     }
-    context.commit('setUserLoginData', data);
+    context.commit("setUserLoginData", data);
     localStorage.setItem("userId", data.id);
     localStorage.setItem("token", data.tokenValue.token);
     localStorage.setItem("refreshToken", data.tokenValue.refreshToken);
@@ -71,8 +98,11 @@ export default {
     context.commit("logout");
   },
 
-  async checkTokens({ commit, getters}) {
-    if (getters.userId !== null && (new Date(getters.expiresAt).getTime() + 120000) <= Date.now()) {
+  async checkTokens({ commit, getters }) {
+    if (
+      getters.userId !== null &&
+      new Date(getters.expiresAt).getTime() + 120000 <= Date.now()
+    ) {
       const res = await fetch(
         "https://localhost:7059/api/authentication/refresh-token",
         {
@@ -84,13 +114,13 @@ export default {
           body: JSON.stringify(getters.token),
         }
       );
-      
+
       const data = await res.json();
       if (!res.ok) {
         const error = new Error(data.message || "Failed to refresh token!");
         throw error;
       }
-      
+
       commit("setToken", data);
     }
   },

@@ -2,14 +2,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <header>
     <nav>
-      <h1><router-link to="/addcompany">Make your company</router-link></h1>
+      <h1><router-link to="/about">About</router-link></h1>
       <input id="menu-toggle" type="checkbox" />
       <label class="menu-button-container" for="menu-toggle">
         <div class="menu-button"></div>
       </label>
       <ul class="menu">
-        <li><router-link to="/about">About</router-link></li>
-        <li><router-link to="/companies">All Companies</router-link></li>
+        <li v-if="isLoggedIn"><router-link to="/companies">All Companies</router-link></li>
         <li v-if="hasComId && isLoggedIn">
           <router-link :to="depIdLink">All Departments</router-link>
         </li>

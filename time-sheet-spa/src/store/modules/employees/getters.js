@@ -11,4 +11,7 @@ export default {
   hasEmployee(state) {
     return !!state.employee;
   },
+  numberOfEmployees(state) {
+    return state.emCount;
+  }
 };

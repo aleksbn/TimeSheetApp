@@ -5,15 +5,9 @@ import getters from "./getters.js";
 export default {
   namespaced: true,
   state() {
-    return {
-      userId: null,
-      expiresAt: 0,
-      refreshToken: '',
-      token: '',
-      currentUser: null
-    };
+    return {};
   },
   mutations,
-  actions,
   getters,
+  actions,
 };

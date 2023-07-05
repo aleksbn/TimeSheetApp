@@ -19,6 +19,8 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         [EmailAddress(ErrorMessage = "You must enter an email address in a correct format.")]
         public string Email { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
     }
 
     public class CompanyDTO: CreateCompanyDTO
@@ -26,7 +28,6 @@ namespace TimeSheet_Backend.Models.DTOs
         [Required]
         public int ID { get; set; }
         public string CompanyManagerId { get; set; }
-        public virtual ManagerDTO CompanyManager { get; set; }
         public virtual IList<EmployeeDTO> Employees { get; set; }
         public virtual IList<DepartmentDTO> Departments { get; set; }
     }

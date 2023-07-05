@@ -33,6 +33,32 @@
           @change="setFilter"
         />
       </div>
+      <br />
+      <br />
+      <div style="text-align: center">
+        <div class="form-control">
+          <label
+            >Page number <span style="margin: 0 20px">/</span> Page size</label
+          >
+          <select name="pageNumber" id="pageNumber" @change="setFilter">
+            <option
+              v-for="number in pageSizeNumbers"
+              :key="number"
+              :value="number"
+            >
+              {{ number + 1 }}
+            </option>
+          </select>
+        </div>
+        /
+        <div class="form-control">
+          <select name="pageSize" id="pageSize" @change="setFilter">
+            <option v-for="number in pageSize" :key="number" :value="number">
+              {{ number }}
+            </option>
+          </select>
+        </div>
+      </div>
     </form>
   </base-card>
 </template>
@@ -42,14 +68,28 @@ export default {
   emits: ["change-filter"],
   data() {
     return {
+      pageNumbers: [],
+      pageSize: [10, 20, 50, 100],
+      numberOfRecords: 0,
       filters: {
         id: "",
         firstName: "",
         lastName: "",
         department: "",
         hourlyRate: 0,
+        pageNumber: 0,
+        pageSize: 10,
       },
     };
+  },
+  computed: {
+    pageSizeNumbers() {
+      return this.pageNumbers;
+    },
+  },
+  async created() {
+    this.numberOfRecords = await this.$store.getters["employees/numberOfEmployees"];
+    this.loadSelect();
   },
   methods: {
     setFilter(event) {
@@ -60,12 +100,25 @@ export default {
           value = 0;
         }
       }
+      if(inputId === "pageSize" || inputId === "pageNumber") {
+        value = parseInt(value);
+      }
+
       const updatedFilter = {
         ...this.filters,
         [inputId]: value,
       };
+      if(inputId === "pageSize") {
+        this.filters.pageNumber = 0;
+      }
       this.filters = updatedFilter;
       this.$emit("change-filter", this.filters);
+    },
+    loadSelect() {
+      this.pageNumbers = [];
+      for (let i = 0; i < this.numberOfRecords; i += this.filters.pageSize) {
+        this.pageNumbers.push(i / this.filters.pageSize);
+      }
     },
   },
 };
@@ -77,11 +130,18 @@ export default {
 }
 input {
   height: 2em;
-  border-radius: 5px;
+  border-radius: 15px;
   width: 12%;
 }
 label {
   padding: 10px;
   width: 7%;
+}
+select {
+  width: 12%;
+  height: 2.2em;
+  border-radius: 15px;
+  text-align: center;
+  margin: 0 20px;
 }
 </style>

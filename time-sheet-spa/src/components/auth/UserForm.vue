@@ -96,7 +96,8 @@
         "
       >
         Password and its corresponding confirmation field must match and be at
-        least 8 characters long, containing letters, numbers and special signs.
+        least 8 characters long, containing letters, numbers and at least one
+        special sign.
       </p>
       <p
         class="invalid"
@@ -125,7 +126,7 @@
 
 <script>
 export default {
-  props: ["Mode", "FirstName", "LastName", "Email", "Password"],
+  props: ["Mode", "FirstName", "LastName", "Email"],
   data() {
     return {
       formIsValid: true,
@@ -212,52 +213,62 @@ export default {
         this.uLastName.isValid = false;
         this.formIsValid = false;
       }
+
       const regexEmail =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-      if (
-        this.Mode == "new" &&
-        (!regexEmail.test(this.uEmail.val) ||
-          this.uEmail.val !== this.uEmailConfirm.val)
-      ) {
-        this.uEmail.isValid = false;
-        this.uEmailConfirm.isValid = false;
-        this.formIsValid = false;
-      }
-      if (this.Mode == "old" && !regexEmail.test(this.uEmail.val)) {
-        this.uEmail.isValid = false;
-        this.formIsValid = false;
-      }
-      if (this.Mode == "old" && !regexEmail.test(this.uEmailConfirm.val)) {
-        this.uEmailConfirm.isValid = false;
-        this.formIsValid = false;
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/i;
+      if (this.Mode === "new") {
+        if (
+          !regexEmail.test(this.uEmail.val) ||
+          this.uEmail.val !== this.uEmailConfirm.val
+        ) {
+          this.uEmail.isValid = false;
+          this.uEmailConfirm.isValid = false;
+          this.formIsValid = false;
+        }
+      } else {
+        if (!regexEmail.test(this.uEmail.val)) {
+          this.uEmail.isValid = false;
+          this.formIsValid = false;
+        }
+        if (this.uEmailConfirm.val !== "") {
+          if (!regexEmail.test(this.uEmailConfirm.val)) {
+            this.uEmailConfirm.isValid = false;
+            this.formIsValid = false;
+          }
+        }
       }
 
-      const regexPass =
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,50}$/gm;
-      if (
-        this.Mode === "new" &&
-        (!regexPass.test(this.uPassword.val) ||
-          this.uPassword.val !== this.uPasswordConfirm.val)
-      ) {
-        this.uPassword.isValid = false;
-        this.uPasswordConfirm.isValid = false;
-        this.formIsValid = false;
-      }
-      if (this.Mode === "old" && !regexPass.test(this.uPassword.val)) {
-        this.uPassword.isValid = false;
-        this.formIsValid = false;
-      }
-      if (this.Mode === "old" && !regexPass.test(this.uPasswordConfirm.val)) {
-        this.uPasswordConfirm.isValid = false;
-        this.formIsValid = false;
+      const regexPass = new RegExp(
+        "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
+      );
+      if (this.Mode === "new") {
+        if (
+          !regexPass.test(this.uPassword.val) ||
+          this.uPassword.val !== this.uPasswordConfirm.val
+        ) {
+          this.uPassword.isValid = false;
+          this.uPasswordConfirm.isValid = false;
+          this.formIsValid = false;
+        }
+      } else {
+        if (!regexPass.test(this.uPassword.val)) {
+          this.uPassword.isValid = false;
+          this.formIsValid = false;
+        }
+        if (this.uPasswordConfirm.val !== "") {
+          if (!regexPass.test(this.uPasswordConfirm.val)) {
+            this.uPasswordConfirm.isValid = false;
+            this.formIsValid = false;
+          }
+        }
       }
     },
   },
   mounted() {
     if (this.Mode === "old") {
-      this.$refs.FirstName = this.FirstName;
-      this.$refs.LastName = this.LastName;
-      this.$refs.Email = this.Email;
+      this.$refs.FirstName.value = this.FirstName;
+      this.$refs.LastName.value = this.LastName;
+      this.$refs.Email.value = this.Email;
     }
   },
 };

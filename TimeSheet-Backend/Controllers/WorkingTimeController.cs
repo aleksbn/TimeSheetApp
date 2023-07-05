@@ -142,8 +142,19 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest("Input all required fields in a correct format!");
             }
 
+            var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll();
+
             try
             {
+                if(workingTimes.ToList().FindIndex(wt => wt.EmployeeID == workingTimeDTO.EmployeeID && wt.Date == workingTimeDTO.Date) >= 0)
+                {
+                    return BadRequest("That employee has already been registered on that particular date.");
+                }
+                if(workingTimeDTO.Date.DayOfWeek == DayOfWeek.Sunday || workingTimeDTO.Date.DayOfWeek == DayOfWeek.Saturday) 
+                {
+                    return BadRequest("You cannot add working day on a Saturday or Sunday.");
+                }
+
                 var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTimeDTO.EmployeeID);
                 var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
                 var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
@@ -179,8 +190,8 @@ namespace TimeSheet_Backend.Controllers
                 List<Employee> employees = new(allEmployees);
                 List<WorkingTime> workingTimes = new();
                 DateTime currentDate = DateTime.Today;
-                TimeSpan? startTime = company.StartTime == null ? company.StartTime : new TimeSpan(8,0,0);
-                TimeSpan? endTime = company.EndTime == null ? company.EndTime : new TimeSpan(8, 0, 0);
+                TimeSpan startTime = company.StartTime;
+                TimeSpan endTime = company.EndTime;
 
                 if (date != null)
                 {
@@ -207,8 +218,8 @@ namespace TimeSheet_Backend.Controllers
                     workingTimes.Add(new WorkingTime()
                     {
                         Date = currentDate,
-                        StartTime = startTime.Value,
-                        EndTime = endTime.Value,
+                        StartTime = startTime,
+                        EndTime = endTime,
                         EmployeeID = employee.ID
                     });
                 }
@@ -230,8 +241,19 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest("Input all required fields in a correct format!");
             }
 
+            var workingTimes = await _unitOfWork.WorkingTimeRepository.GetAll();
+
             try
             {
+                if (workingTimes.ToList().FindIndex(wt => wt.EmployeeID == workingTimeDTO.EmployeeID && wt.Date == workingTimeDTO.Date && wt.ID != workingTimeDTO.ID) >= 0)
+                {
+                    return BadRequest("That employee has already been registered on that particular date.");
+                }
+                if (workingTimeDTO.Date.DayOfWeek == DayOfWeek.Sunday || workingTimeDTO.Date.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    return BadRequest("You cannot add working day on a Saturday or Sunday.");
+                }
+
                 var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTimeDTO.EmployeeID);
                 var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
                 var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);

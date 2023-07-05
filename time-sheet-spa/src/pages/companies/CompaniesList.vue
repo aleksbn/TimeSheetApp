@@ -24,11 +24,13 @@
             :City="company.City"
             :Country="company.Country"
             :Email="company.Email"
+            :StartTime="company.StartTime"
+            :EndTime="company.EndTime"
           ></company-item>
         </ul>
         <h3 v-else>
           There are no companies for this user.
-          <router-link to="/">Add one!</router-link>
+          <router-link to="/addcompany">Add one!</router-link>
         </h3>
       </base-card>
     </section>

@@ -47,13 +47,33 @@
           />
         </div>
         <div class="form-control" :class="{ invalid: !comEmail.isValid }">
-          <label for="cEmail">Email:</label>
+          <label for="Email">Email:</label>
           <input
             type="text"
             name="Email"
             ref="comEmail"
             :disabled="!editMode"
             @blur="clearValidity('comEmail')"
+          />
+        </div>
+        <div class="form-control" :class="{ invalid: !comStartTime.isValid }">
+          <label for="StartTime">Start time:</label>
+          <input
+            type="time"
+            name="StartTime"
+            ref="comStartTime"
+            :disabled="!editMode"
+            @blur="clearValidity('comStartTime')"
+          />
+        </div>
+        <div class="form-control" :class="{ invalid: !comEndTime.isValid }">
+          <label for="EndTime">End time:</label>
+          <input
+            type="time"
+            name="EndTime"
+            ref="comEndTime"
+            :disabled="!editMode"
+            @blur="clearValidity('comEndTime')"
           />
         </div>
         <p v-if="!formIsValid">
@@ -104,7 +124,7 @@
 
 <script>
 export default {
-  props: ["ID", "Name", "Address", "City", "Country", "Email", "Mode"],
+  props: ["ID", "Name", "Address", "City", "Country", "Email", "Mode", "StartTime", "EndTime"],
   emits: ["save-data", "delete-company"],
   data() {
     return {
@@ -127,6 +147,14 @@ export default {
         val: "",
       },
       comEmail: {
+        isValid: true,
+        val: "",
+      },
+      comStartTime: {
+        isValid: true,
+        val: "",
+      },
+      comEndTime: {
         isValid: true,
         val: "",
       },
@@ -160,6 +188,14 @@ export default {
         this.comEmail.isValid = false;
         this.formIsValid = false;
       }
+      if (this.comStartTime.val === "" && this.comStartTime.val < this.comEndTime.val) {
+        this.comStartTime.isValid = false;
+        this.formIsValid = false;
+      }
+      if (this.comEndTime.val === ""  && this.comStartTime.val < this.comEndTime.val) {
+        this.comEndTime.isValid = false;
+        this.formIsValid = false;
+      }
     },
 
     submitForm() {
@@ -173,6 +209,8 @@ export default {
       this.comCity.val = this.$refs.comCity.value.trim();
       this.comCountry.val = this.$refs.comCountry.value.trim();
       this.comEmail.val = this.$refs.comEmail.value.trim();
+      this.comStartTime.val = this.$refs.comStartTime.value;
+      this.comEndTime.val = this.$refs.comEndTime.value;
 
       this.validateForm();
 
@@ -186,6 +224,8 @@ export default {
         comCity: this.comCity.val,
         comCountry: this.comCountry.val,
         comEmail: this.comEmail.val,
+        comStartTime: this.comStartTime.val,
+        comEndTime: this.comEndTime.val
       };
 
       if (this.Mode === "old") {
@@ -229,6 +269,8 @@ export default {
       this.$refs.comName.value = this.Name;
       this.$refs.comCountry.value = this.Country;
       this.$refs.comEmail.value = this.Email;
+      this.$refs.comStartTime.value = this.StartTime;
+      this.$refs.comEndTime.value = this.EndTime;
     }
   },
 };

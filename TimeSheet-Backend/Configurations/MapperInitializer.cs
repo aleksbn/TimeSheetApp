@@ -18,7 +18,7 @@ namespace TimeSheet_Backend.Configurations
             CreateMap<WorkingTime, CreateWorkingTimeDTO>().ReverseMap();
             CreateMap<AppUser, RegisterUserDTO>().ReverseMap();
             CreateMap<AppUser, LoginUserDTO>().ReverseMap();
-            CreateMap<AppUser, ManagerDTO>().ReverseMap();
+            CreateMap<AppUser, GetUserDTO>().ReverseMap();
         }
     }
 }

@@ -10,6 +10,8 @@ import AddUser from "./pages/auth/AddUser.vue";
 import AuthPage from "./pages/auth/AuthPage.vue";
 import Companies from "./pages/companies/CompaniesList.vue";
 import CompanyDetails from "./pages/companies/CompanyDetails.vue";
+import GenerateDataPage from "./pages/generate/GenerateDataPage.vue";
+import EditUserPage from "./pages/auth/EditUser.vue";
 import Employees from "./pages/employees/EmployeesList.vue";
 import EmployeeDetails from "./pages/employees/EmployeeDetails.vue";
 import Departments from "./pages/departments/DepartmentsList.vue";
@@ -84,7 +86,18 @@ const router = createRouter({
       props: true,
       meta: { requiresAuth: true },
     },
+    {
+      path: "/generate/:comid",
+      component: GenerateDataPage,
+      props: true,
+      meta: { requiresAuth: true },
+    },
     { path: "/login", component: LoginPage, meta: { requiresUnauth: true } },
+    {
+      path: "/editprofile",
+      component: EditUserPage,
+      meta: { requiresAuth: true },
+    },
     { path: "/logout", component: LogoutPage, meta: { requiresAuth: true } },
     { path: "/register/", component: AddUser, meta: { requiresUnauth: true } },
     {

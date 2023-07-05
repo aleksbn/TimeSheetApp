@@ -52,6 +52,14 @@ namespace TimeSheet_Backend.Controllers
             return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
+        [Authorize]
+        [HttpGet("get-user")]
+        public async Task<IActionResult> GetUser()
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            return Ok(_mapper.Map<GetUserDTO>(user));
+        }
+
         [HttpPost("register-user")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO userDTO)
         {
@@ -61,10 +69,14 @@ namespace TimeSheet_Backend.Controllers
             }
 
             var userExists = await _userManager.FindByEmailAsync(userDTO.Email);
+            var employees = await _unitOfWork.EmployeeRepository.GetAll();
+            var employeeEmails = employees.Select(x => x.Email);
+            var companies = await _unitOfWork.CompanyRepository.GetAll();
+            var companyEmails = companies.Select(x => x.Email);
 
-            if (userExists != null)
+            if (userExists != null || employeeEmails.Contains(userDTO.Email) || companyEmails.Contains(userDTO.Email))
             {
-                return BadRequest($"The user {userDTO.Email} has already been used.");
+                return BadRequest($"The email {userDTO.Email} has already been used.");
             }
 
             AppUser appUser = (AppUser)_mapper.Map(userDTO, typeof(RegisterUserDTO), typeof(AppUser));
@@ -136,7 +148,12 @@ namespace TimeSheet_Backend.Controllers
             if (editUserDTO.NewEmail != null)
             {
                 var emailExists = await _userManager.FindByEmailAsync(editUserDTO.NewEmail);
-                if (emailExists != null)
+                var employees = await _unitOfWork.EmployeeRepository.GetAll();
+                var employeeEmails = employees.Select(x => x.Email);
+                var companies = await _unitOfWork.CompanyRepository.GetAll();
+                var companyEmails = companies.Select(x => x.Email);
+
+                if (emailExists != null || employeeEmails.Contains(editUserDTO.NewEmail) || companyEmails.Contains(editUserDTO.NewEmail))
                 {
                     return BadRequest("There is a user with that email already. Pick another one.");
                 }
@@ -257,7 +274,7 @@ namespace TimeSheet_Backend.Controllers
 
             var rTokensFromDb = await _databaseContext.RefreshTokens.Where(rt => rt.UserId == user.Id).OrderByDescending(rt => rt.DateExpired).ToListAsync();
 
-            if (rTokensFromDb != null && rTokensFromDb[0].DateExpired <= DateTime.UtcNow)
+            if (rTokensFromDb.Count == 0 || rTokensFromDb[0].DateExpired <= DateTime.UtcNow)
             {
                 var refreshToken = new RefreshToken()
                 {

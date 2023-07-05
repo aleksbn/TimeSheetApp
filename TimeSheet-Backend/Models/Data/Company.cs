@@ -16,8 +16,8 @@ namespace TimeSheet_Backend.Models.Data
         public string Country { get; set; }
         [Required]
         public string Email { get; set; }
-        public TimeSpan? StartTime { get; set; }
-        public TimeSpan? EndTime { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
         [AllowNull]
         [ForeignKey(nameof(AppUser))]
         public string CompanyManagerId { get; set; }

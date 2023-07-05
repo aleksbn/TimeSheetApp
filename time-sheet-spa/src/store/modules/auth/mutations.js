@@ -23,6 +23,10 @@ export default {
     state.expiresAt = payload.expiresAt;
   },
 
+  setCurrentUser(state, payload) {
+    state.currentUser = payload;
+  },
+
   logout(state) {
     state.userId = null;
     state.token = "";

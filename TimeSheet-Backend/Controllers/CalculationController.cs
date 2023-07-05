@@ -41,7 +41,7 @@ namespace TimeSheet_Backend.Controllers
                 return Unauthorized("That company is not created by this user. You cannot read statistics about it.");
             }
 
-            var employeeList = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comid, null, new List<string>
+            var employeeList = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comid, e => e.OrderBy(em => em.DepartmentID), new List<string>
             {
                 "WorkingTimes", 
                 "Department"

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
 using TimeSheet_Backend.Warehouse;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TimeSheet_Backend.Controllers
 {
@@ -14,17 +16,19 @@ namespace TimeSheet_Backend.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
 
         private string GetUserId()
         {
             return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
-        public EmployeeController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public EmployeeController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         [HttpGet("{comId}/{depId}")]
@@ -42,7 +46,7 @@ namespace TimeSheet_Backend.Controllers
                     "WorkingTimes", "Department"
                 });
                 var toReturn = _mapper.Map<List<EmployeeDTO>>(employees.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
-                return Ok(toReturn);
+                return Ok(new { toReturn, employees.Count });
             }
             catch (Exception x)
             {
@@ -66,7 +70,7 @@ namespace TimeSheet_Backend.Controllers
                 });
 
                 var toReturn = _mapper.Map<List<EmployeeDTO>>(employees.Skip(requestParams.PageNumber * requestParams.PageSize).Take(requestParams.PageSize));
-                return Ok(toReturn);
+                return Ok(new { toReturn, employees.Count });
             }
             catch (Exception x)
             {
@@ -107,8 +111,18 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest("Input all required fields in a correct format!");
             }
 
+            var userExists = await _userManager.FindByIdAsync(GetUserId());
+            var employees = await _unitOfWork.EmployeeRepository.GetAll();
+            var employeeEmails = employees.Select(x => x.Email);
+            var companies = await _unitOfWork.CompanyRepository.GetAll();
+            var companyEmails = companies.Select(x => x.Email);
+
             try
             {
+                if (employeeDTO.Email == userExists.Email || employeeEmails.Contains(employeeDTO.Email) || companyEmails.Contains(employeeDTO.Email))
+                {
+                    return BadRequest($"The email {employeeDTO.Email} has already been used.");
+                }
                 var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == employeeDTO.DepartmentId);
                 var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
                 if (com == null || com.CompanyManagerId != GetUserId())
@@ -133,8 +147,19 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest("Input all required fields in a correct format!");
             }
 
+            var userExists = await _userManager.FindByIdAsync(GetUserId());
+            var employees = await _unitOfWork.EmployeeRepository.GetAll();
+            var employeeEmails = employees.Select(x => x.Email);
+            var companies = await _unitOfWork.CompanyRepository.GetAll();
+            var companyEmails = companies.Select(x => x.Email);
+
             try
             {
+                if (employeeDTO.Email == userExists.Email || employeeEmails.Contains(employeeDTO.Email) || companyEmails.Contains(employeeDTO.Email))
+                {
+                    return BadRequest($"The email {employeeDTO.Email} has already been used.");
+                }
+
                 var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == employeeDTO.DepartmentId);
                 var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
                 if (com == null || com.CompanyManagerId != GetUserId())
@@ -160,7 +185,7 @@ namespace TimeSheet_Backend.Controllers
             var employee = await _unitOfWork.EmployeeRepository.Get(e => e.ID == id);
             if (employee != null)
             {
-                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == employeeDTO.DepartmentId);
+                var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == employee.DepartmentID);
                 var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
                 if (com == null || com.CompanyManagerId != GetUserId())
                 {

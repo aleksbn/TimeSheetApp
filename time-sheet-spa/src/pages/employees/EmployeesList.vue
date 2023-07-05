@@ -1,10 +1,15 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
+    <base-dialog
+      :show="!!error"
+      title="An error occured"
+      @close="handleError"
+      :showClose="true"
+    >
       <p>{{ error }}</p>
     </base-dialog>
     <section>
-      <employee-filter @change-filter="setFilters"></employee-filter>
+      <employee-filter v-if="show" @change-filter="setFilters"></employee-filter>
     </section>
     <section>
       <base-card>
@@ -45,10 +50,15 @@
             :Department="employee.Department"
           ></employee-item>
         </table>
-        <h3 v-else>
+        <h3 v-else-if="hasDepartments">
           There are no employees.
-          <router-link to="/">Add one!</router-link>
+          <router-link to="/addemployee">Add one</router-link>, or
+          <router-link :to="generateLink"
+            >randomly generate both employees and their working
+            times!</router-link
+          >
         </h3>
+        <h3 v-else>You must <router-link to="/adddepartment">add department</router-link> before you add any employees.</h3>
       </base-card>
     </section>
   </div>
@@ -56,15 +66,23 @@
 
 <script>
 import EmployeeItem from "../../components/employees/EmployeeItem.vue";
-import EmployeeFilter from "../../components/employees/EmployeeFilter.vue";
+import { defineAsyncComponent } from "vue";
 export default {
   components: {
     EmployeeItem,
-    EmployeeFilter,
+    EmployeeFilter: defineAsyncComponent(() =>
+      import("../../components/employees/EmployeeFilter.vue")
+    ),
   },
   computed: {
     hasEmployees() {
       return !this.isLoading && this.$store.getters["employees/hasEmployees"];
+    },
+    hasDepartments() {
+      return !this.isLoading && this.$store.getters["departments/hasDepartments"];
+    },
+    generateLink() {
+      return "/generate/" + localStorage.getItem("comid");
     },
     filteredEmployees() {
       var employees = this.$store.getters["employees/employees"];
@@ -112,6 +130,11 @@ export default {
       return employees;
     },
   },
+  watch: {
+    activeFilters() {
+      this.refresh();
+    }
+  },
   data() {
     return {
       isLoading: false,
@@ -122,7 +145,10 @@ export default {
         lastName: "",
         department: "",
         hourlyRate: 0,
+        pageNumber: 0,
+        pageSize: 10,
       },
+      show: false,
     };
   },
   methods: {
@@ -135,13 +161,18 @@ export default {
         ) {
           await this.$store.dispatch("employees/loadEmployeesFromCompany", {
             comid: localStorage.getItem("comid"),
+            pageNumber: this.activeFilters.pageNumber,
+            pageSize: this.activeFilters.pageSize
           });
         } else {
           await this.$store.dispatch("employees/loadEmployeesFromDepartment", {
             comid: localStorage.getItem("comid"),
             depid: localStorage.getItem("depid"),
+            pageNumber: this.activeFilters.pageNumber,
+            pageSize: this.activeFilters.pageSize
           });
         }
+        this.show = true;
       } catch (error) {
         this.error =
           error.message + " in getting employees" || "Something went wrong!";

@@ -7,6 +7,7 @@ export default {
   state() {
     return {
       employees: [],
+      emCount: 0,
       employee: null,
     };
   },

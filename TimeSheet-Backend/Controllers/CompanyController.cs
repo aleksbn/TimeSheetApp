@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
@@ -16,17 +17,19 @@ namespace TimeSheet_Backend.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<AppUser> _userManager;
 
         private string GetUserId()
         {
             return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
-        public CompanyController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public CompanyController(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -68,8 +71,18 @@ namespace TimeSheet_Backend.Controllers
                 return BadRequest("Input all required fields in a correct format!");
             }
 
+            var userExists = await _userManager.FindByIdAsync(GetUserId());
+            var employees = await _unitOfWork.EmployeeRepository.GetAll();
+            var employeeEmails = employees.Select(x => x.Email);
+            var companies = await _unitOfWork.CompanyRepository.GetAll();
+            var companyEmails = companies.Select(x => x.Email);
+
             try
             {
+                if(company.Email == userExists.Email || employeeEmails.Contains(company.Email) || companyEmails.Contains(company.Email))
+                {
+                    return BadRequest($"The email {company.Email} has already been used.");
+                }
                 var toInsert = _mapper.Map<Company>(company);
                 toInsert.CompanyManagerId = GetUserId();
                 await _unitOfWork.CompanyRepository.Insert(toInsert);
@@ -96,6 +109,17 @@ namespace TimeSheet_Backend.Controllers
                 {
                     return Unauthorized("That company is not created by this user. You cannot edit it.");
                 }
+
+                var userExists = await _userManager.FindByIdAsync(GetUserId());
+                var employees = await _unitOfWork.EmployeeRepository.GetAll();
+                var employeeEmails = employees.Select(x => x.Email);
+                var companies = await _unitOfWork.CompanyRepository.GetAll();
+                var companyEmails = companies.Select(x => x.Email);
+                if (editCompany.Email == userExists.Email || employeeEmails.Contains(editCompany.Email) || companyEmails.Contains(editCompany.Email))
+                {
+                    return BadRequest($"The email {editCompany.Email} has already been used.");
+                }
+
                 var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == editCompany.ID, null);
                 company = _mapper.Map<Company>(editCompany);
                 _unitOfWork.CompanyRepository.Update(company);

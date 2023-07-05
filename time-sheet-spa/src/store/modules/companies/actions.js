@@ -25,6 +25,8 @@ export default {
           Country: data[key].country,
           Email: data[key].email,
           CompanyManagerId: data[key].companyManagerId,
+          StartTime: data[key].startTime,
+          EndTime: data[key].endTime
         };
         companies.push(com);
       }
@@ -58,6 +60,8 @@ export default {
       Country: data.country,
       Email: data.email,
       CompanyManagerId: data.companyManagerId,
+      StartTime: data.startTime,
+      EndTime: data.endTime
     };
     commit("setCompany", company);
   },
@@ -70,8 +74,10 @@ export default {
       City: payload.comCity,
       Country: payload.comCountry,
       Email: payload.comEmail,
+      StartTime: payload.comStartTime,
+      EndTime: payload.comEndTime
     };
-
+    
     const res = await fetch("https://localhost:7059/api/company", {
       method: "POST",
       headers: {
@@ -97,6 +103,9 @@ export default {
       City: payload.comCity,
       Country: payload.comCountry,
       Email: payload.comEmail,
+      CompanyManagerId: localStorage.getItem("userId"),
+      StartTime: payload.comStartTime,
+      EndTime: payload.comEndTime
     };
 
     const res = await fetch("https://localhost:7059/api/company", {
