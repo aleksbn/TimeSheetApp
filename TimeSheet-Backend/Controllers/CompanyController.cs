@@ -114,8 +114,8 @@ namespace TimeSheet_Backend.Controllers
                 var employees = await _unitOfWork.EmployeeRepository.GetAll();
                 var employeeEmails = employees.Select(x => x.Email);
                 var companies = await _unitOfWork.CompanyRepository.GetAll();
-                var companyEmails = companies.Select(x => x.Email);
-                if (editCompany.Email == userExists.Email || employeeEmails.Contains(editCompany.Email) || companyEmails.Contains(editCompany.Email))
+                var companyEmailTaken = companies.Select(x => x.Email == editCompany.Email && x.ID != editCompany.ID);
+                if (editCompany.Email == userExists.Email || employeeEmails.Contains(editCompany.Email) || companyEmailTaken.Any(x => x))
                 {
                     return BadRequest($"The email {editCompany.Email} has already been used.");
                 }

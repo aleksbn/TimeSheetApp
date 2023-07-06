@@ -2,7 +2,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <header>
     <nav>
-      <h1><router-link to="/about">About</router-link></h1>
+      <h2><router-link to="/about">Readme</router-link></h2>
       <input id="menu-toggle" type="checkbox" />
       <label class="menu-button-container" for="menu-toggle">
         <div class="menu-button"></div>

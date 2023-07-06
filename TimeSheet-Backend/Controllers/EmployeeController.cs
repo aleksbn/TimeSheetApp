@@ -149,13 +149,13 @@ namespace TimeSheet_Backend.Controllers
 
             var userExists = await _userManager.FindByIdAsync(GetUserId());
             var employees = await _unitOfWork.EmployeeRepository.GetAll();
-            var employeeEmails = employees.Select(x => x.Email);
+            var employeeMailTaken = employees.Select(e => e.Email == employeeDTO.Email && e.ID != employeeDTO.ID);
             var companies = await _unitOfWork.CompanyRepository.GetAll();
             var companyEmails = companies.Select(x => x.Email);
 
             try
             {
-                if (employeeDTO.Email == userExists.Email || employeeEmails.Contains(employeeDTO.Email) || companyEmails.Contains(employeeDTO.Email))
+                if (employeeDTO.Email == userExists.Email || employeeMailTaken.Any(e => e) || companyEmails.Contains(employeeDTO.Email))
                 {
                     return BadRequest($"The email {employeeDTO.Email} has already been used.");
                 }

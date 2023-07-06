@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import store from "./store/index.js";
 
-import AboutUs from "./pages/AboutUs.vue";
+import AboutUs from "./pages/instructions/AboutUs.vue";
+import UserManual from "./pages/instructions/UserManual.vue";
+import InstallationManual from "./pages/instructions/InstallationManual.vue";
 import AddCompany from "./pages/companies/AddCompany.vue";
 import AddDepartment from "./pages/departments/AddDepartment.vue";
 import AddEmployee from "./pages/employees/AddEmployee.vue";
@@ -30,6 +32,14 @@ const router = createRouter({
       path: "/addcompany",
       component: AddCompany,
       meta: { requiresAuth: true },
+    },
+    {
+      path: "/installationmanual",
+      component: InstallationManual,
+    },
+    {
+      path: "/usermanual",
+      component: UserManual,
     },
     {
       path: "/adddepartment",
