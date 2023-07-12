@@ -8,151 +8,96 @@
         </div>
         <div class="form-control" :class="{ invalid: !empFirstName.isValid }">
           <label for="Firstame">First name:</label>
-          <input
-            type="text"
-            name="FirstName"
-            :disabled="!editMode"
-            ref="empFirstName"
-            @blur="clearValidity('empFirstName')"
-          />
+          <input type="text" name="FirstName" :disabled="!editMode" ref="empFirstName"
+            @blur="clearValidity('empFirstName')" />
         </div>
+        <p class="invalid" v-if="!empFirstName.isValid">
+          First name cannot be empty, must contain only letters, but it is allowed to use dashes (like in Marc-Anthony),
+          or single quotes (like in O'Neal).
+        </p>
         <div class="form-control" :class="{ invalid: !empLastName.isValid }">
           <label for="LastName">Last name:</label>
-          <input
-            type="text"
-            name="LastName"
-            :disabled="!editMode"
-            ref="empLastName"
-            @blur="clearValidity('empLastName')"
-          />
+          <input type="text" name="LastName" :disabled="!editMode" ref="empLastName"
+            @blur="clearValidity('empLastName')" />
         </div>
+        <p class="invalid" v-if="!empLastName.isValid">
+          Last name cannot be empty, must contain only letters, but it is allowed to use dashes (like in Schwartz-Muller),
+          or single quotes (like in O'Brian).
+        </p>
         <div class="form-control" :class="{ invalid: !empJobTitle.isValid }">
           <label for="JobTitle">Job title:</label>
-          <input
-            type="text"
-            name="JobTitle"
-            :disabled="!editMode"
-            ref="empJobTitle"
-            @blur="clearValidity('empJobTitle')"
-          />
+          <input type="text" name="JobTitle" :disabled="!editMode" ref="empJobTitle"
+            @blur="clearValidity('empJobTitle')" />
         </div>
+        <p class="invalid" v-if="!empJobTitle.isValid">
+          Job title cannot be empty, must contain only letters, but it is allowed to use dashes or single quotes.
+        </p>
         <div class="form-control" :class="{ invalid: !empDegree.isValid }">
           <label for="Degree">Degree:</label>
-          <input
-            type="text"
-            name="Degree"
-            :disabled="!editMode"
-            ref="empDegree"
-            @blur="clearValidity('empDegree')"
-          />
+          <input type="text" name="Degree" :disabled="!editMode" ref="empDegree" @blur="clearValidity('empDegree')" />
         </div>
-        <div
-          class="form-control"
-          :class="{ invalid: !empDepartmentId.isValid }"
-        >
+        <p class="invalid" v-if="!empDegree.isValid">
+          Degree cannot be empty, must contain only letters, but it is allowed to use dashes or single quotes.
+        </p>
+        <div class="form-control" :class="{ invalid: !empDepartmentId.isValid }">
           <label for="DepartmentId">Department:</label>
-          <select
-            name="DepartmentId"
-            id="DepartmentId"
-            :disabled="!editMode"
-            ref="empDepartmentId"
-            @blur="clearValidity('empDepartmentId')"
-          >
-            <option
-              v-for="dep in departments"
-              :key="dep.ID"
-              :value="dep.ID"
-              :selected="depId === dep.ID ? true : false"
-            >
+          <select name="DepartmentId" id="DepartmentId" :disabled="!editMode" ref="empDepartmentId"
+            @blur="clearValidity('empDepartmentId')">
+            <option v-for="dep in departments" :key="dep.ID" :value="dep.ID" :selected="depId === dep.ID ? true : false">
               {{ dep.Name }}
             </option>
           </select>
         </div>
         <div class="form-control" :class="{ invalid: !empEmail.isValid }">
           <label for="Email">Email:</label>
-          <input
-            type="text"
-            name="Email"
-            :disabled="!editMode"
-            ref="empEmail"
-            @blur="clearValidity('empEmail')"
-          />
+          <input type="text" name="Email" :disabled="!editMode" ref="empEmail" @blur="clearValidity('empEmail')" />
         </div>
         <div class="form-control" :class="{ invalid: !empAddress.isValid }">
           <label for="Address">Address:</label>
-          <input
-            type="text"
-            name="Address"
-            :disabled="!editMode"
-            ref="empAddress"
-            @blur="clearValidity('empAddress')"
-          />
+          <input type="text" name="Address" :disabled="!editMode" ref="empAddress" @blur="clearValidity('empAddress')" />
         </div>
+        <p class="invalid" v-if="this.Mode === 'new' && !empEmail.isValid">
+          Email and its corresponding confirmation field must match and be valid email addresses.
+        </p>
+        <p class="invalid" v-if="this.Mode === 'old' && !empEmail.isValid">
+          Both old and new emails must be valid email addresses.
+        </p>
         <div class="form-control" :class="{ invalid: !empPhone.isValid }">
           <label for="Phone">Phone:</label>
-          <input
-            type="text"
-            name="Phone"
-            :disabled="!editMode"
-            ref="empPhone"
-            @blur="clearValidity('empPhone')"
-          />
+          <input type="text" name="Phone" :disabled="!editMode" ref="empPhone" @blur="clearValidity('empPhone')" />
         </div>
+        <p class="invalid" v-if="!empPhone.isValid">
+          Phone number must be in +999999999 or 099999999 format.
+        </p>
         <div class="form-control" :class="{ invalid: !empDateOfBirth.isValid }">
           <label for="DateOfBirth">Date of birth:</label>
-          <input
-            type="text"
-            name="DateOfBirth"
-            :disabled="!editMode"
-            ref="empDateOfBirth"
-            @blur="clearValidity('empDateOfBirth')"
-          />
+          <input type="text" name="DateOfBirth" :disabled="!editMode" ref="empDateOfBirth"
+            @blur="clearValidity('empDateOfBirth')" />
         </div>
         <p v-if="!empDateOfBirth.isValid">
           The only available format is DD.MM.YYY! You must use that one!
         </p>
-        <div
-          class="form-control"
-          :class="{ invalid: !empStartOfEmployment.isValid }"
-        >
+        <div class="form-control" :class="{ invalid: !empStartOfEmployment.isValid }">
           <label for="StartOfEmployment">Start of employment:</label>
-          <input
-            type="text"
-            name="StartOfEmployment"
-            :disabled="!editMode"
-            ref="empStartOfEmployment"
-            @blur="clearValidity('empStartOfEmployment')"
-          />
+          <input type="text" name="StartOfEmployment" :disabled="!editMode" ref="empStartOfEmployment"
+            @blur="clearValidity('empStartOfEmployment')" />
         </div>
         <p v-if="!empStartOfEmployment.isValid">
           The only available format is DD.MM.YYY! You must use that one!
         </p>
         <div class="form-control" :class="{ invalid: !empHourlyRate.isValid }">
           <label for="HourlyRate">Hourly rate ($):</label>
-          <input
-            type="number"
-            step="0.01"
-            name="HourlyRate"
-            :disabled="!editMode"
-            ref="empHourlyRate"
-            @blur="clearValidity('empHourlyRate')"
-          />
+          <input type="number" step="0.01" name="HourlyRate" :disabled="!editMode" ref="empHourlyRate"
+            @blur="clearValidity('empHourlyRate')" />
         </div>
         <p v-if="!formIsValid">
           Please, fix the above errors and submit again.
         </p>
         <div>
           <base-button style="display: inline">{{ textForMode }}</base-button>
-          <base-button
-            v-if="this.ID"
-            @click="openWorkingTimes()"
-            style="display: inline"
-            :to="'/workingtimes/' + this.ID"
-            >Working times</base-button
-          >
-          <base-button :type="'button'" @click="deleteEmployee" style="display: inline"
-            >Delete this employee</base-button
-          >
+          <base-button v-if="this.ID" @click="openWorkingTimes()" style="display: inline"
+            :to="'/workingtimes/' + this.ID">Working times</base-button>
+          <base-button :type="'button'" @click="deleteEmployee" style="display: inline">Delete this employee</base-button>
         </div>
       </form>
     </base-card>
@@ -161,6 +106,7 @@
 
 <script>
 import moment from "moment";
+import DataCheckers from "@/data-checkers";
 export default {
   emits: ["save-data", "delete-employee"],
   props: [
@@ -231,6 +177,9 @@ export default {
     };
   },
   methods: {
+    handleError() {
+      this.error = null;
+    },
     clearValidity(input) {
       this[input].isValid = true;
     },
@@ -240,16 +189,16 @@ export default {
         return;
       }
 
-      this.empAddress.val = this.$refs.empAddress.value;
+      this.empAddress.val = this.$refs.empAddress.value.trim();
       this.empDateOfBirth.val = this.$refs.empDateOfBirth.value;
-      this.empDegree.val = this.$refs.empDegree.value;
+      this.empDegree.val = this.$refs.empDegree.value.trim();
       this.empDepartmentId.val = this.$refs.empDepartmentId.value;
-      this.empEmail.val = this.$refs.empEmail.value;
-      this.empFirstName.val = this.$refs.empFirstName.value;
+      this.empEmail.val = this.$refs.empEmail.value.trim();
+      this.empFirstName.val = this.$refs.empFirstName.value.trim();
       this.empHourlyRate.val = this.$refs.empHourlyRate.value;
-      this.empJobTitle.val = this.$refs.empJobTitle.value;
-      this.empLastName.val = this.$refs.empLastName.value;
-      this.empPhone.val = this.$refs.empPhone.value;
+      this.empJobTitle.val = this.$refs.empJobTitle.value.trim();
+      this.empLastName.val = this.$refs.empLastName.value.trim();
+      this.empPhone.val = this.$refs.empPhone.value.trim();
       this.empStartOfEmployment.val = this.$refs.empStartOfEmployment.value;
 
       this.validateForm();
@@ -277,41 +226,39 @@ export default {
           empId: this.ID,
         };
       }
-      
+
       this.$emit("save-data", formData);
     },
     validateForm() {
       this.formIsValid = true;
-      if (this.empFirstName.val === "") {
+      if (!DataCheckers.checkPersonName(this.empFirstName.val)) {
         this.empFirstName.isValid = false;
         this.formIsValid = false;
       }
-      if (this.empLastName.val === "") {
+      if (!DataCheckers.checkPersonName(this.empLastName.val)) {
         this.empLastName.isValid = false;
         this.formIsValid = false;
       }
-      if (this.empJobTitle.val === "") {
+      if (!DataCheckers.checkPersonName(this.empJobTitle.val)) {
         this.empJobTitle.isValid = false;
         this.formIsValid = false;
       }
-      const regexExp =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-      if (this.empEmail.val === "" || !regexExp.test(this.empEmail.val)) {
+      if (!DataCheckers.checkEmail(this.empEmail.val)) {
         this.empEmail.isValid = false;
         this.formIsValid = false;
       }
-      if (this.empAddress.val === "") {
+      if (this.empAddress.val.length < 5) {
         this.empAddress.isValid = false;
         this.formIsValid = false;
       }
       if (
         this.empDateOfBirth.val === "" ||
-        !moment(this.empDateOfBirth.val, "DD.MM.YYYY", true).isValid()
+        !DataCheckers.checkDate(this.empDateOfBirth.val)
       ) {
         this.empDateOfBirth.isValid = false;
         this.formIsValid = false;
       }
-      if (this.empDegree.val === "") {
+      if (!DataCheckers.checkDegree(this.empDegree.val)) {
         this.empDegree.isValid = false;
         this.formIsValid = false;
       }
@@ -322,13 +269,13 @@ export default {
         this.empHourlyRate.isValid = false;
         this.formIsValid = false;
       }
-      if (this.empPhone.val.trim().length < 9) {
+      if (!DataCheckers.checkPhone(this.empPhone.val)) {
         this.empPhone.isValid = false;
         this.formIsValid = false;
       }
       if (
         this.empStartOfEmployment.val === "" ||
-        !moment(this.empStartOfEmployment.val, "DD.MM.YYYY", true).isValid()
+        !DataCheckers.checkDate(this.empStartOfEmployment.val)
       ) {
         this.empStartOfEmployment.isValid = false;
         this.formIsValid = false;
@@ -436,6 +383,7 @@ h3 {
 .invalid input {
   border: 1px solid red;
 }
+
 p {
   font-weight: bold;
   font-size: large;

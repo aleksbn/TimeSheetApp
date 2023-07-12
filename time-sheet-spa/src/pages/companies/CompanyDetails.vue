@@ -1,43 +1,20 @@
 <template>
   <div>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
       <base-spinner></base-spinner>
     </div>
-    <company-form
-      v-else-if="hasCompany"
-      @save-data="saveData"
-      @delete-company="deleteCompany"
-      :key="company.ID"
-      :ID="company.ID"
-      :Name="company.Name"
-      :Address="company.Address"
-      :City="company.City"
-      :Country="company.Country"
-      :Email="company.Email"
-      :Mode="this.EditMode"
-      :StartTime="company.StartTime"
-      :EndTime="company.EndTime"
-    ></company-form>
+    <company-form v-if="hasCompany" @save-data="saveData" @delete-company="deleteCompany" :key="company.ID"
+      :ID="company.ID" :Name="company.Name" :Address="company.Address" :City="company.City" :Country="company.Country"
+      :Email="company.Email" :Mode="this.EditMode" :StartTime="company.StartTime"
+      :EndTime="company.EndTime"></company-form>
     <base-card v-else>
       <h3>There are some problems with loading of this company.</h3>
     </base-card>
-    <base-dialog
-      :showClose="false"
-      fixed
-      title="Select some delete options"
-      :show="deleting"
-    >
-      <company-delete-options
-        @cancel="cancelDeletion"
-      ></company-delete-options>
+    <base-dialog :showClose="false" fixed title="Select some delete options" :show="deleting">
+      <company-delete-options @cancel="cancelDeletion"></company-delete-options>
     </base-dialog>
   </div>
 </template>
@@ -63,8 +40,14 @@ export default {
   },
   methods: {
     async saveData(data) {
-      await this.$store.dispatch("companies/editCompany", data);
-      this.$router.push("/companies");
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch("companies/editCompany", data);
+        this.$router.push("/companies");
+      } catch (error) {
+        this.error = error;
+      }
+      this.isLoading = false;
     },
     cancelDeletion() {
       this.deleting = false;

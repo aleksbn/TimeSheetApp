@@ -12,7 +12,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load employee data!");
+      const error = new Error(data || "Failed to load employee data!");
       throw error;
     }
 
@@ -35,6 +35,7 @@ export default {
 
   async loadEmployeesFromCompany({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
+    console.log(payload);
     const res = await fetch(
       "https://localhost:7059/api/employee/" +
         payload.comid +
@@ -51,9 +52,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(
-        data.message || "Failed to load employees from company!"
-      );
+      const error = new Error(data || "Failed to load employees from company!");
       throw error;
     }
     const employees = [];
@@ -75,7 +74,7 @@ export default {
       };
       employees.push(employee);
     }
-    
+
     commit("setEmployees", {
       employees: employees,
       emCount: data.count,
@@ -106,7 +105,7 @@ export default {
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(
-        data.message || "Failed to load employees from department!"
+        data || "Failed to load employees from department!"
       );
       throw error;
     }
@@ -161,8 +160,9 @@ export default {
       body: JSON.stringify(emp),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to add an employee!");
+      const error = new Error(data || "Failed to add an employee!");
       throw error;
     }
   },
@@ -194,8 +194,9 @@ export default {
       body: JSON.stringify(emp),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to edit employee!");
+      const error = new Error(data || "Failed to edit employee!");
       throw error;
     }
   },
@@ -214,8 +215,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to delete employee!");
+      const error = new Error(data || "Failed to delete employee!");
       throw error;
     }
   },

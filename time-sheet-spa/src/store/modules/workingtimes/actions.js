@@ -18,7 +18,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load working times!");
+      const error = new Error(data || "Failed to load working times!");
       throw error;
     }
 
@@ -54,9 +54,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(
-        data.message || "Failed to load specific working time!"
-      );
+      const error = new Error(data || "Failed to load specific working time!");
       throw error;
     }
     const wt = {
@@ -89,7 +87,7 @@ export default {
     });
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to add working time!");
+      const error = new Error(data || "Failed to add working time!");
       throw error;
     }
   },
@@ -108,8 +106,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to delete working time!");
+      const error = new Error(data || "Failed to delete working time!");
       throw error;
     }
   },
@@ -137,8 +136,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to edit working time!");
+      const error = new Error(data || "Failed to edit working time!");
       throw error;
     }
   },

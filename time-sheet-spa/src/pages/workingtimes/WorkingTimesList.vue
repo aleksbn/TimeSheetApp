@@ -1,43 +1,25 @@
 <template>
   <div>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <base-dialog :show="editing" title="Edit working time" :showClose="false">
-      <working-time-form
-        v-if="hasWorkingTime"
-        :key="workingTime.ID"
-        :ID="workingTime.ID"
-        :Employee="workingTime.Employee"
-        :WtDate="workingTime.WtDate"
-        :StartTime="workingTime.StartTime"
-        :EndTime="workingTime.EndTime"
-        :Mode="editing === true ? 'old' : 'new'"
-        @close="closeEditor"
-        @cancel="cancelEditing"
-      ></working-time-form>
+      <working-time-form v-if="hasWorkingTime" :key="workingTime.ID" :ID="workingTime.ID" :Employee="workingTime.Employee"
+        :WtDate="workingTime.WtDate" :StartTime="workingTime.StartTime" :EndTime="workingTime.EndTime"
+        :Mode="editing === true ? 'old' : 'new'" @close="closeEditor" @cancel="cancelEditing"
+        @catch-error="catchError"></working-time-form>
     </base-dialog>
     <base-dialog :show="creating" title="Add working data" :showClose="false">
-      <add-working-time @cancel="close"></add-working-time>
+      <add-working-time @cancel="close" @catch-error="catchError"></add-working-time>
     </base-dialog>
     <section>
-      <working-time-filter
-        @params-changed="setParams"
-        v-if="show"
-      ></working-time-filter>
+      <working-time-filter @params-changed="setParams" v-if="show"></working-time-filter>
     </section>
     <section>
       <base-card>
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
-          <base-button @click="create" v-if="hasWorkingTimes"
-            >Add a working time</base-button
-          >
+          <base-button @click="create" v-if="hasWorkingTimes">Add a working time</base-button>
         </div>
         <div v-if="isLoading">
           <base-spinner></base-spinner>
@@ -51,35 +33,18 @@
             <th>End time</th>
             <th></th>
           </tr>
-          <working-time-item
-            v-for="wt in filteredWorkingTimes"
-            @delete="deleteWT"
-            @edit="editWT"
-            :key="wt.ID"
-            :ID="wt.ID"
-            :Employee="wt.Employee"
-            :WtDate="wt.Date"
-            :StartTime="wt.StartTime"
-            :EndTime="wt.EndTime"
-          ></working-time-item>
+          <working-time-item v-for="wt in filteredWorkingTimes" @delete="deleteWT" @edit="editWT" :key="wt.ID" :ID="wt.ID"
+            :Employee="wt.Employee" :WtDate="wt.Date" :StartTime="wt.StartTime" :EndTime="wt.EndTime"></working-time-item>
         </table>
         <h3 v-else>
           There are no working times.
           <router-link to="/">Add one!</router-link>
         </h3>
       </base-card>
-      <base-dialog
-        :show="deleting"
-        title="Do you want to delete selected working time?"
-        :showClose="false"
-      >
+      <base-dialog :show="deleting" title="Do you want to delete selected working time?" :showClose="false">
         <div class="form-control" style="text-align: center">
-          <base-button style="display: inline" @click="deleteWTnow"
-            >Delete</base-button
-          >
-          <base-button style="display: inline" @click="cancel"
-            >Cancel</base-button
-          >
+          <base-button style="display: inline" @click="deleteWTnow">Delete</base-button>
+          <base-button style="display: inline" @click="cancel">Cancel</base-button>
         </div>
       </base-dialog>
     </section>
@@ -144,6 +109,9 @@ export default {
     async close() {
       this.creating = false;
       await this.refresh();
+    },
+    catchError(error) {
+      this.error = error
     },
     create() {
       this.creating = true;
@@ -259,17 +227,22 @@ th {
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2; /* Light gray */
+  background-color: #f2f2f2;
+  /* Light gray */
 }
 
 tr:nth-child(odd) {
-  background-color: rgba(255, 0, 0, 0.801); /* Red */
-  color: #fff; /* White text on red rows */
+  background-color: rgba(255, 0, 0, 0.801);
+  /* Red */
+  color: #fff;
+  /* White text on red rows */
 }
 
 tr:nth-child(even):hover,
 tr:nth-child(odd):hover {
-  background-color: rgba(0, 0, 255, 0.5); /* Blue on hover */
-  color: #fff; /* White text on blue rows on hover */
+  background-color: rgba(0, 0, 255, 0.5);
+  /* Blue on hover */
+  color: #fff;
+  /* White text on blue rows on hover */
 }
 </style>

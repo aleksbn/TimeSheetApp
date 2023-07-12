@@ -55,7 +55,7 @@
 <script>
 import moment from "moment";
 export default {
-  emits: ["cancel"],
+  emits: ["cancel", "catchError"],
   data() {
     return {
       formIsValid: true,
@@ -85,7 +85,8 @@ export default {
       this.$emit("cancel");
     },
     async submitData() {
-      this.validateForm();
+      try {
+        this.validateForm();
 
       if (!this.formIsValid) {
         return;
@@ -100,6 +101,11 @@ export default {
 
       await this.$store.dispatch("workingTimes/addWorkingTime", formData);
       this.$emit("close");
+      }
+      catch (error) {
+        this.$emit("catchError", error);
+        this.$emit("cancel");
+      }
     },
     validateForm() {
       this.formIsValid = true;
@@ -135,6 +141,8 @@ export default {
   async created() {
     await this.$store.dispatch("employees/loadEmployeesFromCompany", {
       comid: parseInt(localStorage.getItem("comid")),
+      pageNumber: 0,
+      pageSize: 10000
     });
   },
 };

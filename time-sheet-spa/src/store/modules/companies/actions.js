@@ -1,39 +1,35 @@
 export default {
   async loadCompanies({ commit, dispatch, rootGetters }) {
     await dispatch("auth/checkTokens", null, { root: true });
-    try {
-      const res = await fetch("https://localhost:7059/api/company", {
-        method: "GET",
-        headers: {
-          Authorization: 'Bearer ' + rootGetters["auth/token"].token,
-        },
-      });
-      const data = await res.json();
+    const res = await fetch("https://localhost:7059/api/company", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + rootGetters["auth/token"].token,
+      },
+    });
+    const data = await res.json();
 
-      if (!res.ok) {
-        const error = new Error(data.message || "Failed to load companies!");
-        throw error;
-      }
-
-      const companies = [];
-      for (const key in data) {
-        const com = {
-          ID: data[key].id,
-          Name: data[key].name,
-          Address: data[key].address,
-          City: data[key].city,
-          Country: data[key].country,
-          Email: data[key].email,
-          CompanyManagerId: data[key].companyManagerId,
-          StartTime: data[key].startTime,
-          EndTime: data[key].endTime
-        };
-        companies.push(com);
-      }
-      commit("setCompanies", companies);
-    } catch (error) {
-      console.log(error);
+    if (!res.ok) {
+      const error = new Error(data || "Failed to load companies!");
+      throw error;
     }
+
+    const companies = [];
+    for (const key in data) {
+      const com = {
+        ID: data[key].id,
+        Name: data[key].name,
+        Address: data[key].address,
+        City: data[key].city,
+        Country: data[key].country,
+        Email: data[key].email,
+        CompanyManagerId: data[key].companyManagerId,
+        StartTime: data[key].startTime,
+        EndTime: data[key].endTime,
+      };
+      companies.push(com);
+    }
+    commit("setCompanies", companies);
   },
 
   async loadCompany({ commit, dispatch, rootGetters }, payload) {
@@ -49,7 +45,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load company data!");
+      const error = new Error(data || "Failed to load company data!");
       throw error;
     }
     var company = {
@@ -61,7 +57,7 @@ export default {
       Email: data.email,
       CompanyManagerId: data.companyManagerId,
       StartTime: data.startTime,
-      EndTime: data.endTime
+      EndTime: data.endTime,
     };
     commit("setCompany", company);
   },
@@ -75,9 +71,9 @@ export default {
       Country: payload.comCountry,
       Email: payload.comEmail,
       StartTime: payload.comStartTime,
-      EndTime: payload.comEndTime
+      EndTime: payload.comEndTime,
     };
-    
+
     const res = await fetch("https://localhost:7059/api/company", {
       method: "POST",
       headers: {
@@ -88,8 +84,9 @@ export default {
       body: JSON.stringify(com),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to add company!");
+      const error = new Error(data || "Failed to add company!");
       throw error;
     }
   },
@@ -105,7 +102,7 @@ export default {
       Email: payload.comEmail,
       CompanyManagerId: localStorage.getItem("userId"),
       StartTime: payload.comStartTime,
-      EndTime: payload.comEndTime
+      EndTime: payload.comEndTime,
     };
 
     const res = await fetch("https://localhost:7059/api/company", {
@@ -118,8 +115,9 @@ export default {
       body: JSON.stringify(com),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to edit company!");
+      const error = new Error(data || "Failed to edit company!");
       throw error;
     }
   },
@@ -138,8 +136,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to delete company!");
+      const error = new Error(data || "Failed to delete company!");
       throw error;
     }
   },

@@ -11,8 +11,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to generate data!");
+      const error = new Error(data || "Failed to generate data!");
       throw error;
     }
   },

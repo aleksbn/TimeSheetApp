@@ -2,7 +2,7 @@
 {
     public class RequestParams
     {
-        const int maxPageSize = 100;
+        const int maxPageSize = 100000;
         private int _pageSize = 10;
 
         public int PageNumber { get; set; } = 0;

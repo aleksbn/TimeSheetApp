@@ -12,7 +12,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load departments!");
+      const error = new Error(data || "Failed to load departments!");
       throw error;
     }
 
@@ -43,9 +43,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(
-        data.message || "Failed to load department data!"
-      );
+      const error = new Error(data || "Failed to load department data!");
       throw error;
     }
 
@@ -74,8 +72,9 @@ export default {
       body: JSON.stringify(dep),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to add department!");
+      const error = new Error(data || "Failed to add department!");
       throw error;
     }
   },
@@ -98,8 +97,9 @@ export default {
       body: JSON.stringify(dep),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to edit department!");
+      const error = new Error(data || "Failed to edit department!");
       throw error;
     }
   },
@@ -118,8 +118,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to delete department!");
+      const error = new Error(data || "Failed to delete department!");
       throw error;
     }
   },

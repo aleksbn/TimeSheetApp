@@ -99,9 +99,9 @@
           </ol>
         </li>
       </ol>
-      <p>Proceed to :
+      <p>Proceed to:
         <router-link to="/installationmanual"
-          ><h3>Required software installation guide</h3></router-link
+          ><h3>Required software installation guide, if you want to use it soley on your own computer</h3></router-link
         >
         <router-link to="/usermanual"
           ><h3>Application user manual</h3></router-link

@@ -11,36 +11,19 @@
       </div>
       <div class="form-control" :class="{ invalid: !wtDate.isValid }">
         <label for="wtDate">Date</label>
-        <input
-          type="text"
-          name="wtDate"
-          ref="wtDate"
-          @blur="clearValidity('wtDate')"
-        />
+        <input type="text" name="wtDate" ref="wtDate" @blur="clearValidity('wtDate')" />
       </div>
       <div class="form-control" :class="{ invalid: !wtStartTime.isValid }">
         <label for="StartTime">Start time</label>
-        <input
-          type="time"
-          name="StartTime"
-          ref="wtStartTime"
-          @blur="clearValidity('wtStartTime')"
-        />
+        <input type="time" name="StartTime" ref="wtStartTime" @blur="clearValidity('wtStartTime')" />
       </div>
       <div class="form-control" :class="{ invalid: !wtEndTime.isValid }">
         <label for="EndTime">End time</label>
-        <input
-          type="time"
-          name="EndTime"
-          ref="wtEndTime"
-          @blur="clearValidity('wtEndTime')"
-        />
+        <input type="time" name="EndTime" ref="wtEndTime" @blur="clearValidity('wtEndTime')" />
       </div>
       <p v-if="!formIsValid">Please, fix the above errors and submit again.</p>
       <base-button style="display: inline">Save</base-button>
-      <base-button style="display: inline" :type="'button'" @click="cancel"
-        >Cancel</base-button
-      >
+      <base-button style="display: inline" :type="'button'" @click="cancel">Cancel</base-button>
     </form>
   </div>
 </template>
@@ -50,38 +33,43 @@ import moment from "moment";
 
 export default {
   props: ["ID", "Employee", "WtDate", "StartTime", "EndTime", "Mode"],
-  emits: ["close", "cancel"],
+  emits: ["close", "cancel", "catchError"],
   methods: {
     cancel() {
       this.$emit("cancel");
     },
     async submitForm() {
-      this.wtDate.val = this.$refs.wtDate.value;
-      this.wtStartTime.val = this.$refs.wtStartTime.value;
-      this.wtEndTime.val = this.$refs.wtEndTime.value;
+      try {
+        this.wtDate.val = this.$refs.wtDate.value;
+        this.wtStartTime.val = this.$refs.wtStartTime.value;
+        this.wtEndTime.val = this.$refs.wtEndTime.value;
 
-      this.validateForm();
+        this.validateForm();
 
-      if (!this.formIsValid) {
-        return;
-      }
+        if (!this.formIsValid) {
+          return;
+        }
 
-      var formData = {
-        wtDate: this.wtDate.val,
-        wtStartTime: this.wtStartTime.val,
-        wtEndTime: this.wtEndTime.val,
-        wtEmployeeId: this.Employee.id,
-      };
-
-      if (this.Mode === "old") {
-        formData = {
-          ...formData,
-          wtId: this.ID,
+        var formData = {
+          wtDate: this.wtDate.val,
+          wtStartTime: this.wtStartTime.val,
+          wtEndTime: this.wtEndTime.val,
+          wtEmployeeId: this.Employee.id,
         };
-      }
 
-      await this.$store.dispatch("workingTimes/editWorkingTime", formData);
-      this.$emit("close");
+        if (this.Mode === "old") {
+          formData = {
+            ...formData,
+            wtId: this.ID,
+          };
+        }
+
+        await this.$store.dispatch("workingTimes/editWorkingTime", formData);
+        this.$emit("close");
+      } catch (error) {
+        this.$emit("cancel");
+        this.$emit("catchError", error);
+      }
     },
     clearValidity(input) {
       this[input].isValid = true;

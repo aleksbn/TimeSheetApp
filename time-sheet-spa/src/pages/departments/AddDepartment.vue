@@ -3,6 +3,12 @@
     <section>
       <h2 style="text-align: center">Add a new department</h2>
     </section>
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
+      <p>{{ error }}</p>
+    </base-dialog>
+    <div v-if="isLoading">
+      <base-spinner></base-spinner>
+    </div>
     <section>
       <department-form
         @save-data="saveData"
@@ -20,13 +26,21 @@ export default {
   },
   data() {
     return {
+      error: null,
+      isLoading: false,
       EditMode: "new",
     };
   },
   methods: {
     async saveData(data) {
-      await this.$store.dispatch("departments/addDepartment", data);
-      this.$router.push("/departments/" + localStorage.getItem('comid'));
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch("departments/addDepartment", data);
+        this.$router.push("/departments/" + localStorage.getItem('comid'));
+      } catch(error) {
+        this.error = error;
+      }
+      this.isLoading = false;
     },
   },
 };

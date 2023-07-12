@@ -8,114 +8,67 @@
         </div>
         <div class="form-control" :class="{ invalid: !comName.isValid }">
           <label for="Name">Name:</label>
-          <input
-            type="text"
-            name="Name"
-            ref="comName"
-            :disabled="!editMode"
-            @blur="clearValidity('comName')"
-          />
+          <input type="text" name="Name" ref="comName" :disabled="!editMode" @blur="clearValidity('comName')" />
         </div>
+        <p class="invalid" v-if="!comName.isValid">
+          Company name cannot be empty.
+        </p>
         <div class="form-control" :class="{ invalid: !comAddress.isValid }">
           <label for="Address">Address:</label>
-          <input
-            type="text"
-            name="Address"
-            ref="comAddress"
-            :disabled="!editMode"
-            @blur="clearValidity('comAddress')"
-          />
+          <input type="text" name="Address" ref="comAddress" :disabled="!editMode" @blur="clearValidity('comAddress')" />
         </div>
+        <p class="invalid" v-if="!comAddress.isValid">
+          Company address cannot be empty and it must be at least 5 letters long.
+        </p>
         <div class="form-control" :class="{ invalid: !comCity.isValid }">
           <label for="City">City:</label>
-          <input
-            type="text"
-            name="City"
-            ref="comCity"
-            :disabled="!editMode"
-            @blur="clearValidity('comCity')"
-          />
+          <input type="text" name="City" ref="comCity" :disabled="!editMode" @blur="clearValidity('comCity')" />
         </div>
+        <p class="invalid" v-if="!comCity.isValid">
+          Company city cannot be empty and it must contains only letters and possibly ' and . sign (like in some
+          french cities, or like St. Pauli).
+        </p>
         <div class="form-control" :class="{ invalid: !comCountry.isValid }">
           <label for="Country">Country:</label>
-          <input
-            type="text"
-            name="Country"
-            ref="comCountry"
-            :disabled="!editMode"
-            @blur="clearValidity('comCountry')"
-          />
+          <input type="text" name="Country" ref="comCountry" :disabled="!editMode" @blur="clearValidity('comCountry')" />
         </div>
+        <p class="invalid" v-if="!comCountry.isValid">
+          Company country cannot be empty and must contain only letters.
+        </p>
         <div class="form-control" :class="{ invalid: !comEmail.isValid }">
           <label for="Email">Email:</label>
-          <input
-            type="text"
-            name="Email"
-            ref="comEmail"
-            :disabled="!editMode"
-            @blur="clearValidity('comEmail')"
-          />
+          <input type="text" name="Email" ref="comEmail" :disabled="!editMode" @blur="clearValidity('comEmail')" />
         </div>
+        <p class="invalid" v-if="!comEmail.isValid">
+          You must type in a regular email address.
+        </p>
         <div class="form-control" :class="{ invalid: !comStartTime.isValid }">
           <label for="StartTime">Start time:</label>
-          <input
-            type="time"
-            name="StartTime"
-            ref="comStartTime"
-            :disabled="!editMode"
-            @blur="clearValidity('comStartTime')"
-          />
+          <input type="time" name="StartTime" ref="comStartTime" :disabled="!editMode" min="06:00" max="14:00"
+            value="07:00" @blur="clearValidity('comStartTime')" />
         </div>
         <div class="form-control" :class="{ invalid: !comEndTime.isValid }">
           <label for="EndTime">End time:</label>
-          <input
-            type="time"
-            name="EndTime"
-            ref="comEndTime"
-            :disabled="!editMode"
-            @blur="clearValidity('comEndTime')"
-          />
+          <input type="time" name="EndTime" ref="comEndTime" :disabled="!editMode" @blur="clearValidity('comEndTime')"
+            min="15:00" max="23:00" value="15:00" />
         </div>
+        <p class="invalid" v-if="!comStartTime.isValid || !comEndTime.isValid">
+          Starting time cannot be before the end of the working time of the company.
+        </p>
         <p v-if="!formIsValid">
           Please, fix the above errors and submit again.
         </p>
         <div>
           <base-button style="display: inline">{{ textForMode }}</base-button>
-          <base-button
-            v-if="this.ID"
-            link
-            style="display: inline"
-            :to="'/departments/' + this.ID"
-            >Departments</base-button
-          >
-          <base-button
-            v-if="this.ID"
-            @click="openEmployees()"
-            style="display: inline"
-            >Employees</base-button
-          >
-          <base-button
-            v-if="this.ID"
-            @click="openWorkingTimes()"
-            style="display: inline"
-            >Working times</base-button
-          >
-          <base-button
-            v-if="this.ID"
-            link
-            :to="calculationLink"
-            :type="'button'"
-            style="display: inline"
-          >
+          <base-button v-if="this.ID" link style="display: inline"
+            :to="'/departments/' + this.ID">Departments</base-button>
+          <base-button v-if="this.ID" @click="openEmployees()" style="display: inline">Employees</base-button>
+          <base-button v-if="this.ID" @click="openWorkingTimes()" style="display: inline">Working times</base-button>
+          <base-button v-if="this.ID" link :to="calculationLink" :type="'button'" style="display: inline">
             See the calculations
           </base-button>
-          <base-button
-            v-if="this.ID"
-            :type="'button'"
-            @click="deleteCompany()"
-            style="display: inline"
-            >Delete this company</base-button
-          >
+          <base-button v-if="this.ID" :type="'button'" @click="deleteCompany()" style="display: inline">Delete this
+            company</base-button>
         </div>
       </form>
     </base-card>
@@ -123,6 +76,7 @@
 </template>
 
 <script>
+import DataCheckers from '@/data-checkers';
 export default {
   props: ["ID", "Name", "Address", "City", "Country", "Email", "Mode", "StartTime", "EndTime"],
   emits: ["save-data", "delete-company"],
@@ -165,34 +119,32 @@ export default {
       this[input].isValid = true;
     },
     validateForm() {
-      const regexExp =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
       this.formIsValid = true;
       if (this.comName.val === "") {
         this.comName.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comAddress.val === "") {
+      if (this.comAddress.val.length < 5) {
         this.comAddress.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comCity.val === "") {
+      if (!DataCheckers.checkCity(this.comCity.val)) {
         this.comCity.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comCountry.val === "") {
+      if (!DataCheckers.checkCountry(this.comCountry.val)) {
         this.comCountry.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comEmail.val === "" || !regexExp.test(this.comEmail.val)) {
+      if (!DataCheckers.checkEmail(this.comEmail.val)) {
         this.comEmail.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comStartTime.val === "" && this.comStartTime.val < this.comEndTime.val) {
+      if (this.comStartTime.val > this.comEndTime.val) {
         this.comStartTime.isValid = false;
         this.formIsValid = false;
       }
-      if (this.comEndTime.val === ""  && this.comStartTime.val < this.comEndTime.val) {
+      if (this.comStartTime.val > this.comEndTime.val) {
         this.comEndTime.isValid = false;
         this.formIsValid = false;
       }
@@ -219,11 +171,11 @@ export default {
       }
 
       var formData = {
-        comName: this.comName.val,
-        comAddress: this.comAddress.val,
-        comCity: this.comCity.val,
-        comCountry: this.comCountry.val,
-        comEmail: this.comEmail.val,
+        comName: this.comName.val.trim(),
+        comAddress: this.comAddress.val.trim(),
+        comCity: this.comCity.val.trim(),
+        comCountry: this.comCountry.val.trim(),
+        comEmail: this.comEmail.val.trim(),
         comStartTime: this.comStartTime.val,
         comEndTime: this.comEndTime.val
       };

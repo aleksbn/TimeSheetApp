@@ -18,7 +18,7 @@ export default {
 
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load statistic data!");
+      const error = new Error(data || "Failed to load statistic data!");
       throw error;
     }
 

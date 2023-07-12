@@ -1,36 +1,17 @@
 <template>
   <div>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
       <base-spinner></base-spinner>
     </div>
-    <department-form
-      v-else-if="hasDepartment"
-      @save-data="saveData"
-      @delete-department="deleteDepartment"
-      :key="department.ID"
-      :comid="this.comid"
-      :ID="department.ID"
-      :Name="department.Name"
-      :Mode="this.EditMode"
-    ></department-form>
+    <department-form v-else-if="hasDepartment" @save-data="saveData" @delete-department="deleteDepartment"
+      :key="department.ID" :comid="this.comid" :ID="department.ID" :Name="department.Name"
+      :Mode="this.EditMode"></department-form>
     <h3 v-else>There's some problems with loading of this department.</h3>
-    <base-dialog
-      :showClose="false"
-      fixed
-      title="Select some delete options"
-      :show="deleting"
-    >
-      <department-delete-options
-        @cancel="cancelDeletion"
-      ></department-delete-options>
+    <base-dialog :showClose="false" fixed title="Select some delete options" :show="deleting">
+      <department-delete-options @cancel="cancelDeletion"></department-delete-options>
     </base-dialog>
   </div>
 </template>

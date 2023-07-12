@@ -12,8 +12,9 @@ export default {
       }
     );
 
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to create new user!");
+      const error = new Error(data || "Failed to create new user!");
       throw error;
     }
   },
@@ -31,7 +32,7 @@ export default {
     );
     const data = await res.json();
     if (!res.ok) {
-      const error = new Error(data.message || "Failed to load company data!");
+      const error = new Error(data || "Failed to load user data!");
       throw error;
     }
     var user = {
@@ -57,9 +58,9 @@ export default {
         body: JSON.stringify(payload),
       }
     );
-
+    const data = await res.json();
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to update user data!");
+      const error = new Error(data || "Failed to update user data!");
       throw error;
     }
   },
@@ -84,7 +85,7 @@ export default {
     const data = await res.json();
 
     if (!res.ok) {
-      const error = new Error(res.message || "Failed to update user data!");
+      const error = new Error(data || "Failed to login!");
       throw error;
     }
     context.commit("setUserLoginData", data);
@@ -117,7 +118,7 @@ export default {
 
       const data = await res.json();
       if (!res.ok) {
-        const error = new Error(data.message || "Failed to refresh token!");
+        const error = new Error(data || "Failed to refresh token!");
         throw error;
       }
 
