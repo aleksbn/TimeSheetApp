@@ -1,8 +1,3 @@
 {
-  "dependencies": {
-    "apis1": {
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/TimeSheet-Backend-API/apis/TimeSheet-Backend",
-      "type": "apis.azure"
-    }
-  }
+  "dependencies": {}
 }

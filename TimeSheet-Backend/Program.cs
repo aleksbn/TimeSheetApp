@@ -26,10 +26,6 @@ builder.Services.AddCors(options =>
     {
         builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
     });
-    options.AddPolicy(name: "AllowFirebase", builder =>
-    {
-        builder.WithOrigins("https://time-sheet-spa.web.app/");
-    });
 });
 
 builder.Services.AddSwaggerGen();
@@ -88,7 +84,6 @@ app.UseHttpsRedirection();
 
 //Using CORS policy
 app.UseCors("AllowAll");
-app.UseCors("AllowFirebase");
 
 app.UseAuthorization();
 

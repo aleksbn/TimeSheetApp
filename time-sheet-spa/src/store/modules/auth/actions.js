@@ -95,6 +95,10 @@ export default {
     context.commit("logout");
   },
 
+  setUserData(context, payload) {
+    context.commit("setUserData", payload);
+  },
+
   async checkTokens({ commit, rootGetters, getters }) {
     if (
       getters.userId !== null &&
