@@ -8,6 +8,9 @@
     >
       <p>{{ error }}</p>
     </base-dialog>
+    <div v-if="isLoading">
+      <base-spinner></base-spinner>
+    </div>
     <base-card>
       <form @submit.prevent="submitData">
         <div class="form-control">
@@ -34,6 +37,7 @@ export default {
   data() {
     return {
       error: null,
+      isLoading: false,
       formIsValid: true,
       email: {
         isValid: true,
@@ -53,10 +57,12 @@ export default {
       this.validateForm();
 
       if (!this.formIsValid) {
+        this.isLoading = false;
         return;
       }
 
       try {
+        this.isLoading = true;
         await this.$store.dispatch("auth/login", {
           Email: this.email.val,
           Password: this.password.val,
@@ -65,6 +71,7 @@ export default {
       } catch (error) {
         this.error = error.message + " in logging in." || "Something went wrong!";
       }
+      this.isLoading = false;
     },
     validateForm() {
       this.formIsValid = true;
