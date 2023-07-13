@@ -1,7 +1,7 @@
 export default {
-  async register(_1, payload) {
+  async register({ rootGetters }, payload) {
     const res = await fetch(
-      "https://localhost:7059/api/Authentication/register-user",
+      rootGetters["getSiteLink"] + "Authentication/register-user",
       {
         method: "POST",
         headers: {
@@ -22,7 +22,7 @@ export default {
   async getUser({ commit, dispatch, rootGetters }) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/Authentication/get-user",
+      rootGetters["getSiteLink"] + "Authentication/get-user",
       {
         method: "GET",
         headers: {
@@ -47,7 +47,7 @@ export default {
   async editUser({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/Authentication/edit-user",
+      rootGetters["getSiteLink"] + "Authentication/edit-user",
       {
         method: "PUT",
         headers: {
@@ -65,13 +65,9 @@ export default {
     }
   },
 
-  setUserData(context, payload) {
-    context.commit("setUserData", payload);
-  },
-
-  async login(context, payload) {
+  async login({ commit, rootGetters }, payload) {
     const res = await fetch(
-      "https://localhost:7059/api/Authentication/login-user",
+      rootGetters["getSiteLink"] + "Authentication/login-user",
       {
         method: "POST",
         headers: {
@@ -88,7 +84,7 @@ export default {
       const error = new Error(data || "Failed to login!");
       throw error;
     }
-    context.commit("setUserLoginData", data);
+    commit("setUserLoginData", data);
     localStorage.setItem("userId", data.id);
     localStorage.setItem("token", data.tokenValue.token);
     localStorage.setItem("refreshToken", data.tokenValue.refreshToken);
@@ -99,13 +95,13 @@ export default {
     context.commit("logout");
   },
 
-  async checkTokens({ commit, getters }) {
+  async checkTokens({ commit, rootGetters, getters }) {
     if (
       getters.userId !== null &&
       new Date(getters.expiresAt).getTime() + 120000 <= Date.now()
     ) {
       const res = await fetch(
-        "https://localhost:7059/api/authentication/refresh-token",
+        rootGetters["getSiteLink"] + "authentication/refresh-token",
         {
           method: "POST",
           headers: {

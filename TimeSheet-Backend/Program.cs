@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //Adding DbContext
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
 
 //Adding AutoMapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
@@ -25,6 +25,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowAll", builder =>
     {
         builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    });
+    options.AddPolicy(name: "AllowFirebase", builder =>
+    {
+        builder.WithOrigins("https://time-sheet-spa.web.app/");
     });
 });
 
@@ -84,6 +88,7 @@ app.UseHttpsRedirection();
 
 //Using CORS policy
 app.UseCors("AllowAll");
+app.UseCors("AllowFirebase");
 
 app.UseAuthorization();
 

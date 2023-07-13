@@ -24,7 +24,7 @@
           >
           </department-item>
         </ul>
-        <h3 v-else>
+        <h3 v-else-if="!isLoading">
           There are no departments for this company.
           <router-link to="/adddepartment">Add one!</router-link>
         </h3>

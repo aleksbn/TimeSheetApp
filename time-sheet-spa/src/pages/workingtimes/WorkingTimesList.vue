@@ -154,13 +154,13 @@ export default {
       this.isLoading = true;
       if (localStorage.getItem("empidwt")) {
         this.id = localStorage.getItem("empidwt");
-        this.link = "https://localhost:7059/api/workingtime/fromemployee/";
+        this.link = "workingtime/fromemployee/";
       } else if (localStorage.getItem("depidwt")) {
         this.id = localStorage.getItem("depidwt");
-        this.link = "https://localhost:7059/api/workingtime/fromdepartment/";
+        this.link = "workingtime/fromdepartment/";
       } else if (localStorage.getItem("comidwt")) {
         this.id = localStorage.getItem("comidwt");
-        this.link = "https://localhost:7059/api/workingtime/fromcompany/";
+        this.link = "workingtime/fromcompany/";
       }
       try {
         await this.$store.dispatch("workingTimes/loadWorkingTimes", {

@@ -9,6 +9,11 @@ import statisticsModule from "./modules/statistics/index.js";
 import generateModule from "./modules/generate/index.js";
 
 const store = createStore({
+  getters: {
+    getSiteLink() {
+      return "http://time-sheet.azurewebsites.net/api/";
+    },
+  },
   modules: {
     companies: companiesModule,
     departments: departmentsModule,
@@ -16,7 +21,7 @@ const store = createStore({
     workingTimes: workingTimesModule,
     auth: authModule,
     statistics: statisticsModule,
-    generate: generateModule
+    generate: generateModule,
   },
 });
 

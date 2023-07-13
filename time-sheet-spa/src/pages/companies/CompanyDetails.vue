@@ -10,7 +10,7 @@
       :ID="company.ID" :Name="company.Name" :Address="company.Address" :City="company.City" :Country="company.Country"
       :Email="company.Email" :Mode="this.EditMode" :StartTime="company.StartTime"
       :EndTime="company.EndTime"></company-form>
-    <base-card v-else>
+    <base-card v-else-if="!isLoading">
       <h3>There are some problems with loading of this company.</h3>
     </base-card>
     <base-dialog :showClose="false" fixed title="Select some delete options" :show="deleting">

@@ -9,7 +9,7 @@
     <department-form v-else-if="hasDepartment" @save-data="saveData" @delete-department="deleteDepartment"
       :key="department.ID" :comid="this.comid" :ID="department.ID" :Name="department.Name"
       :Mode="this.EditMode"></department-form>
-    <h3 v-else>There's some problems with loading of this department.</h3>
+    <h3 v-else-if="!isLoading">There's some problems with loading of this department.</h3>
     <base-dialog :showClose="false" fixed title="Select some delete options" :show="deleting">
       <department-delete-options @cancel="cancelDeletion"></department-delete-options>
     </base-dialog>

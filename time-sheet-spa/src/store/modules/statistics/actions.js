@@ -2,7 +2,8 @@ export default {
   async loadStatistics({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      "https://localhost:7059/api/calculation/" +
+      rootGetters["getSiteLink"] +
+        "calculation/" +
         payload.comid +
         "?year=" +
         payload.year +

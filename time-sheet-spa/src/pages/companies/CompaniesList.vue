@@ -28,7 +28,7 @@
             :EndTime="company.EndTime"
           ></company-item>
         </ul>
-        <h3 v-else>
+        <h3 v-else-if="!isLoading">
           There are no companies for this user.
           <router-link to="/addcompany">Add one!</router-link>
         </h3>

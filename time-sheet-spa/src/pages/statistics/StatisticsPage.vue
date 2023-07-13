@@ -38,7 +38,7 @@
             <td>{{ stat.Earnings.toFixed(2) }} $</td>
           </tr>
         </table>
-        <p v-else>
+        <p v-else-if="!isLoading">
           There are no statistics for this company, or for this period. You must add some data
           first, or revisit filter section.
         </p>

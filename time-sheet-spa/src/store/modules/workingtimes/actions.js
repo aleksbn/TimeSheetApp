@@ -3,7 +3,8 @@ export default {
     await dispatch("auth/checkTokens", null, { root: true });
     const link = payload.link;
     const res = await fetch(
-      link +
+      rootGetters["getSiteLink"] +
+        link +
         payload.id +
         "?PageNumber=" +
         payload.pageNumber +
@@ -44,7 +45,7 @@ export default {
   async loadWorkingTime({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      `https://localhost:7059/api/workingtime/GetWorkingTime/${payload}`,
+      rootGetters["getSiteLink"] + `workingtime/GetWorkingTime/${payload}`,
       {
         method: "GET",
         headers: {
@@ -76,15 +77,18 @@ export default {
       EndTime: payload.wtEndTime,
     };
 
-    const res = await fetch(`https://localhost:7059/api/workingtime/create/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(wtData),
-    });
+    const res = await fetch(
+      rootGetters["getSiteLink"] + `workingtime/create/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(wtData),
+      }
+    );
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to add working time!");
@@ -95,7 +99,8 @@ export default {
   async deleteWorkingTime({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      `https://localhost:7059/api/workingtime/deleteWorkingTime/${payload.id}`,
+      rootGetters["getSiteLink"] +
+        `workingtime/deleteWorkingTime/${payload.id}`,
       {
         method: "DELETE",
         headers: {
@@ -124,7 +129,7 @@ export default {
     };
 
     const res = await fetch(
-      "https://localhost:7059/api/workingtime/editWorkingTime",
+      rootGetters["getSiteLink"] + "workingtime/editWorkingTime",
       {
         method: "PUT",
         headers: {
