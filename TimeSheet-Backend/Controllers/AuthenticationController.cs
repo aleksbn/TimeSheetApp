@@ -91,8 +91,7 @@ namespace TimeSheet_Backend.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(appUser, userDTO.Role);
-                    var userId = _userManager.FindByEmailAsync(appUser.Email);
-                    return Ok(userId);
+                    return Ok("User created");
                 }
 
                 return BadRequest("User could not be created.");
@@ -116,7 +115,7 @@ namespace TimeSheet_Backend.Controllers
                 return Ok(new { userExists.Id, tokenValue});
             }
 
-            return Unauthorized();
+            return Unauthorized("Wrong username or password");
         }
 
         [Authorize]
@@ -287,8 +286,8 @@ namespace TimeSheet_Backend.Controllers
                 };
                 await _databaseContext.RefreshTokens.AddAsync(refreshToken);
                 await _databaseContext.SaveChangesAsync();
-
-                response.Token = refreshToken.Token;
+                
+                response.RefreshToken = refreshToken.Token;
             }
             else
             {
