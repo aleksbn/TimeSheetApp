@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Claims;
 using TimeSheet_Backend.Models.Data;
 using TimeSheet_Backend.Models.DTOs;
@@ -129,13 +130,16 @@ namespace TimeSheet_Backend.Controllers
                 {
                     return Unauthorized("That company is not created by this user. You cannot add to its data.");
                 }
-                await _unitOfWork.EmployeeRepository.Insert(_mapper.Map<Employee>(employeeDTO));
+                var employee = _mapper.Map<Employee>(employeeDTO);
+                var random = new Random();
+                employee.ID = employee.DateOfBirth.Day.ToString("00") + employee.DateOfBirth.Month.ToString("00") + employee.DateOfBirth.Year.ToString().Substring(1, 3) + random.Next(100000, 999999);
+                await _unitOfWork.EmployeeRepository.Insert(employee);
                 await _unitOfWork.Save();
                 return Ok("Employee created");
             }
             catch (Exception x)
             {
-                return BadRequest(x.InnerException.Message);
+                return BadRequest(x.Message);
             }
         }
 
