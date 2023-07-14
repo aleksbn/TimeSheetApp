@@ -145,8 +145,8 @@ export default {
       Phone: payload.empPhone,
       JobTitle: payload.empJobTitle,
       Degree: payload.empDegree,
-      DateOfBirth: payload.empDateOfBirth,
-      StartOfEmployment: payload.empStartOfEmployment,
+      DateOfBirth: new Date((payload.empDateOfBirth).split(".").reverse().join("/")),
+      StartOfEmployment: new Date((payload.empStartOfEmployment).split(".").reverse().join("/")),
       HourlyRate: payload.empHourlyRate,
       DepartmentId: payload.empDepartmentId,
     };

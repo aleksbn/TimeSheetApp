@@ -209,7 +209,7 @@ export default {
       var formData = {
         empAddress: this.empAddress.val,
         empEmail: this.empEmail.val,
-        empDateOfBirth: new Date(this.empDateOfBirth.val),
+        empDateOfBirth: this.empDateOfBirth.val,
         empDegree: this.empDegree.val,
         empDepartmentId: this.empDepartmentId.val,
         empFirstName: this.empFirstName.val,
@@ -217,7 +217,7 @@ export default {
         empJobTitle: this.empJobTitle.val,
         empLastName: this.empLastName.val,
         empPhone: this.empPhone.val,
-        empStartOfEmployment: new Date(this.empStartOfEmployment.val),
+        empStartOfEmployment: this.empStartOfEmployment.val,
       };
 
       if (this.Mode === "old") {
