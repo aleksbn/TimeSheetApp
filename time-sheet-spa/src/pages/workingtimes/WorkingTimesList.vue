@@ -10,7 +10,7 @@
         @catch-error="catchError"></working-time-form>
     </base-dialog>
     <base-dialog :show="creating" title="Add working data" :showClose="false">
-      <add-working-time @cancel="close" @catch-error="catchError"></add-working-time>
+      <add-working-time @close="close" @cancel="close" @catch-error="catchError"></add-working-time>
     </base-dialog>
     <section>
       <working-time-filter @params-changed="setParams" v-if="show"></working-time-filter>

@@ -55,7 +55,7 @@
 <script>
 import moment from "moment";
 export default {
-  emits: ["cancel", "catchError"],
+  emits: ["close", "cancel", "catchError"],
   data() {
     return {
       formIsValid: true,
@@ -103,8 +103,8 @@ export default {
       this.$emit("close");
       }
       catch (error) {
-        this.$emit("catchError", error);
         this.$emit("cancel");
+        this.$emit("catchError", error);
       }
     },
     validateForm() {

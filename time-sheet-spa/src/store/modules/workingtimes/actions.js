@@ -72,7 +72,7 @@ export default {
     await dispatch("auth/checkTokens", null, { root: true });
     const wtData = {
       EmployeeId: payload.wtEmployeeId,
-      Date: new Date(payload.wtDate.split(".").reverse().join("/")),
+      Date: payload.wtDate.split(".").reverse().join("/"),
       StartTime: payload.wtStartTime,
       EndTime: payload.wtEndTime,
     };

@@ -35,7 +35,6 @@ export default {
 
   async loadEmployeesFromCompany({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
-    console.log(payload);
     const res = await fetch(
       rootGetters["getSiteLink"] +
         "employee/" +
@@ -145,8 +144,8 @@ export default {
       Phone: payload.empPhone,
       JobTitle: payload.empJobTitle,
       Degree: payload.empDegree,
-      DateOfBirth: new Date((payload.empDateOfBirth).split(".").reverse().join("/")),
-      StartOfEmployment: new Date((payload.empStartOfEmployment).split(".").reverse().join("/")),
+      DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
+      StartOfEmployment: payload.empStartOfEmployment.split(".").reverse().join("/"),
       HourlyRate: payload.empHourlyRate,
       DepartmentId: payload.empDepartmentId,
     };
@@ -181,8 +180,8 @@ export default {
       Address: payload.empAddress,
       Email: payload.empEmail,
       Phone: payload.empPhone,
-      DateOfBirth: payload.empDateOfBirth,
-      StartOfEmployment: payload.empStartOfEmployment,
+      DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
+      StartOfEmployment: payload.empStartOfEmployment.split(".").reverse().join("/"),
       HourlyRate: payload.empHourlyRate,
     };
 
