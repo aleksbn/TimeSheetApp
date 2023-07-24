@@ -38,7 +38,7 @@
         </table>
         <h3 v-else>
           There are no working times.
-          <router-link to="/">Add one!</router-link>
+          <base-button @click="create" id="addLink">Add one</base-button>
         </h3>
       </base-card>
       <base-dialog :show="deleting" title="Do you want to delete selected working time?" :showClose="false">
@@ -205,6 +205,11 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+#addLink{
+  display: inline;
+  font-weight: normal;
 }
 
 .controls {
