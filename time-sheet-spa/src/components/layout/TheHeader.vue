@@ -31,6 +31,16 @@
 
 <script>
 export default {
+  mounted() {
+    const menuToggleCheckbox = document.getElementById('menu-toggle');
+
+    const menuItems = document.querySelectorAll('.menu li');
+    menuItems.forEach((menuItem) => {
+      menuItem.addEventListener('click', () => {
+        menuToggleCheckbox.checked = false;
+      });
+    });
+  },
   data() {
     return {
       comid: null,
