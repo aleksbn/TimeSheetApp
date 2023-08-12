@@ -37,6 +37,7 @@
 
 <script>
 import moment from "moment";
+import { toRaw } from 'vue';
 export default {
   emits: ["close", "cancel", "catchError"],
   data() {
@@ -120,11 +121,28 @@ export default {
     hasEmployees() {
       return this.$store.getters["employees/hasEmployees"];
     },
+    selectedEmpId() {
+      return this.selectedEmployeeId;
+    }
   },
   async created() {
     await this.$store.dispatch("employees/loadEmployees", {
       link: `${localStorage.getItem("comid")}?PageNumber=0&PageSize=10000`
     });
+    this.wtDate.val = moment(new Date().toLocaleDateString().substring(0, 10)).format("DD.MM.YYYY");
+    const comId = localStorage.getItem("comid");
+    if (comId) {
+      await this.$store.dispatch("companies/loadCompany", { id: comId });
+      const company = toRaw(this.$store.getters["companies/company"]);
+      this.wtStartTime.val = company.StartTime;
+      this.wtEndTime.val = company.EndTime;
+    }
+    const empId = localStorage.getItem("empid");
+    if (empId) {
+      await this.$store.dispatch("employees/loadEmployee", { empid: empId });
+      const employee = this.$store.getters["employees/employee"];
+      this.employeeId.val = employee.ID;
+    }
   },
 };
 </script>

@@ -172,7 +172,7 @@ export default {
         this.show = true;
       } catch (error) {
         this.error =
-          error.message + " in getting working times." || "Something went wrong!";
+          `${error.message} in getting working times.` || "Something went wrong!";
       }
       this.isLoading = false;
     },
@@ -205,11 +205,6 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-#addLink{
-  display: inline;
-  font-weight: normal;
 }
 
 .controls {
