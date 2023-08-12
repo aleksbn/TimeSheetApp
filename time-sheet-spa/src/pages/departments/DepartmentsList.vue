@@ -63,7 +63,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting departments" || "Something went wrong!";
+          `${error.message} in getting departments.` || "Something went wrong!";
       }
       this.isLoading = false;
     },

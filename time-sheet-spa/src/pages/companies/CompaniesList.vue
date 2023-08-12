@@ -64,7 +64,7 @@ export default {
         await this.$store.dispatch("companies/loadCompanies");
       } catch (error) {
         this.error =
-          error.message + " in getting companies." || "Something went wrong!";
+          `${error.message} in getting companies.` || "Something went wrong!";
       }
       this.isLoading = false;
     },

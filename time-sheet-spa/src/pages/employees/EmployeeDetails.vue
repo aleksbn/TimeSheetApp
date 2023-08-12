@@ -57,7 +57,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting employee." || "Something went wrong!";
+          `${error.message} in getting employee.` || "Something went wrong!";
       }
       this.isLoading = false;
     },

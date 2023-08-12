@@ -88,16 +88,13 @@ export default {
         return;
       }
 
-      var formData = {
+      const formData = {
         depName: this.depName.val,
         comId: localStorage.getItem('comid')
       };
 
       if (this.Mode === "old") {
-        formData = {
-          ...formData,
-          depId: this.ID,
-        };
+        formData.depId = this.ID;
       }
 
       this.$emit("save-data", formData);

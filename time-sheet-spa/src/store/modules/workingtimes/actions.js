@@ -3,13 +3,7 @@ export default {
     await dispatch("auth/checkTokens", null, { root: true });
     const link = payload.link;
     const res = await fetch(
-      rootGetters["getSiteLink"] +
-        link +
-        payload.id +
-        "?PageNumber=" +
-        payload.pageNumber +
-        "&PageSize=" +
-        payload.pageSize,
+      `${rootGetters["getSiteLink"]}${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
       {
         method: "GET",
         headers: {
@@ -45,7 +39,7 @@ export default {
   async loadWorkingTime({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + `workingtime/GetWorkingTime/${payload}`,
+      `${rootGetters["getSiteLink"]}workingtime/GetWorkingTime/${payload}`,
       {
         method: "GET",
         headers: {
@@ -78,7 +72,7 @@ export default {
     };
 
     const res = await fetch(
-      rootGetters["getSiteLink"] + `workingtime/create/`,
+      `${rootGetters["getSiteLink"]}workingtime/create/`,
       {
         method: "POST",
         headers: {
@@ -99,8 +93,7 @@ export default {
   async deleteWorkingTime({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] +
-        `workingtime/deleteWorkingTime/${payload.id}`,
+      `${rootGetters["getSiteLink"]}workingtime/deleteWorkingTime/${payload.id}`,
       {
         method: "DELETE",
         headers: {
@@ -129,7 +122,7 @@ export default {
     };
 
     const res = await fetch(
-      rootGetters["getSiteLink"] + "workingtime/editWorkingTime",
+      `${rootGetters["getSiteLink"]}workingtime/editWorkingTime`,
       {
         method: "PUT",
         headers: {

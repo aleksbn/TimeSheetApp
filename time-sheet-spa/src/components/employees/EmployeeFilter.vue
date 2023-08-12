@@ -94,7 +94,7 @@ export default {
   methods: {
     setFilter(event) {
       const inputId = event.target.id;
-      var value = event.target.value;
+      let value = event.target.value;
       if (inputId === "hourlyRate") {
         if (value === "") {
           value = 0;

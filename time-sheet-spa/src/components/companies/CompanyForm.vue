@@ -170,21 +170,18 @@ export default {
         return;
       }
 
-      var formData = {
-        comName: this.comName.val.trim(),
-        comAddress: this.comAddress.val.trim(),
-        comCity: this.comCity.val.trim(),
-        comCountry: this.comCountry.val.trim(),
-        comEmail: this.comEmail.val.trim(),
+      const formData = {
+        comName: this.comName.val,
+        comAddress: this.comAddress.val,
+        comCity: this.comCity.val,
+        comCountry: this.comCountry.val,
+        comEmail: this.comEmail.val,
         comStartTime: this.comStartTime.val,
         comEndTime: this.comEndTime.val
       };
 
       if (this.Mode === "old") {
-        formData = {
-          ...formData,
-          comId: this.ID,
-        };
+        formData.comId = this.ID;
       }
 
       this.$emit("save-data", formData);

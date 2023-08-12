@@ -1,11 +1,6 @@
 <template>
   <div>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -18,9 +13,7 @@
         </div>
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
-          <base-button link to="/addemployee" v-if="hasEmployees"
-            >Add employee</base-button
-          >
+          <base-button link to="/addemployee" v-if="hasEmployees">Add employee</base-button>
         </div>
         <table v-if="hasEmployees">
           <tr>
@@ -33,32 +26,21 @@
             <th>Hourly rate</th>
             <th></th>
           </tr>
-          <employee-item
-            v-for="employee in filteredEmployees"
-            :key="employee.ID"
-            :ID="employee.ID"
-            :FirstName="employee.FirstName"
-            :LastName="employee.LastName"
-            :JobTitle="employee.JobTitle"
-            :Degree="employee.Degree"
-            :Address="employee.Address"
-            :Phone="employee.Phone"
-            :DateOfBirth="employee.DateOfBirth"
-            :StartOfEmployment="employee.StartOfEmployment"
-            :HourlyRate="employee.HourlyRate"
-            :DepartmentId="employee.DepartmentId"
-            :Department="employee.Department"
-          ></employee-item>
+          <employee-item v-for="employee in filteredEmployees" :key="employee.ID" :ID="employee.ID"
+            :FirstName="employee.FirstName" :LastName="employee.LastName" :JobTitle="employee.JobTitle"
+            :Degree="employee.Degree" :Address="employee.Address" :Phone="employee.Phone"
+            :DateOfBirth="employee.DateOfBirth" :StartOfEmployment="employee.StartOfEmployment"
+            :HourlyRate="employee.HourlyRate" :DepartmentId="employee.DepartmentId"
+            :Department="employee.Department"></employee-item>
         </table>
         <h3 v-else-if="hasDepartments">
           There are no employees.
           <router-link to="/addemployee">Add one</router-link>, or
-          <router-link :to="generateLink"
-            >randomly generate both employees and their working
-            times!</router-link
-          >
+          <router-link :to="generateLink">randomly generate both employees and their working
+            times!</router-link>
         </h3>
-        <h3 v-else>You must <router-link to="/adddepartment">add department</router-link> before you add any employees.</h3>
+        <h3 v-else>You must <router-link to="/adddepartment">add department</router-link> before you add any employees.
+        </h3>
       </base-card>
     </section>
   </div>
@@ -85,7 +67,7 @@ export default {
       return "/generate/" + localStorage.getItem("comid");
     },
     filteredEmployees() {
-      var employees = this.$store.getters["employees/employees"];
+      let employees = this.$store.getters["employees/employees"];
       employees = employees.filter((employee) => {
         if (employee.ID.includes(this.activeFilters.id)) {
           return true;
@@ -159,23 +141,18 @@ export default {
           localStorage.getItem("comid") !== null &&
           localStorage.getItem("depid") === null
         ) {
-          await this.$store.dispatch("employees/loadEmployeesFromCompany", {
-            comid: localStorage.getItem("comid"),
-            pageNumber: this.activeFilters.pageNumber,
-            pageSize: this.activeFilters.pageSize
+          await this.$store.dispatch("employees/loadEmployees", {
+            link: `${localStorage.getItem("comid")}?PageNumber=${this.activeFilters.pageNumber}&PageSize=${this.activeFilters.pageSize}`
           });
         } else {
-          await this.$store.dispatch("employees/loadEmployeesFromDepartment", {
-            comid: localStorage.getItem("comid"),
-            depid: localStorage.getItem("depid"),
-            pageNumber: this.activeFilters.pageNumber,
-            pageSize: this.activeFilters.pageSize
+          await this.$store.dispatch("employees/loadEmployees", {
+            link: `${localStorage.getItem("comid")}/${localStorage.getItem("depid")}?PageNumber=${this.activeFilters.pageNumber}&PageSize=${this.activeFilters.pageSize}`
           });
         }
         this.show = true;
       } catch (error) {
         this.error =
-          error.message + " in getting employees" || "Something went wrong!";
+          `${error.message} in getting employees.` || "Something went wrong!";
       }
       this.isLoading = false;
     },
@@ -227,17 +204,22 @@ td {
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2; /* Light gray */
+  background-color: #f2f2f2;
+  /* Light gray */
 }
 
 tr:nth-child(odd) {
-  background-color: rgba(255, 0, 0, 0.801); /* Red */
-  color: #fff; /* White text on red rows */
+  background-color: rgba(255, 0, 0, 0.801);
+  /* Red */
+  color: #fff;
+  /* White text on red rows */
 }
 
 tr:nth-child(even):hover,
 tr:nth-child(odd):hover {
-  background-color: rgba(0, 0, 255, 0.5); /* Blue on hover */
-  color: #fff; /* White text on blue rows on hover */
+  background-color: rgba(0, 0, 255, 0.5);
+  /* Blue on hover */
+  color: #fff;
+  /* White text on blue rows on hover */
 }
 </style>

@@ -69,7 +69,7 @@ export default {
         });
         this.$router.push("/companies");
       } catch (error) {
-        this.error = error.message + " in logging in." || "Something went wrong!";
+        this.error = `${error.message} in logging in.` || "Something went wrong!";
       }
       this.isLoading = false;
     },

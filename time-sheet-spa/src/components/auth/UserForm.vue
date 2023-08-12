@@ -143,28 +143,28 @@ export default {
           return;
         }
 
+        const formData = {
+          FirstName: this.uFirstName.val,
+          LastName: this.uLastName.val,
+        };
+
         if (this.Mode === "old") {
-          const formData = {
-            Id: this.ID,
-            FirstName: this.uFirstName.val,
-            LastName: this.uLastName.val,
-            OldEmail: this.uEmail.val,
-            NewEmail: this.uEmailConfirm.val,
-            NewEmailConfirmation: this.uEmailConfirm.val,
-            OldPassword: this.uPassword.val,
-            NewPassword: this.uPasswordConfirm.val,
-            PasswordConfirmation: this.uPasswordConfirm.val,
-          };
+          formData.Id = this.ID;
+          formData.OldEmail = this.uEmail.val;
+          formData.NewEmail = this.uEmailConfirm.val;
+          formData.NewEmailConfirmation = this.uEmailConfirm.val;
+          formData.OldPassword = this.uPassword.val;
+          formData.NewPassword = this.uPasswordConfirm.val;
+          formData.PasswordConfirmation = this.uPasswordConfirm.val;
           await this.$store.dispatch("auth/editUser", formData);
           this.$router.push("/companies");
-        } else {
-          const formData = {
-            FirstName: this.uFirstName.val,
-            LastName: this.uLastName.val,
-            Email: this.uEmail.val,
-            Password: this.uPassword.val,
-            Role: "COMPANY MANAGER",
-          };
+        }
+        else {
+          formData.FirstName = this.uFirstName.val;
+          formData.LastName = this.uLastName.val;
+          formData.Email = this.uEmail.val;
+          formData.Password = this.uPassword.val;
+          formData.Role = "COMPANY MANAGER";
           await this.$store.dispatch("auth/register", formData);
           this.$router.push("/login");
         }

@@ -206,7 +206,7 @@ export default {
       if (!this.formIsValid) {
         return;
       }
-      var formData = {
+      const formData = {
         empAddress: this.empAddress.val,
         empEmail: this.empEmail.val,
         empDateOfBirth: this.empDateOfBirth.val,
@@ -221,10 +221,7 @@ export default {
       };
 
       if (this.Mode === "old") {
-        formData = {
-          ...formData,
-          empId: this.ID,
-        };
+        formData.empId = this.ID;
       }
 
       this.$emit("save-data", formData);

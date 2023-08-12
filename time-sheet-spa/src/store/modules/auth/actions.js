@@ -1,7 +1,7 @@
 export default {
   async register({ rootGetters }, payload) {
     const res = await fetch(
-      rootGetters["getSiteLink"] + "Authentication/register-user",
+      `${rootGetters["getSiteLink"]}Authentication/register-user`,
       {
         method: "POST",
         headers: {
@@ -22,7 +22,7 @@ export default {
   async getUser({ commit, dispatch, rootGetters }) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "Authentication/get-user",
+      `${rootGetters["getSiteLink"]}Authentication/get-user`,
       {
         method: "GET",
         headers: {
@@ -47,7 +47,7 @@ export default {
   async editUser({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "Authentication/edit-user",
+      `${rootGetters["getSiteLink"]}Authentication/edit-user`,
       {
         method: "PUT",
         headers: {
@@ -67,7 +67,7 @@ export default {
 
   async login({ commit, rootGetters }, payload) {
     const res = await fetch(
-      rootGetters["getSiteLink"] + "Authentication/login-user",
+      `${rootGetters["getSiteLink"]}Authentication/login-user`,
       {
         method: "POST",
         headers: {
@@ -105,7 +105,7 @@ export default {
       new Date(getters.expiresAt).getTime() + 120000 <= Date.now()
     ) {
       const res = await fetch(
-        rootGetters["getSiteLink"] + "authentication/refresh-token",
+        `${rootGetters["getSiteLink"]}authentication/refresh-token`,
         {
           method: "POST",
           headers: {

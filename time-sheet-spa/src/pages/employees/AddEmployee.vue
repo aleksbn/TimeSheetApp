@@ -35,7 +35,7 @@ export default {
     async saveData(data) {
       try {
         await this.$store.dispatch("employees/addEmployee", data);
-        this.$router.push("/employees/" + localStorage.getItem("comid"));
+        this.$router.push(`/employees/ + ${localStorage.getItem("comid")}`);
       } catch (error) {
         this.error = error;
       }

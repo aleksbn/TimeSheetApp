@@ -22,8 +22,8 @@ export default {
         await this.$store.dispatch("employees/deleteEmployee", {
           empId: localStorage.getItem("empid"),
         });
-        var link = "/employees/" + localStorage.getItem("comid");
-        if (localStorage.getItem("depid") != null) {
+        let link = "/employees/" + localStorage.getItem("comid");
+        if (localStorage.getItem("depid") !== null) {
           link += "/" + localStorage.getItem("depid");
         }
         this.$router.push(link);

@@ -62,7 +62,7 @@ export default {
         this.$router.replace("/employees/" + this.$route.params.comid);
       } catch (error) {
         this.error =
-          error.message + " in generating data" || "Something went wrong!";
+          `${error.message} in generating data.` || "Something went wrong!";
       }
     },
     handleError() {

@@ -2,7 +2,7 @@ export default {
   async loadEmployee({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "employee/" + payload.empid,
+      `${rootGetters["getSiteLink"]}employee/${payload.empid}`,
       {
         method: "GET",
         headers: {
@@ -33,16 +33,10 @@ export default {
     commit("setEmployee", employee);
   },
 
-  async loadEmployeesFromCompany({ commit, dispatch, rootGetters }, payload) {
+  async loadEmployees({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] +
-        "employee/" +
-        payload.comid +
-        "?PageNumber=" +
-        payload.pageNumber +
-        "&PageSize=" +
-        payload.pageSize,
+      `${rootGetters["getSiteLink"]}employee/${payload.link}`,
       {
         method: "GET",
         headers: {
@@ -80,61 +74,7 @@ export default {
       emCount: data.count,
     });
   },
-
-  async loadEmployeesFromDepartment(
-    { commit, dispatch, rootGetters },
-    payload
-  ) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(
-      rootGetters["getSiteLink"] +
-        "employee/" +
-        payload.comid +
-        "/" +
-        payload.depid +
-        "?PageNumber=" +
-        payload.pageNumber +
-        "&PageSize=" +
-        payload.pageSize,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-        },
-      }
-    );
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(
-        data || "Failed to load employees from department!"
-      );
-      throw error;
-    }
-    const employees = [];
-    for (const key in data.toReturn) {
-      const employee = {
-        ID: data.toReturn[key].id,
-        FirstName: data.toReturn[key].firstName,
-        LastName: data.toReturn[key].lastName,
-        JobTitle: data.toReturn[key].jobTitle,
-        Degree: data.toReturn[key].degree,
-        Address: data.toReturn[key].address,
-        Email: data.toReturn[key].email,
-        Phone: data.toReturn[key].phone,
-        DateOfBirth: data.toReturn[key].dateOfBirth,
-        StartOfEmployment: data.toReturn[key].startOfEmployment,
-        HourlyRate: data.toReturn[key].hourlyRate,
-        DepartmentId: data.toReturn[key].departmentId,
-        Department: data.toReturn[key].department,
-      };
-      employees.push(employee);
-    }
-    commit("setEmployees", {
-      employees: employees,
-      emCount: data.count,
-    });
-  },
-
+  
   async addEmployee({ dispatch, rootGetters }, payload) {
     const emp = {
       FirstName: payload.empFirstName,
@@ -145,13 +85,16 @@ export default {
       JobTitle: payload.empJobTitle,
       Degree: payload.empDegree,
       DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
-      StartOfEmployment: payload.empStartOfEmployment.split(".").reverse().join("/"),
+      StartOfEmployment: payload.empStartOfEmployment
+        .split(".")
+        .reverse()
+        .join("/"),
       HourlyRate: payload.empHourlyRate,
       DepartmentId: payload.empDepartmentId,
     };
 
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(rootGetters["getSiteLink"] + "employee/", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}employee/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -181,11 +124,14 @@ export default {
       Email: payload.empEmail,
       Phone: payload.empPhone,
       DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
-      StartOfEmployment: payload.empStartOfEmployment.split(".").reverse().join("/"),
+      StartOfEmployment: payload.empStartOfEmployment
+        .split(".")
+        .reverse()
+        .join("/"),
       HourlyRate: payload.empHourlyRate,
     };
 
-    const res = await fetch(rootGetters["getSiteLink"] + "employee", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}employee`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -205,7 +151,7 @@ export default {
   async deleteEmployee({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + `employee/${payload.empId}`,
+      `${rootGetters["getSiteLink"]}employee/${payload.empId}`,
       {
         method: "DELETE",
         headers: {

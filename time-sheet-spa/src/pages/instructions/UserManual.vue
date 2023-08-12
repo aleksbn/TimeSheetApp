@@ -27,7 +27,7 @@
         a possibility to either login, or register.
       </p>
       <p>
-        <img src="../../media/images/App01.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App01.jpg" alt="" />
       </p>
       <p>
         Fill in the form the way you want (data, of course, does not have to be
@@ -41,7 +41,7 @@
         this:
       </p>
       <p>
-        <img src="../../media/images/App02.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App02.jpg" alt="" />
       </p>
       <p>
         In order to see the employees or departments, you must click on the
@@ -49,7 +49,7 @@
         something like this:
       </p>
       <p>
-        <img src="../../media/images/App03.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App03.jpg" alt="" />
       </p>
       <p> You can now see that extra options appeared on the nav bar.
       <ul>By pressing the self explanatory buttons in the lower part of the screen, you can do the following:
@@ -66,11 +66,11 @@
         this:
       </p>
       <p>
-        <img src="../../media/images/App04.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App04.jpg" alt="" />
       </p>
       <p>Pressing the Details button will allow you to see everything about that department, as well as edit it.</p>
       <p>
-        <img src="../../media/images/App05.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App05.jpg" alt="" />
       </p>
       <p>
         Now, I'm perfectly aware, if you're just checking out the app, you're not willing to add, like, 20 workers and,
@@ -83,7 +83,7 @@
         criteria and numbers.
       </p>
       <p>
-        <img src="../../media/images/App06.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App06.jpg" alt="" />
       </p>
       <p>
         In case you want to see their working times, you may do so from the company menu (and see working times of all
@@ -91,14 +91,14 @@
         employee details page.
       </p>
       <p>
-        <img src="../../media/images/App07.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App07.jpg" alt="" />
       </p>
       <p>
         If you decide to see statistic for any given month, you may do so by clicking on the "Statistics" button from
         Company Details page. You will get something like this. Just select the period you need the stats for.
       </p>
       <p>
-        <img src="../../media/images/App08.jpg" alt="" style="width: 100%" />
+        <img src="../../media/images/App08.jpg" alt="" />
       </p>
       <p>And that's it! If you notice some errors or you want to contact me, you can mail me to <a
           href="mailto:aleksandar.matic986@gmail.com">aleksandar.matic986@gmail.com</a>. Cheers!</p>
@@ -109,6 +109,10 @@
 <style scoped>
 p {
   text-align: justify;
+}
+
+img {
+  width: 100%;
 }
 
 iframe {

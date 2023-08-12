@@ -1,10 +1,10 @@
 export default {
   async loadCompanies({ commit, dispatch, rootGetters }) {
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(rootGetters["getSiteLink"] + "company", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}company`, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + rootGetters["auth/token"].token,
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
       },
     });
     const data = await res.json();
@@ -35,7 +35,7 @@ export default {
   async loadCompany({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "company/" + payload.id,
+      `${rootGetters["getSiteLink"]}company/${payload.id}`,
       {
         method: "GET",
         headers: {
@@ -74,7 +74,7 @@ export default {
       EndTime: payload.comEndTime,
     };
 
-    const res = await fetch(rootGetters["getSiteLink"] + "company", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}company`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -105,7 +105,7 @@ export default {
       EndTime: payload.comEndTime,
     };
 
-    const res = await fetch(rootGetters["getSiteLink"] + "company", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}company`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -125,7 +125,7 @@ export default {
   async deleteCompany({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + `company/${payload.id}?targetDepartmentId=${payload.targetDepartmentId}&&deleteEmployees=${payload.deleteEmployees}`,
+      `${rootGetters["getSiteLink"]}company/${payload.id}?targetDepartmentId=${payload.targetDepartmentId}&&deleteEmployees=${payload.deleteEmployees}`,
       {
         method: "DELETE",
         headers: {

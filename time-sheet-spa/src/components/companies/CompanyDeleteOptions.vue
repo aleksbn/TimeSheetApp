@@ -34,7 +34,7 @@
         </div>
         <div v-if="comSel > 0">
           <p style="text-align: justify">
-            Select the department of that company you would like to transfer
+            Select the department of the company you would like to transfer
             employees of deleting company.
           </p>
           <div class="form-control">
@@ -139,7 +139,7 @@ export default {
           error.message + " in getting companies." || "Something went wrong!";
       }
       this.loadedCompanies = this.$store.getters["companies/companies"].filter(
-        (c) => c.ID != parseInt(localStorage.getItem("comid"))
+        (c) => +c.ID !== parseInt(localStorage.getItem("comid"))
       );
     },
     async loadDepartments() {

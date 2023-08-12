@@ -2,7 +2,7 @@ export default {
   async loadDepartments({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "department/" + payload.comid,
+      `${rootGetters["getSiteLink"]}department/${payload.comid}`,
       {
         method: "GET",
         headers: {
@@ -30,10 +30,7 @@ export default {
   async loadDepartment({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + "department/" +
-        payload.comid +
-        "/" +
-        payload.depid,
+      `${rootGetters["getSiteLink"]}department/${payload.comid}/${payload.depid}`,
       {
         method: "GET",
         headers: {
@@ -62,7 +59,7 @@ export default {
     };
 
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(rootGetters["getSiteLink"] + "department", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}department`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -87,7 +84,7 @@ export default {
     };
 
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(rootGetters["getSiteLink"] + "department", {
+    const res = await fetch(`${rootGetters["getSiteLink"]}department`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${rootGetters["auth/token"].token}`,
@@ -107,7 +104,7 @@ export default {
   async deleteDepartment({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] + `department/${payload.depId}?deleteEmployees=${payload.deleteEmployees}&&targetDepId=${payload.targetDepId}`,
+      `${rootGetters["getSiteLink"]}department/${payload.depId}?deleteEmployees=${payload.deleteEmployees}&&targetDepId=${payload.targetDepId}`,
       {
         method: "DELETE",
         headers: {

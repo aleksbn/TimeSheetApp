@@ -102,7 +102,7 @@ export default {
       }
       this.loadedDepartments = this.$store.getters[
         "departments/departments"
-      ].filter((d) => d.ID != parseInt(localStorage.getItem("depid")));
+      ].filter((d) => +d.ID !== parseInt(localStorage.getItem("depid")));
     },
   },
 };

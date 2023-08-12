@@ -2,13 +2,7 @@ export default {
   async loadStatistics({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const res = await fetch(
-      rootGetters["getSiteLink"] +
-        "calculation/" +
-        payload.comid +
-        "?year=" +
-        payload.year +
-        "&month=" +
-        payload.month,
+      `${rootGetters["getSiteLink"]}calculation/${payload.comid}?year=${payload.year}&month=${payload.month}`,
       {
         method: "GET",
         headers: {
