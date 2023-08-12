@@ -19,36 +19,19 @@
     </div>
     <div class="form-control" :class="{ invalid: !wtDate.isValid }">
       <label for="wtDate">Date</label>
-      <input
-        type="text"
-        name="wtDate"
-        @blur="clearValidity('wtDate')"
-        v-model="wtDate.val"
-      />
+      <input type="text" name="wtDate" @blur="clearValidity('wtDate')" v-model="wtDate.val" />
     </div>
     <div class="form-control" :class="{ invalid: !wtStartTime.isValid }">
       <label for="StartTime">Start time</label>
-      <input
-        type="time"
-        name="wtStartTime"
-        @blur="clearValidity('wtStartTime')"
-        v-model="wtStartTime.val"
-      />
+      <input type="time" name="wtStartTime" @blur="clearValidity('wtStartTime')" v-model="wtStartTime.val" />
     </div>
     <div class="form-control" :class="{ invalid: !wtEndTime.isValid }">
       <label for="EndTime">End time</label>
-      <input
-        type="time"
-        name="wtEndTime"
-        @blur="clearValidity('wtEndTime')"
-        v-model="wtEndTime.val"
-      />
+      <input type="time" name="wtEndTime" @blur="clearValidity('wtEndTime')" v-model="wtEndTime.val" />
     </div>
     <p v-if="!formIsValid">Please, fix the above errors and submit again.</p>
     <base-button style="display: inline">Save</base-button>
-    <base-button style="display: inline" :type="'button'" @click="cancel"
-      >Cancel</base-button
-    >
+    <base-button style="display: inline" :type="'button'" @click="cancel">Cancel</base-button>
   </form>
 </template>
 
@@ -88,19 +71,19 @@ export default {
       try {
         this.validateForm();
 
-      if (!this.formIsValid) {
-        return;
-      }
+        if (!this.formIsValid) {
+          return;
+        }
 
-      const formData = {
-        wtEmployeeId: this.employeeId.val,
-        wtDate: this.wtDate.val,
-        wtStartTime: this.wtStartTime.val,
-        wtEndTime: this.wtEndTime.val,
-      };
+        const formData = {
+          wtEmployeeId: this.employeeId.val,
+          wtDate: this.wtDate.val,
+          wtStartTime: this.wtStartTime.val,
+          wtEndTime: this.wtEndTime.val,
+        };
 
-      await this.$store.dispatch("workingTimes/addWorkingTime", formData);
-      this.$emit("close");
+        await this.$store.dispatch("workingTimes/addWorkingTime", formData);
+        this.$emit("close");
       }
       catch (error) {
         this.$emit("cancel");
@@ -139,10 +122,8 @@ export default {
     },
   },
   async created() {
-    await this.$store.dispatch("employees/loadEmployeesFromCompany", {
-      comid: parseInt(localStorage.getItem("comid")),
-      pageNumber: 0,
-      pageSize: 10000
+    await this.$store.dispatch("employees/loadEmployees", {
+      link: `${localStorage.getItem("comid")}?PageNumber=0&PageSize=10000`
     });
   },
 };
@@ -189,6 +170,7 @@ h3 {
 .invalid select {
   border: 1px solid red;
 }
+
 p {
   font-weight: bold;
   font-size: large;
