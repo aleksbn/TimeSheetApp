@@ -20,7 +20,7 @@
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
           <base-button @click="create" v-if="hasWorkingTimes">Add a working time</base-button>
-          <base-button link :to="addMultipleWTsLink" mode="a" style="display: inline">Add multiple working
+          <base-button v-if="showAddMultiple" link :to="addMultipleWTsLink" mode="a" style="display: inline">Add multiple working
             times</base-button>
         </div>
         <div v-if="isLoading">
@@ -84,6 +84,7 @@ export default {
         pageSize: 10,
       },
       show: false,
+      showAddMultiple: true
     };
   },
   computed: {
@@ -201,6 +202,7 @@ export default {
     },
   },
   async created() {
+    this.showAddMultiple = window.location.pathname.split('/')[2].length !== 13;
     await this.loadWorkingTimes();
   },
 };

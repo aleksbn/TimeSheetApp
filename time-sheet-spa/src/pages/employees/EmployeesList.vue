@@ -68,47 +68,11 @@ export default {
     },
     filteredEmployees() {
       let employees = this.$store.getters["employees/employees"];
-      employees = employees.filter((employee) => {
-        if (employee.ID.includes(this.activeFilters.id)) {
-          return true;
-        }
-      });
-      employees = employees.filter((employee) => {
-        if (
-          employee.FirstName.toUpperCase().includes(
-            this.activeFilters.firstName.toUpperCase()
-          )
-        ) {
-          return true;
-        }
-      });
-      employees = employees.filter((employee) => {
-        if (
-          employee.LastName.toUpperCase().includes(
-            this.activeFilters.lastName.toUpperCase()
-          )
-        ) {
-          return true;
-        }
-      });
-      employees = employees.filter((employee) => {
-        if (
-          employee.Department.name
-            .toUpperCase()
-            .includes(this.activeFilters.department.toUpperCase())
-        ) {
-          return true;
-        }
-      });
-      employees = employees.filter((employee) => {
-        if (
-          +this.activeFilters.hourlyRate === 0 ||
-          +employee.HourlyRate === +this.activeFilters.hourlyRate
-        ) {
-          return true;
-        }
-      });
-
+      employees = employees.filter(employee => employee.ID.includes(this.activeFilters.id));
+      employees = employees.filter(employee => employee.FirstName.toUpperCase().includes(this.activeFilters.firstName.toUpperCase()));
+      employees = employees.filter(employee => employee.LastName.toUpperCase().includes(this.activeFilters.lastName.toUpperCase()));
+      employees = employees.filter(employee => employee.Department.name.toUpperCase().includes(this.activeFilters.department.toUpperCase()));
+      employees = employees.filter(employee => +this.activeFilters.hourlyRate === 0 || +employee.HourlyRate === +this.activeFilters.hourlyRate);
       return employees;
     },
   },
