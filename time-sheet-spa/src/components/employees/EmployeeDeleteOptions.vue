@@ -6,9 +6,7 @@
     </p>
   </div>
   <div class="form-control">
-    <base-button style="display: inline" @click="deleteEmployee"
-      >Delete</base-button
-    >
+    <base-button style="display: inline" @click="deleteEmployee">Delete</base-button>
     <base-button style="display: inline" @click="cancel">Cancel</base-button>
   </div>
 </template>
@@ -22,14 +20,14 @@ export default {
         await this.$store.dispatch("employees/deleteEmployee", {
           empId: localStorage.getItem("empid"),
         });
-        let link = "/employees/" + localStorage.getItem("comid");
+        let link = `/employees/${localStorage.getItem("comid")}`;
         if (localStorage.getItem("depid") !== null) {
-          link += "/" + localStorage.getItem("depid");
+          link += `/${localStorage.getItem("depid")}`;
         }
         this.$router.push(link);
       } catch (error) {
         this.error =
-          error.message + " in deleting employee." || "Something went wrong!";
+          `${error.message} in deleting employee.` || "Something went wrong!";
       }
     },
     cancel() {

@@ -96,7 +96,7 @@
         <div>
           <base-button style="display: inline">{{ textForMode }}</base-button>
           <base-button v-if="this.ID" @click="openWorkingTimes()" style="display: inline"
-            :to="'/workingtimes/' + this.ID">Working times</base-button>
+            :to="`/workingtimes/${this.ID}`">Working times</base-button>
           <base-button :type="'button'" @click="deleteEmployee" style="display: inline">Delete this employee</base-button>
         </div>
       </form>
@@ -285,7 +285,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting departments" || "Something went wrong!";
+          `${error.message} in getting departments` || "Something went wrong!";
       }
     },
     openWorkingTimes() {

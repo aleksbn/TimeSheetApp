@@ -3,14 +3,14 @@ import actions from "./actions.js";
 import getters from "./getters.js";
 
 export default {
-  namespaced: true,
-  state() {
-    return {
-      departments: [],
-      department: null
-    }
-  },
-  mutations,
-  getters,
-  actions
+	namespaced: true,
+	state() {
+		return {
+			departments: [],
+			department: null,
+		};
+	},
+	mutations,
+	getters,
+	actions,
 };

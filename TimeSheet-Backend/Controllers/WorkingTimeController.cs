@@ -148,11 +148,11 @@ namespace TimeSheet_Backend.Controllers
             {
                 if(workingTimes.ToList().FindIndex(wt => wt.EmployeeID == workingTimeDTO.EmployeeID && wt.Date == workingTimeDTO.Date) >= 0)
                 {
-                    return BadRequest("That employee has already been registered on that particular date.");
+                    return BadRequest("That employee has already been added on that particular work date.");
                 }
-                if(workingTimeDTO.Date.DayOfWeek == DayOfWeek.Sunday || workingTimeDTO.Date.DayOfWeek == DayOfWeek.Saturday) 
+                if (workingTimeDTO.Date.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    return BadRequest("You cannot add working day on a Saturday or Sunday.");
+                    return BadRequest("You cannot add working day on Sunday.");
                 }
 
                 var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == workingTimeDTO.EmployeeID);
@@ -173,59 +173,40 @@ namespace TimeSheet_Backend.Controllers
         }
 
         [HttpPost]
-        [ActionName("createRangeForCompany")]
-        public async Task<IActionResult> PostWorkingTimeRange(int comId, string date = null, string start = null, string end = null)
+        [ActionName("createmultiple")]
+        public async Task<IActionResult> PostWorkingTimeRange([FromBody] List<CreateWorkingTimeDTO> workingTimes)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Input all required fields in a correct format!");
+            }
+
+            var workingTimesForTesting = await _unitOfWork.WorkingTimeRepository.GetAll();
+
             try
             {
-                var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
-                if (com == null || com.CompanyManagerId != GetUserId())
+                if (workingTimesForTesting.ToList().FindIndex(wtft => wtft.Date == workingTimes[0].Date && workingTimes.Any(wt => wt.EmployeeID == wtft.EmployeeID)) != -1)
                 {
-                    return Unauthorized("That company is not created by this user. You cannot add to its data.");
+                    return BadRequest("That employee has already been added on that particular work date.");
                 }
-
-                List<WorkingTime> times = new();
-                var allEmployees = await _unitOfWork.EmployeeRepository.GetAll(e => e.Department.CompanyID == comId);
-                var company = await _unitOfWork.CompanyRepository.Get(c => c.ID == comId);
-                List<Employee> employees = new(allEmployees);
-                List<WorkingTime> workingTimes = new();
-                DateTime currentDate = DateTime.Today;
-                TimeSpan startTime = company.StartTime;
-                TimeSpan endTime = company.EndTime;
-
-                if (date != null)
+                if (workingTimes.Any(wt => wt.Date.DayOfWeek == DayOfWeek.Sunday))
                 {
-                    currentDate = DateTime.Parse(date);
+                    return BadRequest("You cannot add working day on Sunday.");
                 }
-                if(start != null)
+                foreach (CreateWorkingTimeDTO wtDTO in workingTimes)
                 {
-                    startTime = TimeSpan.Parse(start);
-                }
-                if (end != null)
-                {
-                    endTime = TimeSpan.Parse(end);
-                }
-
-                List<WorkingTime> allWorkingTimess = new(await _unitOfWork.WorkingTimeRepository.GetAll(wt => wt.Employee.Department.CompanyID == comId));
-
-                if (allWorkingTimess.Where(wt => wt.Date.ToLongDateString() == currentDate.ToLongDateString()).Select(wt => wt).Any())
-                {
-                    return BadRequest("You already added some employee's working times on that date.");
-                }
-
-                foreach (var employee in employees)
-                {
-                    workingTimes.Add(new WorkingTime()
+                    var emp = await _unitOfWork.EmployeeRepository.Get(e => e.ID == wtDTO.EmployeeID);
+                    var dep = await _unitOfWork.DepartmentRepository.Get(d => d.ID == emp.DepartmentID);
+                    var com = await _unitOfWork.CompanyRepository.Get(c => c.ID == dep.CompanyID);
+                    if (com == null || com.CompanyManagerId != GetUserId())
                     {
-                        Date = currentDate,
-                        StartTime = startTime,
-                        EndTime = endTime,
-                        EmployeeID = employee.ID
-                    });
+                        return Unauthorized("That company is not created by this user. You cannot add to its data.");
+                    }
+                    await _unitOfWork.WorkingTimeRepository.Insert(_mapper.Map<WorkingTime>(wtDTO));
+                    await _unitOfWork.Save();
                 }
-                await _unitOfWork.WorkingTimeRepository.InsertRange(workingTimes);
-                await _unitOfWork.Save();
-                return Ok("Working times added");
+                return Ok("Working time added");
+
             }
             catch (Exception x)
             {

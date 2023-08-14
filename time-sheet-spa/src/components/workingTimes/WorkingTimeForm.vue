@@ -50,7 +50,7 @@ export default {
           return;
         }
 
-        var formData = {
+        const formData = {
           wtDate: this.wtDate.val,
           wtStartTime: this.wtStartTime.val,
           wtEndTime: this.wtEndTime.val,
@@ -58,10 +58,7 @@ export default {
         };
 
         if (this.Mode === "old") {
-          formData = {
-            ...formData,
-            wtId: this.ID,
-          };
+          formData.wtId = this.ID;
         }
 
         await this.$store.dispatch("workingTimes/editWorkingTime", formData);
@@ -112,7 +109,7 @@ export default {
   },
   computed: {
     fullName() {
-      return this.Employee.firstName + " " + this.Employee.lastName;
+      return `${this.Employee.firstName} ${this.Employee.lastName}`;
     },
   },
   mounted() {

@@ -85,8 +85,15 @@ namespace TimeSheet_Backend.Controllers
                 int overtimeHours = 0;
                 foreach (var wt in e.WorkingTimes)
                 {
+                    if(wt.Date.DayOfWeek != DayOfWeek.Saturday)
+                    {
                     totalRegularHours += (int)(wt.EndTime - wt.StartTime).TotalHours <= 8 ? (int)(wt.EndTime - wt.StartTime).TotalHours : (int)(wt.EndTime - wt.StartTime).TotalHours - 8;
                     overtimeHours += (int)(wt.EndTime - wt.StartTime).TotalHours > 8 ? (int)(wt.EndTime - wt.StartTime).TotalHours - 8 : 0;
+                    }
+                    else
+                    {
+                        overtimeHours += (int)(wt.EndTime - wt.StartTime).TotalHours;
+                    }
                 }
                 calc.RegularWorkingHours = totalRegularHours;
                 calc.OvertimeHours = overtimeHours;

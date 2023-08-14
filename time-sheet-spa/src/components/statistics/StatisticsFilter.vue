@@ -3,26 +3,24 @@
     <form>
       <div class="form-control" style="display: block; text-align: center;">
         <label for="choice">Select the ammount of data to be displayed</label>
-        <select
-          name="choice"
-          id="choice"
-          v-model="choice"
-          @change="changeFilter"
-        >
+        <select name="choice" id="choice" v-model="choice" @change="changeFilter">
           <option value="0">All of it</option>
           <option value="1">Specific</option>
         </select>
       </div>
       <br>
-      <div v-if="choiceChanged === '1'"  style="text-align: center;">
+      <div v-if="choiceChanged === '1'" style="text-align: center;">
+        <div class="form-control">
+          <label for="year">Year</label>
+          <select name="year" id="year" v-model="filterData.year" @change="changeFilter">
+            <option :value="year" v-for="year in yearsForSelect" :key="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
         <div class="form-control">
           <label for="month">Month</label>
-          <select
-            name="month"
-            id="month"
-            v-model="filterData.month"
-            @change="changeFilter"
-          >
+          <select name="month" id="month" v-model="filterData.month" @change="changeFilter">
             <option :value="0" selected>Entire year</option>
             <option :value="1">January</option>
             <option :value="2">February</option>
@@ -36,19 +34,6 @@
             <option :value="10">October</option>
             <option :value="11">November</option>
             <option :value="12">December</option>
-          </select>
-        </div>
-        <div class="form-control">
-          <label for="year">Year</label>
-          <select
-            name="year"
-            id="year"
-            v-model="filterData.year"
-            @change="changeFilter"
-          >
-            <option :value="year" v-for="year in yearsForSelect" :key="year">
-              {{ year }}
-            </option>
           </select>
         </div>
       </div>
@@ -83,7 +68,7 @@ export default {
     },
   },
   created() {
-    for (var i = new Date().getFullYear(); i >= 2000; i--) {
+    for (let i = new Date().getFullYear(); i >= 2000; i--) {
       this.years.push(i);
     }
   },
@@ -94,11 +79,13 @@ export default {
 .form-control {
   display: inline;
 }
+
 select {
   height: 3em;
   border-radius: 5px;
   width: 25%;
 }
+
 label {
   padding: 10px;
 }

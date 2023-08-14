@@ -20,6 +20,8 @@
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
           <base-button @click="create" v-if="hasWorkingTimes">Add a working time</base-button>
+          <base-button link :to="addMultipleWTsLink" mode="a" style="display: inline">Add multiple working
+            times</base-button>
         </div>
         <div v-if="isLoading">
           <base-spinner></base-spinner>
@@ -89,6 +91,10 @@ export default {
       return (
         !this.isLoading && this.$store.getters["workingTimes/hasWorkingTimes"]
       );
+    },
+    addMultipleWTsLink() {
+      const addWTsLink = window.location.pathname.split('/');
+      return `/addmultiplewt/${addWTsLink[2]}${addWTsLink[3] ? '/' + addWTsLink[3] : ''}`;
     },
     hasWorkingTime() {
       return this.$store.getters["workingTimes/hasWorkingTime"];
@@ -184,7 +190,7 @@ export default {
         );
       } catch (error) {
         this.error =
-          error.message + " in getting working time." || "Something went wrong!";
+          `${error.message} in getting working time.` || "Something went wrong!";
       }
     },
     async refresh() {

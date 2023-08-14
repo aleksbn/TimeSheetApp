@@ -9,21 +9,15 @@ import statisticsModule from "./modules/statistics/index.js";
 import generateModule from "./modules/generate/index.js";
 
 const store = createStore({
-  getters: {
-    getSiteLink() {
-      return "https://timesheet-backend.azurewebsites.net/api/";
-      // return "https://localhost:7059/api/";
-    },
-  },
-  modules: {
-    companies: companiesModule,
-    departments: departmentsModule,
-    employees: employeesModule,
-    workingTimes: workingTimesModule,
-    auth: authModule,
-    statistics: statisticsModule,
-    generate: generateModule,
-  },
+	modules: {
+		companies: companiesModule,
+		departments: departmentsModule,
+		employees: employeesModule,
+		workingTimes: workingTimesModule,
+		auth: authModule,
+		statistics: statisticsModule,
+		generate: generateModule,
+	},
 });
 
 export default store;

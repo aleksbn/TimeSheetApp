@@ -18,7 +18,7 @@ export default {
   emits: ["delete", "edit"],
   computed: {
     fullName() {
-      return this.Employee.firstName + " " + this.Employee.lastName;
+      return `${this.Employee.firstName} ${this.Employee.lastName}`;
     },
   },
   methods: {

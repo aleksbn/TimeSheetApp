@@ -8,40 +8,19 @@
         </div>
         <div class="form-control" :class="{ invalid: !depName.isValid }">
           <label for="Name">Name:</label>
-          <input
-            type="text"
-            name="Name"
-            :disabled="!editMode"
-            ref="depName"
-            @blur="clearValidity('depName')"
-          />
+          <input type="text" name="Name" :disabled="!editMode" ref="depName" @blur="clearValidity('depName')" />
         </div>
         <p v-if="!formIsValid">
           Please, fix the above errors and submit again.
         </p>
         <div>
           <base-button style="display: inline">{{ textForMode }}</base-button>
-          <base-button
-            v-if="this.ID"
-            link
-            style="display: inline"
-            :to="'/employees/' + this.comid + '/' + this.ID"
-            >Employees</base-button
-          >
-          <base-button
-            v-if="this.ID"
-            @click="openWorkingTimes()"
-            style="display: inline"
-            :to="'/workingtimes/' + this.ID"
-            >Working times</base-button
-          >
-          <base-button
-            v-if="this.ID"
-            :type="'button'"
-            @click="deleteDepartment()"
-            style="display: inline"
-            >Delete this department</base-button
-          >
+          <base-button v-if="this.ID" link style="display: inline"
+            :to="`/employees/${this.comid}/${this.ID}`">Employees</base-button>
+          <base-button v-if="this.ID" @click="openWorkingTimes()" style="display: inline"
+            :to="`/workingtimes/${this.comid}/${this.ID}`">Working times</base-button>
+          <base-button v-if="this.ID" :type="'button'" @click="deleteDepartment()" style="display: inline">Delete this
+            department</base-button>
         </div>
       </form>
     </base-card>
@@ -90,7 +69,7 @@ export default {
 
       const formData = {
         depName: this.depName.val,
-        comId: localStorage.getItem('comid')
+        comId: this.comid
       };
 
       if (this.Mode === "old") {
@@ -102,7 +81,7 @@ export default {
     openWorkingTimes() {
       localStorage.removeItem("comidwt");
       localStorage.removeItem("empidwt");
-      this.$router.push("/workingtimes/" + this.depid);
+      this.$router.push(`/workingtimes/${this.comid}/${this.ID}`);
     },
 
     deleteDepartment() {

@@ -3,12 +3,7 @@
     <section>
       <statistics-filter @filter-changed="changeData"></statistics-filter>
     </section>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <section>
@@ -75,7 +70,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting statistics." || "Something went wrong!";
+          `${error.message} in getting statistics.` || "Something went wrong!";
       }
       this.isLoading = false;
     },
@@ -129,17 +124,22 @@ td {
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2; /* Light gray */
+  background-color: #f2f2f2;
+  /* Light gray */
 }
 
 tr:nth-child(odd) {
-  background-color: rgba(255, 0, 0, 0.801); /* Red */
-  color: #fff; /* White text on red rows */
+  background-color: rgba(255, 0, 0, 0.801);
+  /* Red */
+  color: #fff;
+  /* White text on red rows */
 }
 
 tr:nth-child(even):hover,
 tr:nth-child(odd):hover {
-  background-color: rgba(0, 0, 255, 0.5); /* Blue on hover */
-  color: #fff; /* White text on blue rows on hover */
+  background-color: rgba(0, 0, 255, 0.5);
+  /* Blue on hover */
+  color: #fff;
+  /* White text on blue rows on hover */
 }
 </style>

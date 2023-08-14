@@ -61,7 +61,7 @@
         <div>
           <base-button style="display: inline">{{ textForMode }}</base-button>
           <base-button v-if="this.ID" link style="display: inline"
-            :to="'/departments/' + this.ID">Departments</base-button>
+            :to="`/departments/${this.ID}`">Departments</base-button>
           <base-button v-if="this.ID" @click="openEmployees()" style="display: inline">Employees</base-button>
           <base-button v-if="this.ID" @click="openWorkingTimes()" style="display: inline">Working times</base-button>
           <base-button v-if="this.ID" link :to="calculationLink" :type="'button'" style="display: inline">
@@ -207,7 +207,7 @@ export default {
       return this.editModeType === true ? "Save" : "Edit";
     },
     calculationLink() {
-      return "/calculations/" + this.ID;
+      return `/calculations/${this.ID}`;
     },
   },
   mounted() {

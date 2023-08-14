@@ -10,6 +10,7 @@ import AddDepartment from "./pages/departments/AddDepartment.vue";
 import AddEmployee from "./pages/employees/AddEmployee.vue";
 import AddUser from "./pages/auth/AddUser.vue";
 import AuthPage from "./pages/auth/AuthPage.vue";
+import AddMultipleWorkingTimes from "./pages/workingtimes/AddMultipleWorkingTimes.vue";
 import Companies from "./pages/companies/CompaniesList.vue";
 import CompanyDetails from "./pages/companies/CompanyDetails.vue";
 import GenerateDataPage from "./pages/generate/GenerateDataPage.vue";
@@ -25,109 +26,125 @@ import NotFound from "./pages/NotFound.vue";
 import LogoutPage from "./pages/auth/LogoutPage.vue";
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    { path: "/", redirect: "/about" },
-    {
-      path: "/addcompany",
-      component: AddCompany,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/installationmanual",
-      component: InstallationManual,
-    },
-    {
-      path: "/usermanual",
-      component: UserManual,
-    },
-    {
-      path: "/adddepartment",
-      component: AddDepartment,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/addemployee",
-      component: AddEmployee,
-      meta: { requiresAuth: true },
-    },
-    { path: "/about", component: AboutUs },
-    { path: "/auth", component: AuthPage, meta: { requiresUnauth: true } },
-    {
-      path: "/calculations/:comid",
-      component: StatisticsPage,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    { path: "/companies", component: Companies, meta: { requiresAuth: true } },
-    {
-      path: "/companies/:comid",
-      component: CompanyDetails,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/departments/:comid/",
-      component: Departments,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/departments/:comid/:depid",
-      component: DepartmentDetails,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/employees/:comid",
-      component: Employees,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/employees/:comid/:depid",
-      component: Employees,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/employeedetails/:empid",
-      component: EmployeeDetails,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/generate/:comid",
-      component: GenerateDataPage,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    { path: "/login", component: LoginPage, meta: { requiresUnauth: true } },
-    {
-      path: "/editprofile",
-      component: EditUserPage,
-      meta: { requiresAuth: true },
-    },
-    { path: "/logout", component: LogoutPage, meta: { requiresAuth: true } },
-    { path: "/register/", component: AddUser, meta: { requiresUnauth: true } },
-    {
-      path: "/workingtimes/:id",
-      component: WorkingTimes,
-      props: true,
-      meta: { requiresAuth: true },
-    },
-    { path: "/:notFOund(.*)", component: NotFound },
-  ],
+	history: createWebHistory(),
+	routes: [
+		{ path: "/", redirect: "/about" },
+		{
+			path: "/addcompany",
+			component: AddCompany,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/installationmanual",
+			component: InstallationManual,
+		},
+		{
+			path: "/usermanual",
+			component: UserManual,
+		},
+		{
+			path: "/adddepartment",
+			component: AddDepartment,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/addemployee",
+			component: AddEmployee,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/addmultiplewt/:comid",
+			component: AddMultipleWorkingTimes,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/addmultiplewt/:comid/:depid",
+			component: AddMultipleWorkingTimes,
+			meta: { requiresAuth: true },
+		},
+		{ path: "/about", component: AboutUs },
+		{ path: "/auth", component: AuthPage, meta: { requiresUnauth: true } },
+		{
+			path: "/calculations/:comid",
+			component: StatisticsPage,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{ path: "/companies", component: Companies, meta: { requiresAuth: true } },
+		{
+			path: "/companies/:comid",
+			component: CompanyDetails,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/departments/:comid/",
+			component: Departments,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/departments/:comid/:depid",
+			component: DepartmentDetails,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/employees/:comid",
+			component: Employees,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/employees/:comid/:depid",
+			component: Employees,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/employeedetails/:empid",
+			component: EmployeeDetails,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/generate/:comid",
+			component: GenerateDataPage,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{ path: "/login", component: LoginPage, meta: { requiresUnauth: true } },
+		{
+			path: "/editprofile",
+			component: EditUserPage,
+			meta: { requiresAuth: true },
+		},
+		{ path: "/logout", component: LogoutPage, meta: { requiresAuth: true } },
+		{ path: "/register/", component: AddUser, meta: { requiresUnauth: true } },
+		{
+			path: "/workingtimes/:comid",
+			component: WorkingTimes,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: "/workingtimes/:comid/:depid",
+			component: WorkingTimes,
+			props: true,
+			meta: { requiresAuth: true },
+		},
+		{ path: "/:notFOund(.*)", component: NotFound },
+	],
 });
 
 router.beforeEach(function (to, from, next) {
-  if (to.meta.requiresAuth && !store.getters["auth/isAuthenticated"]) {
-    next("/auth");
-  } else if (to.meta.requiresUnauth && store.getters["auth/isAuthenticated"]) {
-    next("/logout");
-  } else {
-    next();
-  }
+	if (to.meta.requiresAuth && !store.getters["auth/isAuthenticated"]) {
+		next("/auth");
+	} else if (to.meta.requiresUnauth && store.getters["auth/isAuthenticated"]) {
+		next("/logout");
+	} else {
+		next();
+	}
 });
 
 export default router;

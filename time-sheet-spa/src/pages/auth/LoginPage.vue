@@ -1,11 +1,6 @@
 <template>
   <div>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      :showClose="true"
-      @close="handleError"
-    >
+    <base-dialog :show="!!error" title="An error occured" :showClose="true" @close="handleError">
       <p>{{ error }}</p>
     </base-dialog>
     <div v-if="isLoading">
@@ -19,12 +14,7 @@
         </div>
         <div class="form-control">
           <label for="username">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            v-model="password.val"
-          />
+          <input type="password" id="password" name="password" v-model="password.val" />
         </div>
         <base-button>Login</base-button>
       </form>
@@ -127,6 +117,7 @@ h3 {
 .invalid input {
   border: 1px solid red;
 }
+
 p {
   font-weight: bold;
   font-size: large;

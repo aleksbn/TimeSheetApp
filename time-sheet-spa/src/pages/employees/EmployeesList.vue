@@ -64,7 +64,7 @@ export default {
       return !this.isLoading && this.$store.getters["departments/hasDepartments"];
     },
     generateLink() {
-      return "/generate/" + localStorage.getItem("comid");
+      return `/generate/${localStorage.getItem("comid")}`;
     },
     filteredEmployees() {
       let employees = this.$store.getters["employees/employees"];
@@ -102,8 +102,8 @@ export default {
       });
       employees = employees.filter((employee) => {
         if (
-          this.activeFilters.hourlyRate === 0 ||
-          employee.HourlyRate === this.activeFilters.hourlyRate
+          +this.activeFilters.hourlyRate === 0 ||
+          +employee.HourlyRate === +this.activeFilters.hourlyRate
         ) {
           return true;
         }
@@ -164,7 +164,7 @@ export default {
     },
     setFilters(updatedFilters) {
       this.activeFilters = updatedFilters;
-      this.activeFilters.hourlyRate = isNaN(updatedFilters.hourlyRate)
+      this.activeFilters.hourlyRate === isNaN(updatedFilters.hourlyRate)
         ? 0
         : parseFloat(updatedFilters.hourlyRate);
     },

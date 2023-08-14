@@ -13,7 +13,7 @@ export default {
   props: ["ID", "Name"],
   computed: {
     detailsLink() {
-      return this.$route.path + "/" + this.ID;
+      return `${this.$route.path}/${this.ID}`;
     },
   },
 };

@@ -7,21 +7,14 @@
       <base-card>
         <div class="controls">
           <base-button @click="refresh">Refresh</base-button>
-          <base-button link to="/adddepartment"
-            >Add another department</base-button
-          >
+          <base-button link to="/adddepartment">Add another department</base-button>
         </div>
         <div v-if="isLoading">
           <base-spinner></base-spinner>
         </div>
         <ul v-if="hasDepartments">
-          <department-item
-            v-for="department in filteredDepartments"
-            :key="department.ID"
-            :comid="this.comid"
-            :ID="department.ID"
-            :Name="department.Name"
-          >
+          <department-item v-for="department in filteredDepartments" :key="department.ID" :comid="this.comid"
+            :ID="department.ID" :Name="department.Name">
           </department-item>
         </ul>
         <h3 v-else-if="!isLoading">

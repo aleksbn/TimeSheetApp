@@ -10,10 +10,7 @@
       <base-spinner></base-spinner>
     </div>
     <section>
-      <department-form
-        @save-data="saveData"
-        :Mode="this.EditMode"
-      ></department-form>
+      <department-form @save-data="saveData" :Mode="this.EditMode"></department-form>
     </section>
   </div>
 </template>
@@ -36,8 +33,8 @@ export default {
       this.isLoading = true;
       try {
         await this.$store.dispatch("departments/addDepartment", data);
-        this.$router.push("/departments/" + localStorage.getItem('comid'));
-      } catch(error) {
+        this.$router.push(`/departments/${localStorage.getItem('comid')}`);
+      } catch (error) {
         this.error = error;
       }
       this.isLoading = false;

@@ -1,39 +1,17 @@
 <template>
   <base-card>
-    <base-dialog
-      :show="!!error"
-      title="An error occured"
-      @close="handleError"
-      :showClose="true"
-    >
+    <base-dialog :show="!!error" title="An error occured" @close="handleError" :showClose="true">
       <p>{{ error }}</p>
     </base-dialog>
     <form @submit.prevent="submit">
       <div class="form-control">
-        <label for="numberOfEmployees"
-          >Number of employees per department (up to 30)</label
-        >
-        <input
-          type="number"
-          name="numberOfEmployees"
-          id="numberOfEmployees"
-          v-model="numberOfEmployees"
-          min="1"
-          max="30"
-        />
+        <label for="numberOfEmployees">Number of employees per department (up to 30)</label>
+        <input type="number" name="numberOfEmployees" id="numberOfEmployees" v-model="numberOfEmployees" min="1"
+          max="30" />
       </div>
       <div class="form-control">
-        <label for="numberOfDays"
-          >Number of working days (up to 90)</label
-        >
-        <input
-          type="number"
-          name="numberOfDays"
-          id="numberOfDays"
-          v-model="numberOfDays"
-          min="1"
-          max="90"
-        />
+        <label for="numberOfDays">Number of working days (up to 90)</label>
+        <input type="number" name="numberOfDays" id="numberOfDays" v-model="numberOfDays" min="1" max="90" />
       </div>
       <base-button>Generate</base-button>
     </form>
@@ -59,7 +37,7 @@ export default {
       };
       try {
         await this.$store.dispatch("generate/generateData", submitData);
-        this.$router.replace("/employees/" + this.$route.params.comid);
+        this.$router.replace(`/employees/${this.$route.params.comid}`);
       } catch (error) {
         this.error =
           `${error.message} in generating data.` || "Something went wrong!";
@@ -112,6 +90,7 @@ h3 {
 .invalid input {
   border: 1px solid red;
 }
+
 p {
   font-weight: bold;
   font-size: large;

@@ -17,10 +17,10 @@ export default {
   props: ["ID", "Name", "Address", "City", "Country", "Email", "StartTime", "EndTime"],
   computed: {
     fullAddress() {
-      return this.Address + ", " + this.City + ", " + this.Country;
+      return `${this.Address}, ${this.City}, ${this.Country}`;
     },
     detailsLink() {
-        return this.$route.path + '/' + this.ID;
+      return `${this.$route.path}/${this.ID}`;
     }
   },
 };

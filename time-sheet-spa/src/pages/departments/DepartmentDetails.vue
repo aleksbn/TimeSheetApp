@@ -38,7 +38,7 @@ export default {
   methods: {
     async saveData(data) {
       await this.$store.dispatch("departments/editDepartment", data);
-      this.$router.push("/departments/" + this.comid);
+      this.$router.push(`/departments/${this.comid}`);
     },
     cancelDeletion() {
       this.deleting = false;

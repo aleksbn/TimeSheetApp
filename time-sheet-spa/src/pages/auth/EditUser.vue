@@ -1,13 +1,8 @@
 <template>
   <div>
     <base-card>
-      <user-form v-if="hasCurrentUser"
-        :Mode="'old'"
-        :key="currentUser.Email"
-        :FirstName="currentUser.FirstName"
-        :LastName="currentUser.LastName"
-        :Email="currentUser.Email"
-      ></user-form>
+      <user-form v-if="hasCurrentUser" :Mode="'old'" :key="currentUser.Email" :FirstName="currentUser.FirstName"
+        :LastName="currentUser.LastName" :Email="currentUser.Email"></user-form>
       <p v-else>There's something wrong with loading of the user data.</p>
     </base-card>
   </div>

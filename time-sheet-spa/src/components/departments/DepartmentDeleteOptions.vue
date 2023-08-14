@@ -18,17 +18,8 @@
     </p>
     <div class="form-control">
       <label for="companyId">Select department:</label>
-      <select
-        name="departmentId"
-        v-model="depId"
-        id="departmentId"
-        v-if="loadedDepartments.length > 0"
-      >
-        <option
-          v-for="department in departments"
-          :key="department.ID"
-          :value="department.ID"
-        >
+      <select name="departmentId" v-model="depId" id="departmentId" v-if="loadedDepartments.length > 0">
+        <option v-for="department in departments" :key="department.ID" :value="department.ID">
           {{ department.Name }}
         </option>
       </select>
@@ -39,9 +30,7 @@
     </div>
   </div>
   <div class="form-control">
-    <base-button style="display: inline" @click="deleteDepartment"
-      >Delete</base-button
-    >
+    <base-button style="display: inline" @click="deleteDepartment">Delete</base-button>
     <base-button style="display: inline" @click="cancel">Cancel</base-button>
   </div>
 </template>
@@ -85,7 +74,7 @@ export default {
         this.$router.push("/departments/" + localStorage.getItem("comid"));
       } catch (error) {
         this.error =
-          error.message + " in deleting department." || "Something went wrong!";
+          `${error.message} in deleting department.` || "Something went wrong!";
       }
     },
     cancel() {
@@ -98,7 +87,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting departments" || "Something went wrong!";
+          `${error.message} in getting department.` || "Something went wrong!";
       }
       this.loadedDepartments = this.$store.getters[
         "departments/departments"

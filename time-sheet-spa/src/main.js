@@ -13,11 +13,11 @@ const app = createApp(App);
 
 app.use(router);
 app.use(store);
-app.use(DataCheckers)
+app.use(DataCheckers);
 
-app.component('base-card', BaseCard);
-app.component('base-button', BaseButton);
-app.component('base-spinner', BaseSpinner);
-app.component('base-dialog', BaseDialog);
+app.component("base-card", BaseCard);
+app.component("base-button", BaseButton);
+app.component("base-spinner", BaseSpinner);
+app.component("base-dialog", BaseDialog);
 
-app.mount('#app');
+app.mount("#app");

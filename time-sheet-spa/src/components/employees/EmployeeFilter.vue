@@ -15,37 +15,19 @@
       </div>
       <div class="form-control">
         <label for="department">Department:</label>
-        <input
-          type="text"
-          name="department"
-          id="department"
-          @input="setFilter"
-        />
+        <input type="text" name="department" id="department" @input="setFilter" />
       </div>
       <div class="form-control">
         <label for="hourlyRate">Hourly rate:</label>
-        <input
-          type="number"
-          name="hourlyRate"
-          id="hourlyRate"
-          value="0"
-          min="0"
-          @change="setFilter"
-        />
+        <input type="number" name="hourlyRate" id="hourlyRate" value="0" min="0" @change="setFilter" />
       </div>
       <br />
       <br />
       <div style="text-align: center">
         <div class="form-control">
-          <label
-            >Page number <span style="margin: 0 20px">/</span> Page size</label
-          >
+          <label>Page number <span style="margin: 0 20px">/</span> Page size</label>
           <select name="pageNumber" id="pageNumber" @change="setFilter">
-            <option
-              v-for="number in pageSizeNumbers"
-              :key="number"
-              :value="number"
-            >
+            <option v-for="number in pageSizeNumbers" :key="number" :value="number">
               {{ number + 1 }}
             </option>
           </select>
@@ -100,7 +82,7 @@ export default {
           value = 0;
         }
       }
-      if(inputId === "pageSize" || inputId === "pageNumber") {
+      if (inputId === "pageSize" || inputId === "pageNumber") {
         value = parseInt(value);
       }
 
@@ -108,7 +90,7 @@ export default {
         ...this.filters,
         [inputId]: value,
       };
-      if(inputId === "pageSize") {
+      if (inputId === "pageSize") {
         this.filters.pageNumber = 0;
       }
       this.filters = updatedFilter;
@@ -128,15 +110,18 @@ export default {
 .form-control {
   display: inline;
 }
+
 input {
   height: 2em;
   border-radius: 15px;
   width: 12%;
 }
+
 label {
   padding: 10px;
   width: 7%;
 }
+
 select {
   width: 12%;
   height: 2.2em;

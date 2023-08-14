@@ -1,9 +1,7 @@
 <template>
   <div>
     <base-card style="text-align: center">
-      <base-button class="authButtons" link to="/register"
-        >Register</base-button
-      >
+      <base-button class="authButtons" link to="/register">Register</base-button>
       <base-button class="authButtons" link to="/login">Login</base-button>
     </base-card>
   </div>

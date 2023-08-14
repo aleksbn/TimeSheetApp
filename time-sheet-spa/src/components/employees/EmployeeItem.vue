@@ -29,20 +29,16 @@ export default {
   ],
   computed: {
     fullName() {
-      return this.FirstName + " " + this.LastName;
+      return `${this.FirstName} ${this.LastName}`;
     },
     detailsLink() {
       if (localStorage.getItem("depid") !== null) {
         return (
-          this.$route.path.split("/").slice(0, -3).join("/") +
-          "/employeedetails/" +
-          this.ID
+          `${this.$route.path.split("/").slice(0, -3).join("/")}/employeedetails/${this.ID}`
         );
       } else {
         return (
-          this.$route.path.split("/").slice(0, -2).join("/") +
-          "/employeedetails/" +
-          this.ID
+          `${this.$route.path.split("/").slice(0, -2).join("/")}/employeedetails/${this.ID}`
         );
       }
     },

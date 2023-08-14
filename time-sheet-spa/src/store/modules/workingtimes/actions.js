@@ -1,9 +1,13 @@
+import { API_URL } from "@/config";
+import { TIMEOUT_SECONDS } from "@/config";
+import { timeout } from "@/helpers";
+
 export default {
   async loadWorkingTimes({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const link = payload.link;
-    const res = await fetch(
-      `${rootGetters["getSiteLink"]}${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
+    const request = await fetch(
+      `${API_URL}${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
       {
         method: "GET",
         headers: {
@@ -11,6 +15,7 @@ export default {
         },
       }
     );
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to load working times!");
@@ -38,8 +43,8 @@ export default {
 
   async loadWorkingTime({ commit, dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(
-      `${rootGetters["getSiteLink"]}workingtime/GetWorkingTime/${payload}`,
+    const request = await fetch(
+      `${API_URL}workingtime/GetWorkingTime/${payload}`,
       {
         method: "GET",
         headers: {
@@ -47,6 +52,7 @@ export default {
         },
       }
     );
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to load specific working time!");
@@ -62,6 +68,37 @@ export default {
     commit("setWorkingTime", wt);
   },
 
+  async addWorkingTimes({ dispatch, rootGetters }, payload) {
+    await dispatch("auth/checkTokens", null, { root: true });
+    const wtData = payload.employees.filter(e => e.didWork).map(e => {
+      return {
+        EmployeeId: e.id,
+        Date: e.date.split('.').reverse().join('/'),
+        StartTime: e.startTime,
+        EndTime: e.endTime,
+      };
+    });
+    console.log(wtData);
+
+    const request = await fetch(`${API_URL}workingtime/createmultiple/`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(wtData)
+    });
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
+    let data = await res.json();
+    if (!res.ok) {
+      data = data.replace("That", "Some of those").replace("employee", "employees").replace("has", "have");
+      const error = new Error(data || "Failed to add working time!");
+      throw error;
+    }
+  },
+
   async addWorkingTime({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
     const wtData = {
@@ -71,8 +108,8 @@ export default {
       EndTime: payload.wtEndTime,
     };
 
-    const res = await fetch(
-      `${rootGetters["getSiteLink"]}workingtime/create/`,
+    const request = await fetch(
+      `${API_URL}workingtime/create/`,
       {
         method: "POST",
         headers: {
@@ -83,6 +120,7 @@ export default {
         body: JSON.stringify(wtData),
       }
     );
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to add working time!");
@@ -92,8 +130,8 @@ export default {
 
   async deleteWorkingTime({ dispatch, rootGetters }, payload) {
     await dispatch("auth/checkTokens", null, { root: true });
-    const res = await fetch(
-      `${rootGetters["getSiteLink"]}workingtime/deleteWorkingTime/${payload.id}`,
+    const request = await fetch(
+      `${API_URL}workingtime/deleteWorkingTime/${payload.id}`,
       {
         method: "DELETE",
         headers: {
@@ -103,7 +141,7 @@ export default {
         },
       }
     );
-
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to delete working time!");
@@ -121,8 +159,8 @@ export default {
       EmployeeId: payload.wtEmployeeId,
     };
 
-    const res = await fetch(
-      `${rootGetters["getSiteLink"]}workingtime/editWorkingTime`,
+    const request = await fetch(
+      `${API_URL}workingtime/editWorkingTime`,
       {
         method: "PUT",
         headers: {
@@ -133,7 +171,7 @@ export default {
         body: JSON.stringify(wt),
       }
     );
-
+		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
     const data = await res.json();
     if (!res.ok) {
       const error = new Error(data || "Failed to edit working time!");

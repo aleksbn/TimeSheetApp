@@ -1,9 +1,7 @@
 <template>
   <section>
     <base-card style="text-align: center">
-      <label style="font-weight: bold"
-        >Page number <span style="margin: 0 20px">/</span> Page size</label
-      >
+      <label style="font-weight: bold">Page number <span style="margin: 0 20px">/</span> Page size</label>
       <select name="pageNumber" id="pageNumber" @change="setParams">
         <option v-for="number in pageSizeNumbers" :key="number" :value="number">
           {{ number + 1 }}
@@ -52,7 +50,7 @@ export default {
         [inputId]: value,
       };
       this.params = updatedParams;
-      if(inputId === "pageSize") {
+      if (inputId === "pageSize") {
         this.params.pageNumber = 0;
       }
       this.$emit("params-changed", this.params);

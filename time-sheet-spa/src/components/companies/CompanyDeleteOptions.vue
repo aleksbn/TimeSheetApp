@@ -1,73 +1,56 @@
 <template #default>
-        <div>
-          <p style="text-align: justify">
-            Would you like to delete all of the employees from this company? If
-            you choose YES, all of the employees and their working times will be
-            deleted.
-          </p>
-          <div class="form-control">
-            <label for="deleteAll">Delete all employees:</label>
-            <select name="deleteAll" id="deleteAll" v-model="delSelected">
-              <option value="0" selected>NO</option>
-              <option value="1">YES</option>
-            </select>
-          </div>
-        </div>
-        <div v-if="!(delSel > 0)">
-          <p style="text-align: justify">
-            Select the company you would like to transfer employees of deleting
-            company.
-          </p>
-          <div class="form-control">
-            <label for="companyId">Select company:</label>
-            <select name="companyId" v-model="comId" id="companyId">
-              <option value="0">None. Just leave them unemployed.</option>
-              <option
-                v-for="company in companies"
-                :key="company.ID"
-                :value="company.ID"
-              >
-                {{ company.Name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div v-if="comSel > 0">
-          <p style="text-align: justify">
-            Select the department of the company you would like to transfer
-            employees of deleting company.
-          </p>
-          <div class="form-control">
-            <label for="companyId">Select department:</label>
-            <select
-              name="departmentId"
-              v-model="depId"
-              id="departmentId"
-              v-if="loadedDepartments.length > 0"
-            >
-              <option
-                v-for="department in departments"
-                :key="department.ID"
-                :value="department.ID"
-              >
-                {{ department.Name }}
-              </option>
-            </select>
-            <p v-else>
-              There are no departments to choose from. Either add some
-              departments to the selected company, or delete all the employees.
-            </p>
-          </div>
-        </div>
-        <div class="form-control">
-          <base-button style="display: inline" @click="deleteCompany"
-            >Delete</base-button
-          >
-          <base-button style="display: inline" @click="cancel"
-            >Cancel</base-button
-          >
-        </div>
-      </template>
+  <div>
+    <p style="text-align: justify">
+      Would you like to delete all of the employees from this company? If
+      you choose YES, all of the employees and their working times will be
+      deleted.
+    </p>
+    <div class="form-control">
+      <label for="deleteAll">Delete all employees:</label>
+      <select name="deleteAll" id="deleteAll" v-model="delSelected">
+        <option value="0" selected>NO</option>
+        <option value="1">YES</option>
+      </select>
+    </div>
+  </div>
+  <div v-if="!(delSel > 0)">
+    <p style="text-align: justify">
+      Select the company you would like to transfer employees of deleting
+      company.
+    </p>
+    <div class="form-control">
+      <label for="companyId">Select company:</label>
+      <select name="companyId" v-model="comId" id="companyId">
+        <option value="0">None. Just leave them unemployed.</option>
+        <option v-for="company in companies" :key="company.ID" :value="company.ID">
+          {{ company.Name }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div v-if="comSel > 0">
+    <p style="text-align: justify">
+      Select the department of the company you would like to transfer
+      employees of deleting company.
+    </p>
+    <div class="form-control">
+      <label for="companyId">Select department:</label>
+      <select name="departmentId" v-model="depId" id="departmentId" v-if="loadedDepartments.length > 0">
+        <option v-for="department in departments" :key="department.ID" :value="department.ID">
+          {{ department.Name }}
+        </option>
+      </select>
+      <p v-else>
+        There are no departments to choose from. Either add some
+        departments to the selected company, or delete all the employees.
+      </p>
+    </div>
+  </div>
+  <div class="form-control">
+    <base-button style="display: inline" @click="deleteCompany">Delete</base-button>
+    <base-button style="display: inline" @click="cancel">Cancel</base-button>
+  </div>
+</template>
 
 
 
@@ -123,7 +106,7 @@ export default {
         this.$router.push("/companies");
       } catch (error) {
         this.error =
-          error.message + "in deleting company." || "Something went wrong!";
+          `${error.message} in deleting company.` || "Something went wrong!";
       }
     },
     cancel() {
@@ -136,7 +119,7 @@ export default {
         }
       } catch (error) {
         this.error =
-          error.message + " in getting companies." || "Something went wrong!";
+          `${error.message} in getting companies.` || "Something went wrong!";
       }
       this.loadedCompanies = this.$store.getters["companies/companies"].filter(
         (c) => +c.ID !== parseInt(localStorage.getItem("comid"))
@@ -149,7 +132,7 @@ export default {
         });
       } catch (error) {
         this.error =
-          error.message + " in getting departments" || "Something went wrong!";
+          `${error.message} in getting epartments.` || "Something went wrong!";
       }
       this.loadedDepartments = this.$store.getters["departments/departments"];
     },
