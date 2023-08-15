@@ -1,3 +1,6 @@
+import { API_URL } from "./config";
+import { TIMEOUT_SECONDS } from "./config";
+
 export const ResetLocalStorage = function () {
 	localStorage.removeItem("comid");
 	localStorage.removeItem("depid");
@@ -16,3 +19,29 @@ export const timeout = function (s) {
 		}, s * 1000);
 	});
 };
+
+export const AjaxCall = async function(link, method, bodyData, authData) {
+	const requestSettings = {
+		method,
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+			...authData,
+			body: JSON.stringify(bodyData)
+		},
+	};
+	if(bodyData !== null) {
+		requestSettings.body = JSON.stringify(bodyData);
+	}
+
+	const request = fetch(`${API_URL}${link}`, requestSettings);
+	const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
+	const data = await res.json();
+
+	if (!res.ok) {
+		const error = new Error(data || "Failed to create new user!");
+		throw error;
+	}
+
+	return data;
+}

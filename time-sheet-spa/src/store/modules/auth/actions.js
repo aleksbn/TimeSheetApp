@@ -1,88 +1,63 @@
-import { API_URL } from "@/config";
-import { TIMEOUT_SECONDS } from "@/config";
-import { timeout } from "@/helpers";
+import { AjaxCall } from "@/helpers";
 
 export default {
 	async register(payload) {
-		const request = fetch(`${API_URL}Authentication/register-user`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(payload),
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to create new user!");
-			throw error;
+		try {
+			await AjaxCall("Authentication/register-user", "POST", payload, {});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to create new user!");
+			throw errorFromAjax;
 		}
 	},
 
 	async getUser({ commit, dispatch, rootGetters }) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}Authentication/get-user`, {
-			method: "GET",
-			headers: {
+		try {
+			const data = await AjaxCall("Authentication/get-user", "GET", null, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-			},
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to load user data!");
-			throw error;
-		}
-		const user = {
-			FirstName: data.firstName,
-			LastName: data.lastName,
-			Email: data.email,
-		};
+			});
 
-		commit("setCurrentUser", user);
+			const user = {
+				FirstName: data.firstName,
+				LastName: data.lastName,
+				Email: data.email,
+			};
+			commit("setCurrentUser", user);
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to load user data!");
+			throw errorFromAjax;
+		}
 	},
 
 	async editUser({ dispatch, rootGetters }, payload) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}Authentication/edit-user`, {
-			method: "PUT",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
+		try {
+			await AjaxCall("Authentication/edit-user", "PUT", payload, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-			},
-			body: JSON.stringify(payload),
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to update user data!");
-			throw error;
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to update user data!");
+			throw errorFromAjax;
 		}
 	},
 
 	async login({ commit }, payload) {
-		const request = await fetch(`${API_URL}Authentication/login-user`, {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(payload),
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-
-		if (!res.ok) {
-			const error = new Error(data || "Failed to login!");
-			throw error;
+		try {
+			const data = await AjaxCall(
+				"Authentication/login-user",
+				"POST",
+				payload,
+				{}
+			);
+			commit("setUserLoginData", data);
+			localStorage.setItem("userId", data.id);
+			localStorage.setItem("token", data.tokenValue.token);
+			localStorage.setItem("refreshToken", data.tokenValue.refreshToken);
+			localStorage.setItem("expiresAt", data.tokenValue.expiresAt);
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to login!");
+			throw errorFromAjax;
 		}
-		commit("setUserLoginData", data);
-		localStorage.setItem("userId", data.id);
-		localStorage.setItem("token", data.tokenValue.token);
-		localStorage.setItem("refreshToken", data.tokenValue.refreshToken);
-		localStorage.setItem("expiresAt", data.tokenValue.expiresAt);
 	},
 
 	async logout(context) {
@@ -98,22 +73,18 @@ export default {
 			getters.userId !== null &&
 			new Date(getters.expiresAt).getTime() + 120000 <= Date.now()
 		) {
-			const request = await fetch(`${API_URL}authentication/refresh-token`, {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(getters.token),
-			});
-			const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-			const data = await res.json();
-			if (!res.ok) {
-				const error = new Error(data || "Failed to refresh token!");
-				throw error;
+			try {
+				const data = await AjaxCall(
+					"authentication/refresh-token",
+					"POST",
+					getters.token,
+					{}
+				);
+				commit("setToken", data);
+			} catch (error) {
+				const errorFromAjax = new Error(error || "Failed to refresh token!");
+				throw errorFromAjax;
 			}
-
-			commit("setToken", data);
 		}
 	},
 };

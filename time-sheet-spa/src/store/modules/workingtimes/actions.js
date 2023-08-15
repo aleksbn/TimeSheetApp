@@ -1,181 +1,142 @@
-import { API_URL } from "@/config";
-import { TIMEOUT_SECONDS } from "@/config";
-import { timeout } from "@/helpers";
+import { AjaxCall } from "@/helpers";
 
 export default {
-  async loadWorkingTimes({ commit, dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const link = payload.link;
-    const request = await fetch(
-      `${API_URL}${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-        },
-      }
-    );
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(data || "Failed to load working times!");
-      throw error;
-    }
+	async loadWorkingTimes({ commit, dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			const link = payload.link;
+			const data = AjaxCall(
+				`${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
+				"GET",
+				null,
+				{
+					Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+				}
+			);
+			const workingTimes = [];
+			for (const key in data.toReturn) {
+				const wt = {
+					ID: data.toReturn[key].id,
+					Date: data.toReturn[key].date,
+					StartTime: data.toReturn[key].startTime,
+					EndTime: data.toReturn[key].endTime,
+					EmployeeID: data.toReturn[key].employeeID,
+					Employee: data.toReturn[key].employee,
+				};
+				workingTimes.push(wt);
+			}
+			commit("setWorkingTimes", {
+				wts: workingTimes,
+				wtcount: data.count,
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to load working times!");
+			throw errorFromAjax;
+		}
+	},
 
-    const workingTimes = [];
-    for (const key in data.toReturn) {
-      const wt = {
-        ID: data.toReturn[key].id,
-        Date: data.toReturn[key].date,
-        StartTime: data.toReturn[key].startTime,
-        EndTime: data.toReturn[key].endTime,
-        EmployeeID: data.toReturn[key].employeeID,
-        Employee: data.toReturn[key].employee,
-      };
-      workingTimes.push(wt);
-    }
+	async loadWorkingTime({ commit, dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			const data = await AjaxCall(
+				`workingtime/GetWorkingTime/${payload}`,
+				"GET",
+				null,
+				{
+					Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+				}
+			);
+			const wt = {
+				ID: data.id,
+				Employee: data.employee,
+				WtDate: data.date,
+				StartTime: data.startTime,
+				EndTime: data.endTime,
+			};
+			commit("setWorkingTime", wt);
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to load working time data!");
+			throw errorFromAjax;
+		}
+	},
 
-    commit("setWorkingTimes", {
-      wts: workingTimes,
-      wtcount: data.count,
-    });
-  },
+	async addWorkingTimes({ dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			const wtData = payload.employees
+				.filter((e) => e.didWork)
+				.map((e) => {
+					return {
+						EmployeeId: e.id,
+						Date: e.date.split(".").reverse().join("/"),
+						StartTime: e.startTime,
+						EndTime: e.endTime,
+					};
+				});
+			await AjaxCall(`workingtime/createmultiple/`, "POST", wtData, {
+				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+			});
+		} catch (error) {
+			let errorFromAjax = error
+				.replace("That", "Some of those")
+				.replace("employee", "employees")
+				.replace("has", "have");
+			errorFromAjax = new Error(error || "Failed to add multiple working times!");
+			throw errorFromAjax;
+		}
+	},
 
-  async loadWorkingTime({ commit, dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const request = await fetch(
-      `${API_URL}workingtime/GetWorkingTime/${payload}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-        },
-      }
-    );
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(data || "Failed to load specific working time!");
-      throw error;
-    }
-    const wt = {
-      ID: data.id,
-      Employee: data.employee,
-      WtDate: data.date,
-      StartTime: data.startTime,
-      EndTime: data.endTime,
-    };
-    commit("setWorkingTime", wt);
-  },
+	async addWorkingTime({ dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			const wtData = {
+				EmployeeId: payload.wtEmployeeId,
+				Date: payload.wtDate.split(".").reverse().join("/"),
+				StartTime: payload.wtStartTime,
+				EndTime: payload.wtEndTime,
+			};
+			await AjaxCall(`workingtime/create`, "POST", wtData, {
+				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to add workingtime!");
+			throw errorFromAjax;
+		}
+	},
 
-  async addWorkingTimes({ dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const wtData = payload.employees.filter(e => e.didWork).map(e => {
-      return {
-        EmployeeId: e.id,
-        Date: e.date.split('.').reverse().join('/'),
-        StartTime: e.startTime,
-        EndTime: e.endTime,
-      };
-    });
-    console.log(wtData);
+	async deleteWorkingTime({ dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			await AjaxCall(
+				`workingtime/deleteWorkingTime/${payload.id}`,
+				"DELETE",
+				null,
+				{
+					Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+				}
+			);
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to delete working time!");
+			throw errorFromAjax;
+		}
+	},
 
-    const request = await fetch(`${API_URL}workingtime/createmultiple/`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(wtData)
-    });
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    let data = await res.json();
-    if (!res.ok) {
-      data = data.replace("That", "Some of those").replace("employee", "employees").replace("has", "have");
-      const error = new Error(data || "Failed to add working time!");
-      throw error;
-    }
-  },
-
-  async addWorkingTime({ dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const wtData = {
-      EmployeeId: payload.wtEmployeeId,
-      Date: payload.wtDate.split(".").reverse().join("/"),
-      StartTime: payload.wtStartTime,
-      EndTime: payload.wtEndTime,
-    };
-
-    const request = await fetch(
-      `${API_URL}workingtime/create/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(wtData),
-      }
-    );
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(data || "Failed to add working time!");
-      throw error;
-    }
-  },
-
-  async deleteWorkingTime({ dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const request = await fetch(
-      `${API_URL}workingtime/deleteWorkingTime/${payload.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(data || "Failed to delete working time!");
-      throw error;
-    }
-  },
-
-  async editWorkingTime({ dispatch, rootGetters }, payload) {
-    await dispatch("auth/checkTokens", null, { root: true });
-    const wt = {
-      ID: payload.wtId,
-      Date: payload.wtDate.split(".").reverse().join("/"),
-      StartTime: payload.wtStartTime,
-      EndTime: payload.wtEndTime,
-      EmployeeId: payload.wtEmployeeId,
-    };
-
-    const request = await fetch(
-      `${API_URL}workingtime/editWorkingTime`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(wt),
-      }
-    );
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-    const data = await res.json();
-    if (!res.ok) {
-      const error = new Error(data || "Failed to edit working time!");
-      throw error;
-    }
-  },
+	async editWorkingTime({ dispatch, rootGetters }, payload) {
+		await dispatch("auth/checkTokens", null, { root: true });
+		try {
+			const wt = {
+				ID: payload.wtId,
+				Date: payload.wtDate.split(".").reverse().join("/"),
+				StartTime: payload.wtStartTime,
+				EndTime: payload.wtEndTime,
+				EmployeeId: payload.wtEmployeeId,
+			};
+			await AjaxCall(`workingtime/editWorkingTime`, "PUT", wt, {
+				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to edit working time data!");
+			throw errorFromAjax;
+		}
+	},
 };

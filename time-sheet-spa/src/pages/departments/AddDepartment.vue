@@ -29,6 +29,9 @@ export default {
     };
   },
   methods: {
+    handleError() {
+      this.error = null;
+    },
     async saveData(data) {
       this.isLoading = true;
       try {

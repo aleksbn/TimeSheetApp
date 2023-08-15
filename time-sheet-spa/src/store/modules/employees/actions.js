@@ -1,168 +1,135 @@
-import { API_URL } from "@/config";
-import { TIMEOUT_SECONDS } from "@/config";
-import { timeout } from "@/helpers";
+import { AjaxCall } from "@/helpers";
 
 export default {
 	async loadEmployee({ commit, dispatch, rootGetters }, payload) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}employee/${payload.empid}`, {
-			method: "GET",
-			headers: {
+		try {
+			const data = await AjaxCall(`employee/${payload.empid}`, "GET", null, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-			},
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to load employee data!");
-			throw error;
+			});
+			const employee = {
+				ID: data.id,
+				FirstName: data.firstName,
+				LastName: data.lastName,
+				JobTitle: data.jobTitle,
+				Degree: data.degree,
+				Email: data.email,
+				Address: data.address,
+				Phone: data.phone,
+				DateOfBirth: data.dateOfBirth,
+				StartOfEmployment: data.startOfEmployment,
+				HourlyRate: data.hourlyRate,
+				DepartmentId: data.departmentId,
+			};
+			commit("setEmployee", employee);
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to load employee data!");
+			throw errorFromAjax;
 		}
-
-		const employee = {
-			ID: data.id,
-			FirstName: data.firstName,
-			LastName: data.lastName,
-			JobTitle: data.jobTitle,
-			Degree: data.degree,
-			Email: data.email,
-			Address: data.address,
-			Phone: data.phone,
-			DateOfBirth: data.dateOfBirth,
-			StartOfEmployment: data.startOfEmployment,
-			HourlyRate: data.hourlyRate,
-			DepartmentId: data.departmentId,
-		};
-		commit("setEmployee", employee);
 	},
 
 	async loadEmployees({ commit, dispatch, rootGetters }, payload) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}employee/${payload.link}`, {
-			method: "GET",
-			headers: {
+		try {
+			const data = await AjaxCall(`employee/${payload.link}`, "GET", null, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-			},
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to load employees from company!");
-			throw error;
-		}
-		const employees = [];
-		for (const key in data.toReturn) {
-			const employee = {
-				ID: data.toReturn[key].id,
-				FirstName: data.toReturn[key].firstName,
-				LastName: data.toReturn[key].lastName,
-				JobTitle: data.toReturn[key].jobTitle,
-				Degree: data.toReturn[key].degree,
-				Address: data.toReturn[key].address,
-				Email: data.toReturn[key].email,
-				Phone: data.toReturn[key].phone,
-				DateOfBirth: data.toReturn[key].dateOfBirth,
-				StartOfEmployment: data.toReturn[key].startOfEmployment,
-				HourlyRate: data.toReturn[key].hourlyRate,
-				DepartmentId: data.toReturn[key].departmentId,
-				Department: data.toReturn[key].department,
-			};
-			employees.push(employee);
-		}
+			});
+			const employees = [];
+			for (const key in data.toReturn) {
+				const employee = {
+					ID: data.toReturn[key].id,
+					FirstName: data.toReturn[key].firstName,
+					LastName: data.toReturn[key].lastName,
+					JobTitle: data.toReturn[key].jobTitle,
+					Degree: data.toReturn[key].degree,
+					Address: data.toReturn[key].address,
+					Email: data.toReturn[key].email,
+					Phone: data.toReturn[key].phone,
+					DateOfBirth: data.toReturn[key].dateOfBirth,
+					StartOfEmployment: data.toReturn[key].startOfEmployment,
+					HourlyRate: data.toReturn[key].hourlyRate,
+					DepartmentId: data.toReturn[key].departmentId,
+					Department: data.toReturn[key].department,
+				};
+				employees.push(employee);
+			}
 
-		commit("setEmployees", {
-			employees: employees,
-			emCount: data.count,
-		});
+			commit("setEmployees", {
+				employees: employees,
+				emCount: data.count,
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to load employees!");
+			throw errorFromAjax;
+		}
 	},
 
 	async addEmployee({ dispatch, rootGetters }, payload) {
-		const emp = {
-			FirstName: payload.empFirstName,
-			LastName: payload.empLastName,
-			Address: payload.empAddress,
-			Email: payload.empEmail,
-			Phone: payload.empPhone,
-			JobTitle: payload.empJobTitle,
-			Degree: payload.empDegree,
-			DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
-			StartOfEmployment: payload.empStartOfEmployment
-				.split(".")
-				.reverse()
-				.join("/"),
-			HourlyRate: payload.empHourlyRate,
-			DepartmentId: payload.empDepartmentId,
-		};
-
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}employee/`, {
-			method: "POST",
-			headers: {
+		try {
+			const emp = {
+				FirstName: payload.empFirstName,
+				LastName: payload.empLastName,
+				Address: payload.empAddress,
+				Email: payload.empEmail,
+				Phone: payload.empPhone,
+				JobTitle: payload.empJobTitle,
+				Degree: payload.empDegree,
+				DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
+				StartOfEmployment: payload.empStartOfEmployment
+					.split(".")
+					.reverse()
+					.join("/"),
+				HourlyRate: payload.empHourlyRate,
+				DepartmentId: payload.empDepartmentId,
+			};
+			await AjaxCall("employee", "POST", emp, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(emp),
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to add an employee!");
-			throw error;
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to add employee!");
+			throw errorFromAjax;
 		}
 	},
 
 	async editEmployee({ dispatch, rootGetters }, payload) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const emp = {
-			ID: payload.empId,
-			DepartmentId: payload.empDepartmentId,
-			FirstName: payload.empFirstName,
-			LastName: payload.empLastName,
-			JobTitle: payload.empJobTitle,
-			Degree: payload.empDegree,
-			Address: payload.empAddress,
-			Email: payload.empEmail,
-			Phone: payload.empPhone,
-			DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
-			StartOfEmployment: payload.empStartOfEmployment
-				.split(".")
-				.reverse()
-				.join("/"),
-			HourlyRate: payload.empHourlyRate,
-		};
-
-		const request = await fetch(`${API_URL}employee`, {
-			method: "PUT",
-			headers: {
+		try {
+			const emp = {
+				ID: payload.empId,
+				DepartmentId: payload.empDepartmentId,
+				FirstName: payload.empFirstName,
+				LastName: payload.empLastName,
+				JobTitle: payload.empJobTitle,
+				Degree: payload.empDegree,
+				Address: payload.empAddress,
+				Email: payload.empEmail,
+				Phone: payload.empPhone,
+				DateOfBirth: payload.empDateOfBirth.split(".").reverse().join("/"),
+				StartOfEmployment: payload.empStartOfEmployment
+					.split(".")
+					.reverse()
+					.join("/"),
+				HourlyRate: payload.empHourlyRate,
+			};
+			await AjaxCall("employee", "PUT", emp, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(emp),
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to edit employee!");
-			throw error;
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to edit employee data!");
+			throw errorFromAjax;
 		}
 	},
 
 	async deleteEmployee({ dispatch, rootGetters }, payload) {
 		await dispatch("auth/checkTokens", null, { root: true });
-		const request = await fetch(`${API_URL}employee/${payload.empId}`, {
-			method: "DELETE",
-			headers: {
+		try {
+			await AjaxCall(`employee/${payload.empId}`, "DELETE", null, {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-		});
-		const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
-		const data = await res.json();
-		if (!res.ok) {
-			const error = new Error(data || "Failed to delete employee!");
-			throw error;
+			});
+		} catch (error) {
+			const errorFromAjax = new Error(error || "Failed to delete employee!");
+			throw errorFromAjax;
 		}
 	},
 };

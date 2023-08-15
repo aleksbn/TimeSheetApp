@@ -136,7 +136,7 @@ namespace TimeSheet_Backend.Controllers
         public async Task<IActionResult> DeleteCompany(int id, int targetDepartmentId = 0, bool deleteEmployees = false )
         {
             var companyExists = await _unitOfWork.CompanyRepository.Get(c => c.ID == id);
-            if(companyExists.CompanyManagerId == GetUserId())
+            if (companyExists.CompanyManagerId != GetUserId())
             {
                 return Unauthorized("That company is not created by this user. You cannot delete it.");
             }
