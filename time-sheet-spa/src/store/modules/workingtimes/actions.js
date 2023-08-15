@@ -5,7 +5,7 @@ export default {
 		await dispatch("auth/checkTokens", null, { root: true });
 		try {
 			const link = payload.link;
-			const data = AjaxCall(
+			const data = await AjaxCall(
 				`${link}${payload.id}?PageNumber=${payload.pageNumber}&PageSize=${payload.pageSize}`,
 				"GET",
 				null,
