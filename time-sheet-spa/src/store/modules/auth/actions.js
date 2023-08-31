@@ -1,7 +1,7 @@
 import { AjaxCall } from "@/helpers";
 
 export default {
-	async register(payload) {
+	async register(_, payload) {
 		try {
 			await AjaxCall("Authentication/register-user", "POST", payload, {});
 		} catch (error) {
