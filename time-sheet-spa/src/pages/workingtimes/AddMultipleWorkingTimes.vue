@@ -6,6 +6,9 @@
 		<section>
 			<form @submit.prevent="submitForm()" v-if="hasEmployees">
 				<base-card style="max-width: 50%;">
+					<div v-if="isLoading">
+						<base-spinner></base-spinner>
+					</div>
 					<div>
 						<div class="form-control" :class="{ invalid: !wtDate.isValid }">
 							<label for="wtDate">Date:</label>
@@ -64,6 +67,7 @@ export default {
 	data() {
 		return {
 			isValid: true,
+			isLoading: false,
 			error: null,
 			wtDate: {
 				isValid: true,
@@ -140,11 +144,13 @@ export default {
 			this.validate();
 			if (this.formIsValid) {
 				try {
+					this.isLoading = true;
 					this.employees.forEach(e => e.date = this.wtDate.val);
 					await this.$store.dispatch("workingTimes/addWorkingTimes", { employees: this.employees });
 					this.$router.push(`/workingtimes/${this.company.ID}`);
 				} catch (error) {
 					this.error = error;
+					this.isLoading = false;
 				}
 			}
 		}

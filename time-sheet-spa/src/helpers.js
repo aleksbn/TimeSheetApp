@@ -20,22 +20,31 @@ export const timeout = function (s) {
 	});
 };
 
-export const AjaxCall = async function(link, method, bodyData, authData) {
+export const AjaxCall = async function (
+	link,
+	method,
+	bodyData,
+	authData,
+	longOperation = false
+) {
 	const requestSettings = {
 		method,
 		headers: {
 			Accept: "application/json",
 			"Content-Type": "application/json",
 			...authData,
-			body: JSON.stringify(bodyData)
+			body: JSON.stringify(bodyData),
 		},
 	};
-	if(bodyData !== null) {
+	if (bodyData !== null) {
 		requestSettings.body = JSON.stringify(bodyData);
 	}
 
 	const request = fetch(`${API_URL}${link}`, requestSettings);
-	const res = await Promise.race([request, timeout(TIMEOUT_SECONDS)]);
+	const res = await Promise.race([
+		request,
+		timeout(longOperation === false ? TIMEOUT_SECONDS : 120),
+	]);
 	const data = await res.json();
 
 	if (!res.ok) {
@@ -44,4 +53,4 @@ export const AjaxCall = async function(link, method, bodyData, authData) {
 	}
 
 	return data;
-}
+};

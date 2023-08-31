@@ -55,7 +55,9 @@ export default {
 			};
 			commit("setWorkingTime", wt);
 		} catch (error) {
-			const errorFromAjax = new Error(error || "Failed to load working time data!");
+			const errorFromAjax = new Error(
+				error || "Failed to load working time data!"
+			);
 			throw errorFromAjax;
 		}
 	},
@@ -73,15 +75,23 @@ export default {
 						EndTime: e.endTime,
 					};
 				});
-			await AjaxCall(`workingtime/createmultiple/`, "POST", wtData, {
-				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
-			});
+			await AjaxCall(
+				`workingtime/createmultiple/`,
+				"POST",
+				wtData,
+				{
+					Authorization: `Bearer ${rootGetters["auth/token"].token}`,
+				},
+				true
+			);
 		} catch (error) {
 			let errorFromAjax = error
 				.replace("That", "Some of those")
 				.replace("employee", "employees")
 				.replace("has", "have");
-			errorFromAjax = new Error(error || "Failed to add multiple working times!");
+			errorFromAjax = new Error(
+				error || "Failed to add multiple working times!"
+			);
 			throw errorFromAjax;
 		}
 	},
@@ -116,7 +126,9 @@ export default {
 				}
 			);
 		} catch (error) {
-			const errorFromAjax = new Error(error || "Failed to delete working time!");
+			const errorFromAjax = new Error(
+				error || "Failed to delete working time!"
+			);
 			throw errorFromAjax;
 		}
 	},
@@ -135,7 +147,9 @@ export default {
 				Authorization: `Bearer ${rootGetters["auth/token"].token}`,
 			});
 		} catch (error) {
-			const errorFromAjax = new Error(error || "Failed to edit working time data!");
+			const errorFromAjax = new Error(
+				error || "Failed to edit working time data!"
+			);
 			throw errorFromAjax;
 		}
 	},
