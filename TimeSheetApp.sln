@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheet-Backend", "TimeSheet-Backend\TimeSheet-Backend.csproj", "{EDCC3C3A-A7D1-4FDF-BC56-B3F180CA7164}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheet-Backend", "time-sheet-backend-asp.net\TimeSheet-Backend.csproj", "{EDCC3C3A-A7D1-4FDF-BC56-B3F180CA7164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
