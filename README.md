@@ -43,6 +43,7 @@ By default, most of the projects on github are stored without node_modules folde
 npm install
 ```
 And that's it, the required libraries are downloaded.
+Now, you also need node.js, so head down to the [Node.js download page](https://nodejs.org/en/download), download a desired package and install it.
 
 # Running the app
 Head back to the visual studio and press F5 on your keyboard. You'll get console with some data about the app, chrome browser with swagger for testing purposes, and that's it. Backend is running. Now, head to the frontend console where you typed "npm install" in order to install required libraries and type
