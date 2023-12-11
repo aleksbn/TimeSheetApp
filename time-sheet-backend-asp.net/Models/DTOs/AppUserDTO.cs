@@ -33,7 +33,6 @@ namespace TimeSheet_Backend.Models.DTOs
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [RegularExpression("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,50}$")]
         public string Password { get; set; }
     }
 
